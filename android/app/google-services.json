@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "309451813171",
+    "project_id": "terdom-dcc61",
+    "storage_bucket": "terdom-dcc61.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309451813171:android:fbf0458cab84ba3b7a0e46",
+        "android_client_info": {
+          "package_name": "com.example.ternak"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxtz2s-pa1fk_I6Vrg2KhS5CotQRM9v3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
