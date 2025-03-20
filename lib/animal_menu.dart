@@ -13,51 +13,26 @@ class MenuAnimal extends StatefulWidget {
   State<MenuAnimal> createState() => _MenuAnimalState();
 }
 
-
-    @override
-    List<Widget> buildActions (BuildContext context) {
-      return[
-    IconButton(
-      icon: const Icon(Icons.clear),
-      onPressed: () {
-        // query = '';
-       },
-      ),
-    ];
-    }
-   
-
-
-    // @override
-    // List<Widget> buildSuggestions (BuildContext context) {
-    //   List<string> matchQuery = [];
-    // for (var animal in searchTerms) {
-    //   if(animal.toLowerCase().contains(query.toLowerCase())){
-    //     matchQuery.add(animal);
-    //   }
-    // }
-    // return ListView.builder(
-    //   itemCount: matchQuery.length,
-    //   itemBuilder: (context, index) {
-    //     var result = matchQuery [index];
-    //     return ListTile(
-    //     title : Text(result),
-    //     );
-    //   },
-    // );
-    // }
-// }
-
 class _MenuAnimalState extends State<MenuAnimal> {
   int countList = 0;
-  bool isSearching = false;
-  TextEditingController searchController = TextEditingController();
+  String searchQuery = "";
+  String filterCategory = "";
 
   Future<QuerySnapshot<Map<String, dynamic>>> _getListAnimal() {
-    return FirebaseFirestore.instance
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection("hewan")
-        .where("user_uid", isEqualTo: widget.user.uid)
-        .get();
+        .where("user_uid", isEqualTo: widget.user.uid);
+    
+    if (searchQuery.isNotEmpty) {
+      query = query.where("nama", isGreaterThanOrEqualTo: searchQuery)
+                   .where("nama", isLessThanOrEqualTo: searchQuery + '\uf8ff');
+    }
+    
+    if (filterCategory.isNotEmpty) {
+      query = query.where("kategori", isEqualTo: filterCategory);
+    }
+    
+    return query.get();
   }
 
   @override
@@ -73,7 +48,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
         .get()
         .then((value) => setState(() => countList = value.size));
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,24 +61,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
             fontWeight: FontWeight.w900,
           ),
         ),
-          actions: [
-        // IconButton(
-          // onPressed: () {
-          // showSearch(
-          //   context: context, 
-          //   // delegate: CustomSearchDelegate(),);     
-                
-          //   },
-          // icon: const Icon(
-          //   Icons.search, // Ganti ikon jadi Search
-          //     size: 34, // Ukuran bisa disesuaikan
-          //     color: Color.fromRGBO(26, 107, 125, 1), // Warna tetap sama
-          //   ),
-          // ),
-        ],
       ),
-      
-
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -120,102 +78,82 @@ class _MenuAnimalState extends State<MenuAnimal> {
         child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(7),
-                children: [
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.filter_list_alt),
-                    label: const Text("Filter"),
-                    onPressed: () {
-                      print("filter");
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Cari hewan",
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() => searchQuery = value);
                     },
                   ),
-                  const SizedBox(width: 10),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.sort),
-                    label: const Text("Urutkan"),
-                    onPressed: () {
-                      print("filter");
-                    },
+                ),
+                SizedBox(width: 10),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    setState(() => filterCategory = value);
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(value: "", child: Text("Semua")),
+                    PopupMenuItem(value: "Penggemukan", child: Text("Penggemukan")),
+                    PopupMenuItem(value: "Pemeliharaan", child: Text("Pemeliharaan")),
+                  ],
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.filter_list),
+                    label: Text("Filter"),
+                    onPressed: null,
                   ),
-                  const SizedBox(width: 10),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    label: const Text("Kondisi Hewan"),
-                    onPressed: () {
-                      print("filter");
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    label: const Text("Kandang"),
-                    onPressed: () {
-                      print("filter");
-                    },
-                  ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "$countList Hewan",
+              style: const TextStyle(
+                color: Color.fromRGBO(0, 0, 0, 0.5),
+                fontSize: 15,
               ),
             ),
             const SizedBox(height: 10),
             Expanded(
-              flex: 9,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "$countList Hewan",
-                      style: const TextStyle(
-                        color: Color.fromRGBO(0, 0, 0, 0.5),
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Expanded(
-                        child:
-                            FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      future: _getListAnimal(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else {
-                          List<Widget> listData = List.empty();
-                          if (snapshot.data != null) {
-                            listData = snapshot.data!.docs
-                                .map(
-                                  (e) => TileAnimal(
-                                    doc: e,
-                                    refresh: refresh,
-                                    isForHealthy: widget.isForHealthy,
-                                  ),
-                                )
-                                .toList();
-                          }
-
-                          return ListView(
-                            children: listData,
-                          );
-                        }
-                      },
-                    ))
-                  ],
-                ),
+              child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                future: _getListAnimal(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<Widget> listData = [];
+                    if (snapshot.data != null) {
+                      listData = snapshot.data!.docs
+                          .map(
+                            (e) => TileAnimal(
+                              doc: e,
+                              refresh: refresh,
+                              isForHealthy: widget.isForHealthy,
+                            ),
+                          )
+                          .toList();
+                    }
+                    return ListView(children: listData);
+                  }
+                },
               ),
             )
           ],
         ),
       ),
-   );
- }
+    );
+  }
 }
