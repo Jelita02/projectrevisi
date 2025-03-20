@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
@@ -7,7 +8,8 @@ import 'package:ternak/animal_detail.dart';
 const bgColor = Color(0xfffafafa);
 
 class QRScanner extends StatefulWidget {
-  const QRScanner({super.key});
+  final User user;
+  const QRScanner({super.key, required this.user});
 
   @override
   State<QRScanner> createState() => _QRScannerState();
@@ -51,6 +53,7 @@ class _QRScannerState extends State<QRScanner> {
         MaterialPageRoute(
           builder: (context) {
             return AnimalDetail(
+              user: widget.user,
               doc: value,
             );
           },

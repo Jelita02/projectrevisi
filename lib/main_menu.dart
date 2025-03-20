@@ -89,7 +89,7 @@ class _MainMenuState extends State<MainMenu> {
         countSick: _countSick,
         getData: getData,
       ),
-      const QRScanner(),
+      QRScanner(user: widget.user),
       Profile(
         docUser: _docUser,
         user: widget.user,

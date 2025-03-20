@@ -1,16 +1,20 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore: library_prefixes
+import 'package:firebase_auth/firebase_auth.dart' as userFire;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_detail.dart';
 
 class TileAnimal extends StatelessWidget {
+  final userFire.User user;
   final DocumentSnapshot<Map<String, dynamic>> doc;
   final Function refresh;
   final bool isForHealthy;
   const TileAnimal({
     super.key,
+    required this.user,
     required this.doc,
     required this.refresh,
     this.isForHealthy = false,
@@ -33,7 +37,7 @@ class TileAnimal extends StatelessWidget {
             : Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AnimalDetail(doc: doc),
+                  builder: (context) => AnimalDetail(doc: doc, user: user),
                 )).then((value) => refresh());
       },
       child: Container(
@@ -60,7 +64,6 @@ class TileAnimal extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     );
                   }
-                  print("Error: ${snapshot.error}");
                   var image = snapshot.data;
                   if (image != null) {
                     return Image.memory(

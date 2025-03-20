@@ -3,17 +3,20 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:ternak/animal_edit.dart';
 import 'package:ternak/components/riwayat_kesehatan.dart';
 
 class AnimalDetail extends StatefulWidget {
+  final User user;
   final DocumentSnapshot<Map<String, dynamic>> doc;
-  const AnimalDetail({super.key, required this.doc});
+  const AnimalDetail({super.key, required this.doc, required this.user});
 
   @override
   State<AnimalDetail> createState() => _AnimalDetailState();
@@ -188,7 +191,32 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           fontSize: 18,
                         ),
                       ),
-                    )
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: PopupMenuButton<String>(
+                        onSelected: (value) {
+                          if (value == "edit") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AnimalEdit(
+                                        doc: widget.doc,
+                                        user: widget.user,
+                                      )),
+                            );
+                          } else if (value == "delete") {}
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                              value: "edit", child: Text("Edit")),
+                          const PopupMenuItem(
+                              value: "delete", child: Text("Hapus")),
+                        ],
+                        icon:
+                            const Icon(Icons.more_vert), // Titik tiga vertikal
+                      ),
+                    ),
                   ],
                 ),
                 Row(
