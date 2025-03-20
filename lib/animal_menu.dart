@@ -13,39 +13,36 @@ class MenuAnimal extends StatefulWidget {
   State<MenuAnimal> createState() => _MenuAnimalState();
 }
 
-
-    @override
-    List<Widget> buildActions (BuildContext context) {
-      return[
+@override
+List<Widget> buildActions(BuildContext context) {
+  return [
     IconButton(
       icon: const Icon(Icons.clear),
       onPressed: () {
         // query = '';
-       },
-      ),
-    ];
-    }
-   
+      },
+    ),
+  ];
+}
 
-
-    // @override
-    // List<Widget> buildSuggestions (BuildContext context) {
-    //   List<string> matchQuery = [];
-    // for (var animal in searchTerms) {
-    //   if(animal.toLowerCase().contains(query.toLowerCase())){
-    //     matchQuery.add(animal);
-    //   }
-    // }
-    // return ListView.builder(
-    //   itemCount: matchQuery.length,
-    //   itemBuilder: (context, index) {
-    //     var result = matchQuery [index];
-    //     return ListTile(
-    //     title : Text(result),
-    //     );
-    //   },
-    // );
-    // }
+// @override
+// List<Widget> buildSuggestions (BuildContext context) {
+//   List<string> matchQuery = [];
+// for (var animal in searchTerms) {
+//   if(animal.toLowerCase().contains(query.toLowerCase())){
+//     matchQuery.add(animal);
+//   }
+// }
+// return ListView.builder(
+//   itemCount: matchQuery.length,
+//   itemBuilder: (context, index) {
+//     var result = matchQuery [index];
+//     return ListTile(
+//     title : Text(result),
+//     );
+//   },
+// );
+// }
 // }
 
 class _MenuAnimalState extends State<MenuAnimal> {
@@ -73,7 +70,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
         .get()
         .then((value) => setState(() => countList = value.size));
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,13 +83,13 @@ class _MenuAnimalState extends State<MenuAnimal> {
             fontWeight: FontWeight.w900,
           ),
         ),
-          actions: [
-        // IconButton(
+        actions: [
+          // IconButton(
           // onPressed: () {
           // showSearch(
-          //   context: context, 
-          //   // delegate: CustomSearchDelegate(),);     
-                
+          //   context: context,
+          //   // delegate: CustomSearchDelegate(),);
+
           //   },
           // icon: const Icon(
           //   Icons.search, // Ganti ikon jadi Search
@@ -102,8 +99,6 @@ class _MenuAnimalState extends State<MenuAnimal> {
           // ),
         ],
       ),
-      
-
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -216,6 +211,6 @@ class _MenuAnimalState extends State<MenuAnimal> {
           ],
         ),
       ),
-   );
- }
+    );
+  }
 }

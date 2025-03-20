@@ -1,14 +1,17 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// ignore: library_prefixes
+import 'package:firebase_auth/firebase_auth.dart' as userFire;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class AnimalAdd extends StatefulWidget {
-  final User user;
+  final userFire.User user;
   const AnimalAdd({super.key, required this.user});
 
   @override
@@ -30,8 +33,7 @@ class _AnimalAddState extends State<AnimalAdd> {
   late String _blokId;
   late String _blok;
   String _jenisKelamin = "Jantan";
-  String _StatusKesehatan = "Sehat";
-  
+  final String _statusKesehatan = "Sehat";
 
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
@@ -81,12 +83,20 @@ class _AnimalAddState extends State<AnimalAdd> {
       "bobot": _bobotController.text,
       "bobot_akhir": _bobotController.text,
       "tanggal_masuk": _tanggalController.text,
-      "status_kesehatan": _StatusKesehatan,
+      "status_kesehatan": _statusKesehatan,
     }).then((value) {
       if (_imgFile != null) {
-        final storageRef = FirebaseStorage.instance.ref().child("hewan");
-        final imagesRef = storageRef.child(value.id);
-        imagesRef.putFile(_imgFile!);
+        // Ambil ekstensi file asli
+        String extension = path.extension(_imgFile!.path);
+
+        // Buat nama file unik dengan UUID
+        String fileName = '${value.id}$extension';
+
+        Supabase.instance.client.storage
+            .from('terdom') // Ganti dengan nama bucket
+            .upload('hewan/$fileName', _imgFile!)
+            .then((value) => print('File uploaded: $value'))
+            .catchError((error) => {print("ERRORRR: $error")});
       }
 
       Navigator.pop(context, true);
@@ -246,8 +256,17 @@ class _AnimalAddState extends State<AnimalAdd> {
                   labelText: 'Jenis',
                 ),
                 validator: (value) => value == null ? 'Pilih jenis' : null,
-                items: <String>['Domba Garut', 'Domba Gembel','Domba Dorper', 'Domba Ekor Tebal', 'Domba Texel', 'Domba Merino', 'Domba Suffolk', 'Domba Awassi', 'Domba Van Rooy']
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: <String>[
+                  'Domba Garut',
+                  'Domba Gembel',
+                  'Domba Dorper',
+                  'Domba Ekor Tebal',
+                  'Domba Texel',
+                  'Domba Merino',
+                  'Domba Suffolk',
+                  'Domba Awassi',
+                  'Domba Van Rooy'
+                ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

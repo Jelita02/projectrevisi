@@ -13,18 +13,15 @@ class _LaporanScreenState extends State<LaporanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Laporan"),
+        title: const Text("Laporan"),
         backgroundColor: MyColors.primaryC,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {},
-        ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            buildCard(Icons.calendar_today, "Tanggal", "29 Mei 2024 - 29 Mei 2024"),
+            buildCard(
+                Icons.calendar_today, "Tanggal", "29 Mei 2024 - 29 Mei 2024"),
             buildCard(Icons.pie_chart, "Domba", "Populasi: 1 Ekor"),
             buildGenderSection(),
             buildCard(Icons.favorite, "Jumlah Kasus Sakit", "0 Kasus"),
@@ -41,28 +38,31 @@ class _LaporanScreenState extends State<LaporanScreen> {
     return Card(
       child: ListTile(
         leading: Icon(icon, color: MyColors.primaryC),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
       ),
     );
   }
 
   Widget buildGenderSection() {
-    return Card(
+    return const Card(
       child: Column(
         children: [
           ListTile(
-            title: Text("Jenis Kelamin", style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text("Jenis Kelamin",
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           ListTile(
             leading: Icon(Icons.male, color: MyColors.primaryC),
             title: Text("Jantan"),
-            trailing: Text("1 Ekor", style: TextStyle(color: MyColors.primaryC)),
+            trailing:
+                Text("1 Ekor", style: TextStyle(color: MyColors.primaryC)),
           ),
           ListTile(
             leading: Icon(Icons.female, color: Colors.pink),
             title: Text("Betina"),
-            trailing: Text("0 Ekor", style: TextStyle(color: MyColors.primaryC)),
+            trailing:
+                Text("0 Ekor", style: TextStyle(color: MyColors.primaryC)),
           ),
         ],
       ),
@@ -73,16 +73,19 @@ class _LaporanScreenState extends State<LaporanScreen> {
     return Card(
       child: Column(
         children: [
-          ListTile(
-            title: Text("Kategori", style: TextStyle(fontWeight: FontWeight.bold)),
+          const ListTile(
+            title:
+                Text("Kategori", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(onPressed: () {}, child: Text("Pembiakan")),
-                ElevatedButton(onPressed: () {}, child: Text("Penggemukan")),
+                ElevatedButton(
+                    onPressed: () {}, child: const Text("Pembiakan")),
+                ElevatedButton(
+                    onPressed: () {}, child: const Text("Penggemukan")),
               ],
             ),
           ),
@@ -92,11 +95,12 @@ class _LaporanScreenState extends State<LaporanScreen> {
   }
 
   Widget buildStatusSection() {
-    return Card(
+    return const Card(
       child: Column(
         children: [
           ListTile(
-            title: Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
+            title:
+                Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           ListTile(
             title: Text("Hidup"),

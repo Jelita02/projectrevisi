@@ -35,122 +35,123 @@ class _HomeState extends State<Home> {
       child: Center(
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: const Color.fromRGBO(29, 145, 170, 0.3),
-              ),
+            Expanded(
               child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset("assets/images/icon-cage.png"),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Domba",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 17,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: const Color.fromRGBO(29, 145, 170, 0.3),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: ListView(
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset("assets/images/icon-cage.png"),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Domba",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 17,
+                                ),
                               ),
-                            ),
-                            Row(
-                              children: [
-                                const Text(
-                                  "Total Populasi: ",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                              Row(
+                                children: [
+                                  const Text(
+                                    "Total Populasi: ",
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                    ),
                                   ),
-                                ),
-                                Text("${widget.countAnimal} Ekor"),
-                              ],
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.male,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Jantan"),
-                                  ],
-                                ),
-                                Text("${widget.countMale} Ekor"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.female,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Betina"),
-                                  ],
-                                ),
-                                Text("${widget.countFemale} Ekor"),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_activity_outlined,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Sehat"),
-                                  ],
-                                ),
-                                Text("${widget.countHealthy} Ekor"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.healing,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Sakit"),
-                                  ],
-                                ),
-                                Text("${widget.countSick} Ekor"),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    )
-                  ],
+                                  Text("${widget.countAnimal} Ekor"),
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.male,
+                                        color: Color.fromRGBO(29, 145, 170, 1),
+                                        size: 28,
+                                      ),
+                                      Text("Jantan"),
+                                    ],
+                                  ),
+                                  Text("${widget.countMale} Ekor"),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.female,
+                                        color: Color.fromRGBO(29, 145, 170, 1),
+                                        size: 28,
+                                      ),
+                                      Text("Betina"),
+                                    ],
+                                  ),
+                                  Text("${widget.countFemale} Ekor"),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.local_activity_outlined,
+                                        color: Color.fromRGBO(29, 145, 170, 1),
+                                        size: 28,
+                                      ),
+                                      Text("Sehat"),
+                                    ],
+                                  ),
+                                  Text("${widget.countHealthy} Ekor"),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.healing,
+                                        color: Color.fromRGBO(29, 145, 170, 1),
+                                        size: 28,
+                                      ),
+                                      Text("Sakit"),
+                                    ],
+                                  ),
+                                  Text("${widget.countSick} Ekor"),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

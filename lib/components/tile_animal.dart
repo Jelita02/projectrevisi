@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_detail.dart';
 
 class TileAnimal extends StatelessWidget {
@@ -18,8 +17,9 @@ class TileAnimal extends StatelessWidget {
   });
 
   Future<Uint8List?> _getImage() async {
-    final storageRef = FirebaseStorage.instance.ref();
-    var value = await storageRef.child("hewan/${doc.id}").getData(1024 * 1024);
+    var value = await Supabase.instance.client.storage
+        .from('terdom')
+        .download("hewan/${doc.id}.jpg");
 
     return value;
   }
@@ -60,6 +60,7 @@ class TileAnimal extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     );
                   }
+                  print("Error: ${snapshot.error}");
                   var image = snapshot.data;
                   if (image != null) {
                     return Image.memory(

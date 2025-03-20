@@ -56,10 +56,12 @@ class _MainMenuState extends State<MainMenu> {
                 .where((element) => element.data()["jenis_kelamin"] == "Betina")
                 .length;
             _countHealthy = list
-                .where((element) => element.data()["status_kesehatan"] == "Sehat")
+                .where(
+                    (element) => element.data()["status_kesehatan"] == "Sehat")
                 .length;
             _countSick = list
-                .where((element) => element.data()["status_kesehatan"] == "Sakit")
+                .where(
+                    (element) => element.data()["status_kesehatan"] == "Sakit")
                 .length;
           });
         });

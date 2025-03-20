@@ -41,6 +41,7 @@ class LoginFormState extends State<LoginForm> {
     setState(() {
       _isLoading = true;
     });
+
     FirebaseAuth.instance
         .signInWithEmailAndPassword(
       email: _emailController.text,
@@ -55,7 +56,8 @@ class LoginFormState extends State<LoginForm> {
               builder: (context) => MainMenu(user: user),
             ));
       } else {
-        setState(() { //untuk merubah nilai secara realtime
+        setState(() {
+          //untuk merubah nilai secara realtime
           _isLoading = false;
         });
         throw Exception("Error System");
@@ -74,16 +76,17 @@ class LoginFormState extends State<LoginForm> {
     });
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
-    return Padding( // jarak 
+    return Padding(
+      // jarak
       padding: const EdgeInsets.all(16.0),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Center( 
+            const Center(
               child: Text(
                 "Login",
                 style: TextStyle(
@@ -98,7 +101,8 @@ class LoginFormState extends State<LoginForm> {
                 labelText: 'Email',
               ),
               validator: (value) {
-                if (value == null || value.isEmpty) { //jika nilai input sama dengan kosong atau nilainya kosong maka mengirim pesan masukan email
+                if (value == null || value.isEmpty) {
+                  //jika nilai input sama dengan kosong atau nilainya kosong maka mengirim pesan masukan email
                   return 'Masukkan email';
                 }
                 if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {

@@ -110,9 +110,9 @@ class TileCage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Kandang 1",
-                    style: TextStyle(fontWeight: FontWeight.w900),
+                  Text(
+                    doc.data()["nama"] ?? "",
+                    style: const TextStyle(fontWeight: FontWeight.w900),
                   ),
                   Text(
                     // ignore: prefer_interpolation_to_compose_strings
