@@ -147,7 +147,7 @@ class LoginFormState extends State<LoginForm> {
                   child: const Text(
                     'Lupa Password?',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: Colors.blue, // Warna teks yang dapat ditekan
                     ),
                   ),

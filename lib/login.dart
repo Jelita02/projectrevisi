@@ -24,7 +24,7 @@ class Login extends StatelessWidget {
                   ),
                   Image.asset(
                     "assets/images/login-logo.jpg",
-                    width: 170, // ukuran gambar
+                    width: 250, // ukuran gambar
                   ),
                 ],
               ),

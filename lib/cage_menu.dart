@@ -13,17 +13,30 @@ class CageMenu extends StatefulWidget {
 }
 
 class _CageMenuState extends State<CageMenu> {
-  @override
+  int countList = 0;
+  String searchQuery = "";
+
+  Future<QuerySnapshot<Map<String, dynamic>>> _getListCage() {
+     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+      .collection("kandang")
+      .where("user_uid", isEqualTo: widget.user.uid)
+      .orderBy("nama");
+
+  if (searchQuery.isNotEmpty) {
+    query = query
+        .where("nama", isGreaterThanOrEqualTo: searchQuery)
+        .where("nama", isLessThan: '$searchQuery\uf8ff');
+  }
+
+  return query.get();
+  } 
+
+
+
+   @override
   void initState() {
     super.initState();
     // refresh();
-  }
-
-  Future<QuerySnapshot<Map<String, dynamic>>> _getListCage() {
-    return FirebaseFirestore.instance
-        .collection("kandang")
-        .where("user_uid", isEqualTo: widget.user.uid)
-        .get();
   }
 
   // refresh() {

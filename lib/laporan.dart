@@ -37,7 +37,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
   Widget buildCard(IconData icon, String title, String subtitle) {
     return Card(
       child: ListTile(
-        leading: Icon(icon, color: MyColors.primaryC),
+        leading: Icon(icon, color: const Color.fromRGBO(26, 107, 125, 1)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
       ),
