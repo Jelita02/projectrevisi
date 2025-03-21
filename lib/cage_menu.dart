@@ -15,25 +15,28 @@ class CageMenu extends StatefulWidget {
 class _CageMenuState extends State<CageMenu> {
   int countList = 0;
   String searchQuery = "";
+  String filterCategory = "";
 
   Future<QuerySnapshot<Map<String, dynamic>>> _getListCage() {
-     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-      .collection("kandang")
-      .where("user_uid", isEqualTo: widget.user.uid)
-      .orderBy("nama");
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("kandang")
+        .where("user_uid", isEqualTo: widget.user.uid)
+        .orderBy("nama");
 
-  if (searchQuery.isNotEmpty) {
-    query = query
-        .where("nama", isGreaterThanOrEqualTo: searchQuery)
-        .where("nama", isLessThan: '$searchQuery\uf8ff');
+    if (searchQuery.isNotEmpty) {
+      query = query
+          .where("nama", isGreaterThanOrEqualTo: searchQuery)
+          .where("nama", isLessThan: '$searchQuery\uf8ff');
+    }
+
+    if (filterCategory.isNotEmpty) {
+      query = query.where("kategori", isEqualTo: filterCategory);
+    }
+
+    return query.get();
   }
 
-  return query.get();
-  } 
-
-
-
-   @override
+  @override
   void initState() {
     super.initState();
     // refresh();
@@ -75,33 +78,45 @@ class _CageMenuState extends State<CageMenu> {
         child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 1,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(7),
-                children: [
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.filter_list_alt),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Cari Kandang",
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() => searchQuery = value);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    setState(() => filterCategory = value);
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: "", child: Text("Semua")),
+                    const PopupMenuItem(
+                        value: "Penggemukan", child: Text("Penggemukan")),
+                    const PopupMenuItem(
+                        value: "Pembiakan", child: Text("Pembiakan")),
+                  ],
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.filter_list),
                     label: const Text("Filter"),
-                    onPressed: () {
-                      print("filter");
-                    },
+                    onPressed: null,
                   ),
-                  const SizedBox(width: 10),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.sort),
-                    label: const Text("Urutkan"),
-                    onPressed: () {
-                      print("filter");
-                    },
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Expanded(

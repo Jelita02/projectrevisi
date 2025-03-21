@@ -32,8 +32,9 @@ class _AnimalAddState extends State<AnimalAdd> {
   late String _kandang;
   late String _blokId;
   late String _blok;
+  late String _statusKesehatan = "Sehat";
+  late String _status = "Hidup";
   String _jenisKelamin = "Jantan";
-  final String _statusKesehatan = "Sehat";
 
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
@@ -84,6 +85,7 @@ class _AnimalAddState extends State<AnimalAdd> {
       "bobot_akhir": _bobotController.text,
       "tanggal_masuk": _tanggalController.text,
       "status_kesehatan": _statusKesehatan,
+      "status": _status,
     }).then((value) {
       if (_imgFile != null) {
         // Ambil ekstensi file asli
@@ -247,6 +249,48 @@ class _AnimalAddState extends State<AnimalAdd> {
                   setState(() {
                     if (value != null) {
                       _kategori = value;
+                    }
+                  });
+                },
+              ),
+              DropdownButtonFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Kondisi',
+                ),
+                value: _statusKesehatan,
+                validator: (value) => value == null ? 'Pilih Kondisi' : null,
+                items: <String>['Sehat', 'Sakit']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _statusKesehatan = value;
+                    }
+                  });
+                },
+              ),
+              DropdownButtonFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Status',
+                ),
+                value: _status,
+                validator: (value) => value == null ? 'Pilih Kondisi' : null,
+                items: <String>['Hidup', 'Mati', 'Terjual']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _status = value;
                     }
                   });
                 },

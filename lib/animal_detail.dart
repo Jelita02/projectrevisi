@@ -25,8 +25,11 @@ class AnimalDetail extends StatefulWidget {
 class _AnimalDetailState extends State<AnimalDetail> {
   final GlobalKey _globalKey = GlobalKey();
   TextEditingController _textController = TextEditingController();
+  final TextEditingController _textStatusController = TextEditingController();
   bool _readOnlyFinalWeight = true;
+  bool _readOnlyStatus = true;
   IconData _icon = Icons.rebase_edit;
+  IconData _iconStatus = Icons.rebase_edit;
 
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
@@ -123,8 +126,48 @@ class _AnimalDetailState extends State<AnimalDetail> {
         TextEditingController(text: widget.doc.data()?["bobot_akhir"] ?? "");
   }
 
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Hapus"),
+          content: const Text("Apakah kamu yakin ingin menghapus ini?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Tutup dialog
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection("hewan")
+                    .doc(widget.doc.id)
+                    .delete()
+                    .then((value) {
+                  Navigator.of(context).pop(); // Tutup dialog
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Berhasil dihapus")),
+                  );
+                }).catchError((value) {
+                  Navigator.of(context).pop(); // Tutup dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Gagal menghapus")),
+                  );
+                });
+              },
+              child: const Text("Hapus"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
@@ -205,7 +248,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                         user: widget.user,
                                       )),
                             );
-                          } else if (value == "delete") {}
+                          } else if (value == "delete") {
+                            _showDeleteConfirmation(context);
+                          }
                         },
                         itemBuilder: (context) => [
                           const PopupMenuItem(
@@ -246,20 +291,21 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ),
                       ),
                     ),
-                    const Expanded(
-                      flex: 2,
-                      child: Row(
-                        children: [
-                          Icon(Icons.healing),
-                          Text(
-                            "Sehat",
-                            style: TextStyle(
-                              fontSize: 16,
+                    if (widget.doc.data()?["status_kesehatan"] != null)
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.healing),
+                            Text(
+                              widget.doc.data()?["status_kesehatan"] ?? "",
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )
                   ],
                 ),
               ],
@@ -340,9 +386,33 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     child: Icon(_icon),
                   ),
                   text: "Bobot Terkini",
+                  textController: _textController,
                   readOnly: _readOnlyFinalWeight,
                   autoFocus: !_readOnlyFinalWeight,
                 ),
+                formDropdown(
+                    iconSuffix: GestureDetector(
+                      onTap: () {
+                        if (_iconStatus == Icons.save_rounded) {
+                          FirebaseFirestore.instance
+                              .collection("hewan")
+                              .doc(widget.doc.id)
+                              .update({"status": _textStatusController.text});
+                        }
+                        setState(() {
+                          _readOnlyStatus = !_readOnlyStatus;
+                          _iconStatus = _readOnlyStatus
+                              ? Icons.rebase_edit
+                              : Icons.save_rounded;
+                        });
+                      },
+                      child: Icon(_iconStatus),
+                    ),
+                    text: "Status",
+                    dropdown: dropdownStatus,
+                    textController: _textStatusController,
+                    readOnly: _readOnlyStatus,
+                    value: widget.doc.data()?["status"] ?? ""),
                 form(
                     text: "Day On Feed",
                     value: widget.doc.data()?["day_on_feed"] ?? ""),
@@ -409,23 +479,52 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  TextFormField form({
-    required String text,
-    String? value,
-    Widget? iconSuffix,
-    bool readOnly = true,
-    bool autoFocus = false,
-  }) {
+  TextFormField form(
+      {required String text,
+      String? value,
+      Widget? iconSuffix,
+      bool readOnly = true,
+      bool autoFocus = false,
+      TextEditingController? textController}) {
     return TextFormField(
       autofocus: autoFocus,
       keyboardType: TextInputType.number,
-      controller: value == null ? _textController : null,
+      controller: textController,
       decoration: InputDecoration(
         labelText: text,
-        suffix: iconSuffix,
+        suffixIcon: iconSuffix,
       ),
       readOnly: readOnly,
       initialValue: value,
+    );
+  }
+
+  DropdownButtonFormField formDropdown(
+      {required String text,
+      required List<String> dropdown,
+      String? value,
+      Widget? iconSuffix,
+      bool readOnly = true,
+      TextEditingController? textController}) {
+    return DropdownButtonFormField(
+      decoration: InputDecoration(
+          labelText: text, suffixIcon: iconSuffix, isDense: true),
+      value: dropdown.contains(value) ? (value) : null,
+      items: dropdown.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: readOnly
+          ? null
+          : (value) {
+              setState(() {
+                if (value != null) {
+                  textController?.text = value;
+                }
+              });
+            },
     );
   }
 

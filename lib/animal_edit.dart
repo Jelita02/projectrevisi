@@ -33,8 +33,9 @@ class _AnimalEditState extends State<AnimalEdit> {
   late String _kandang;
   late String _blokId;
   late String _blok;
+  late String _statusKesehatan;
+  late String _status;
   String _jenisKelamin = "Jantan";
-  final String _statusKesehatan = "Sehat";
 
   TextEditingController _namaController = TextEditingController();
   TextEditingController _tanggalController = TextEditingController();
@@ -85,6 +86,7 @@ class _AnimalEditState extends State<AnimalEdit> {
       "bobot_akhir": _bobotController.text,
       "tanggal_masuk": _tanggalController.text,
       "status_kesehatan": _statusKesehatan,
+      "status": _status,
     }).then((value) {
       if (_imgFile != null) {
         // Ambil ekstensi file asli
@@ -101,7 +103,7 @@ class _AnimalEditState extends State<AnimalEdit> {
       }
 
       Navigator.pop(context, true);
-    }).catchError((onError) => print("DADA: $onError"));
+    });
   }
 
   @override
@@ -115,8 +117,6 @@ class _AnimalEditState extends State<AnimalEdit> {
     _bobotController =
         TextEditingController(text: widget.doc.data()?["bobot_akhir"]);
 
-    _jenisKelamin = widget.doc.data()?["jenis_kelamin"];
-
     FirebaseFirestore.instance
         .collection("kandang")
         .where("user_uid", isEqualTo: widget.user.uid)
@@ -128,7 +128,10 @@ class _AnimalEditState extends State<AnimalEdit> {
       });
     });
 
+    _kategori = widget.doc.data()?["kategori"];
     _jenisKelamin = widget.doc.data()?["jenis_kelamin"];
+    _statusKesehatan = widget.doc.data()?["status_kesehatan"];
+    _status = widget.doc.data()?["status"] ?? "";
     _jenis = widget.doc.data()?["jenis"];
     _kandang = widget.doc.data()?["kandang"];
     _blok = widget.doc.data()?["blok"];
@@ -154,6 +157,8 @@ class _AnimalEditState extends State<AnimalEdit> {
   @override
   Widget build(BuildContext context) {
     var dropdownKategori = <String>['Pembiakan', 'Penggemukan'];
+    var dropdownStatusKesehatan = <String>['Sehat', 'Sakit'];
+    var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
     var dropdownJenis = <String>[
       'Domba Garut',
       'Domba Gembel',
@@ -275,14 +280,56 @@ class _AnimalEditState extends State<AnimalEdit> {
                     child: Text(value),
                   );
                 }).toList(),
-                value: dropdownKategori
-                        .contains(widget.doc.data()?["kategori"].toString())
-                    ? (widget.doc.data()?["kategori"].toString())
-                    : null,
+                value:
+                    dropdownKategori.contains(_kategori) ? (_kategori) : null,
                 onChanged: (value) {
                   setState(() {
                     if (value != null) {
                       _kategori = value;
+                    }
+                  });
+                },
+              ),
+              DropdownButtonFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Kondisi',
+                ),
+                value: dropdownStatusKesehatan.contains(_statusKesehatan)
+                    ? (_statusKesehatan)
+                    : null,
+                validator: (value) => value == null ? 'Pilih Kondisi' : null,
+                items: dropdownStatusKesehatan
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _statusKesehatan = value;
+                    }
+                  });
+                },
+              ),
+              DropdownButtonFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Status',
+                ),
+                value: dropdownStatus.contains(_status) ? (_status) : null,
+                validator: (value) => value == null ? 'Pilih Kondisi' : null,
+                items: dropdownStatus
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _status = value;
                     }
                   });
                 },
@@ -299,10 +346,7 @@ class _AnimalEditState extends State<AnimalEdit> {
                     child: Text(value),
                   );
                 }).toList(),
-                value: dropdownJenis
-                        .contains(widget.doc.data()?["jenis"].toString())
-                    ? (widget.doc.data()?["jenis"].toString())
-                    : null,
+                value: dropdownJenis.contains(_jenis) ? (_jenis) : null,
                 onChanged: (value) {
                   setState(() {
                     if (value != null) {

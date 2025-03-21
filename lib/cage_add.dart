@@ -253,7 +253,7 @@ class _CageAddState extends State<CageAdd> {
                   labelText: 'Kategori',
                 ),
                 validator: (value) => value == null ? 'Pilih kategori' : null,
-                items: <String>['Option 1', 'Option 2', 'Option 3']
+                items: <String>['Pembiakan', 'Penggemukan']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

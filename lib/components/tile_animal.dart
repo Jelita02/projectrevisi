@@ -115,12 +115,12 @@ class TileAnimal extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             flex: 1,
                             child: Row(
                               children: [
-                                Icon(Icons.healing),
-                                Text("Sehat"),
+                                const Icon(Icons.healing),
+                                Text(doc.data()?["status_kesehatan"] ?? ""),
                               ],
                             ),
                           )

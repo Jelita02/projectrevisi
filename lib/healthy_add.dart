@@ -21,9 +21,13 @@ class HealthyAddState extends State<HealthyAdd> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _textOtherController = TextEditingController();
 
   bool _demamCheck = false;
   bool _nafsuCheck = false;
+  bool _pinkEyeCheck = false;
+  bool _busukCheck = false;
+  bool _otherCheck = false;
 
   File? _image;
   final picker = ImagePicker();
@@ -90,6 +94,9 @@ class HealthyAddState extends State<HealthyAdd> {
     List<String> gejala = [];
     _demamCheck ? gejala.add("Demam") : null;
     _nafsuCheck ? gejala.add("Nafsu Makan Turun") : null;
+    _pinkEyeCheck ? gejala.add("Penyakit Mata (pink eye)") : null;
+    _busukCheck ? gejala.add("Busuk Kuku") : null;
+    _otherCheck ? gejala.add(_textOtherController.text) : null;
 
     kesehatan.add({
       "user_uid": widget.user.uid,
@@ -193,20 +200,42 @@ class HealthyAddState extends State<HealthyAdd> {
                 }),
                 title: const Text("Nafsu Makan Turun"),
               ),
-               CheckboxListTile(
-                value: _nafsuCheck,
+              CheckboxListTile(
+                value: _pinkEyeCheck,
                 onChanged: (value) => setState(() {
-                  _nafsuCheck = !_nafsuCheck;
+                  _pinkEyeCheck = !_pinkEyeCheck;
                 }),
                 title: const Text("Penyakit mata (pink eye)"),
               ),
               CheckboxListTile(
-                value: _nafsuCheck,
+                value: _busukCheck,
                 onChanged: (value) => setState(() {
-                  _nafsuCheck = !_nafsuCheck;
+                  _busukCheck = !_busukCheck;
                 }),
                 title: const Text("Busuk kuku"),
               ),
+              CheckboxListTile(
+                value: _otherCheck,
+                onChanged: (value) => setState(() {
+                  _otherCheck = !_otherCheck;
+                }),
+                title: const Text("Lainnya"),
+              ),
+              if (_otherCheck) // Tampilkan input hanya jika checkbox aktif
+                TextFormField(
+                  validator: (value) {
+                    if ((value == null || value.isEmpty) && _otherCheck) {
+                      return "Masukan gejala lainya";
+                    }
+
+                    return null;
+                  },
+                  controller: _textOtherController,
+                  decoration: const InputDecoration(
+                    labelText: "Masukkan gejala lain",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               TextFormField(
                 controller: _tanggalController,
                 decoration: const InputDecoration(
