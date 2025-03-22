@@ -73,7 +73,7 @@ class TileCage extends StatelessWidget {
                     );
                   }
                   return Image.asset(
-                    "assets/images/icon-cage.png",
+                    "assets/images/Kandangr.png",
                     fit: BoxFit.fill,
                   );
                 },

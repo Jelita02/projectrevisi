@@ -176,9 +176,9 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/icon-goat.png",
-                              width: 52,
-                              height: 42,
+                              "assets/images/Dombar.png",
+                              width: 110,
+                              height:100,
                             ),
                             const SizedBox(height: 5),
                             const Text(
@@ -204,9 +204,9 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/icon-cage.png",
-                              width: 52,
-                              height: 42,
+                              "assets/images/Kandangr.png",
+                              width: 100,
+                              height: 90,
                             ),
                             const SizedBox(height: 5),
                             const Text(
@@ -238,9 +238,9 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/icon-vektor.png",
-                              width: 52,
-                              height: 42,
+                              "assets/images/kesehatanr.png",
+                              width: 100,
+                              height: 90,
                             ),
                             const SizedBox(height: 5),
                             const Text(
@@ -264,9 +264,9 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/icon-report.png",
-                              width: 52,
-                              height: 42,
+                              "assets/images/laporanr.png",
+                              width: 100,
+                              height: 90,
                             ),
                             const SizedBox(height: 5),
                             const Text(

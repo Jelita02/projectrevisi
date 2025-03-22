@@ -228,7 +228,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     const Expanded(
                       flex: 2,
                       child: Text(
-                        "Domba Jenis",
+                        "Domba",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 18,
@@ -361,9 +361,38 @@ class _AnimalDetailState extends State<AnimalDetail> {
                 ),
                 form(text: "Nama", value: widget.doc.data()?["nama"] ?? ""),
                 form(text: "Usia", value: widget.doc.data()?["usia"] ?? ""),
+                 form(
+                    text: "Jenis Hewan",
+                    value: widget.doc.data()?["jenis"] ?? ""),
                 form(
                     text: "Kategori Hewan",
                     value: widget.doc.data()?["kategori"] ?? ""),
+                form(
+                    text: "Kondisi Hewan",
+                    value: widget.doc.data()?["kondisi"] ?? ""),
+                formDropdown(
+                    iconSuffix: GestureDetector(
+                      onTap: () {
+                        if (_iconStatus == Icons.save_rounded) {
+                          FirebaseFirestore.instance
+                              .collection("hewan")
+                              .doc(widget.doc.id)
+                              .update({"status": _textStatusController.text});
+                        }
+                        setState(() {
+                          _readOnlyStatus = !_readOnlyStatus;
+                          _iconStatus = _readOnlyStatus
+                              ? Icons.rebase_edit
+                              : Icons.save_rounded;
+                        });
+                      },
+                      child: Icon(_iconStatus),
+                    ),
+                    text: "Status",
+                    dropdown: dropdownStatus,
+                    textController: _textStatusController,
+                    readOnly: _readOnlyStatus,
+                    value: widget.doc.data()?["status"] ?? ""),
                 form(
                     text: "Bobot Masuk",
                     value: widget.doc.data()?["bobot"] ?? ""),
@@ -390,29 +419,6 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   readOnly: _readOnlyFinalWeight,
                   autoFocus: !_readOnlyFinalWeight,
                 ),
-                formDropdown(
-                    iconSuffix: GestureDetector(
-                      onTap: () {
-                        if (_iconStatus == Icons.save_rounded) {
-                          FirebaseFirestore.instance
-                              .collection("hewan")
-                              .doc(widget.doc.id)
-                              .update({"status": _textStatusController.text});
-                        }
-                        setState(() {
-                          _readOnlyStatus = !_readOnlyStatus;
-                          _iconStatus = _readOnlyStatus
-                              ? Icons.rebase_edit
-                              : Icons.save_rounded;
-                        });
-                      },
-                      child: Icon(_iconStatus),
-                    ),
-                    text: "Status",
-                    dropdown: dropdownStatus,
-                    textController: _textStatusController,
-                    readOnly: _readOnlyStatus,
-                    value: widget.doc.data()?["status"] ?? ""),
                 form(
                     text: "Day On Feed",
                     value: widget.doc.data()?["day_on_feed"] ?? ""),

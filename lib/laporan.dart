@@ -25,7 +25,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
             buildCard(Icons.pie_chart, "Domba", "Populasi: 1 Ekor"),
             buildGenderSection(),
             buildCard(Icons.favorite, "Jumlah Kasus Sakit", "0 Kasus"),
-            buildCard(Icons.cake, "Usia", "2 bln"),
+            buildCard(Icons.cake, "Usia", "Gigi susu"),
             buildCategorySection(),
             buildStatusSection(),
           ],
@@ -53,29 +53,50 @@ class _LaporanScreenState extends State<LaporanScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           ListTile(
-            leading: Icon(Icons.male, color: MyColors.primaryC),
+            leading: Icon(Icons.male, color: const Color.fromRGBO(26, 107, 125, 1)),
             title: Text("Jantan"),
             trailing:
-                Text("1 Ekor", style: TextStyle(color: MyColors.primaryC)),
+                Text("1 Ekor", style: TextStyle(color: const Color.fromRGBO(26, 107, 125, 1))),
           ),
           ListTile(
             leading: Icon(Icons.female, color: Colors.pink),
             title: Text("Betina"),
             trailing:
-                Text("0 Ekor", style: TextStyle(color: MyColors.primaryC)),
+                Text("0 Ekor", style: TextStyle(color: const Color.fromRGBO(26, 107, 125, 1))),
           ),
         ],
       ),
     );
   }
-
-  Widget buildCategorySection() {
+   Widget buildCategorySection() {
+    return const Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: Text("Kategori",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          ListTile(
+            title: Text("Pembiakan"),
+            trailing:
+                Text("1 Ekor", style: TextStyle(color: const Color.fromRGBO(26, 107, 125, 1))),
+          ),
+          ListTile(
+            title: Text("Penggemukan"),
+            trailing:
+                Text("0 Ekor", style: TextStyle(color: const Color.fromRGBO(26, 107, 125, 1))),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget buildStatusSection() {
     return Card(
       child: Column(
         children: [
           const ListTile(
             title:
-                Text("Kategori", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -83,33 +104,13 @@ class _LaporanScreenState extends State<LaporanScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    onPressed: () {}, child: const Text("Pembiakan")),
+                    onPressed: () {}, child: const Text("Hidup")),
                 ElevatedButton(
-                    onPressed: () {}, child: const Text("Penggemukan")),
+                    onPressed: () {}, child: const Text("Mati")),
+                ElevatedButton(
+                    onPressed: () {}, child: const Text("Terjual")),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildStatusSection() {
-    return const Card(
-      child: Column(
-        children: [
-          ListTile(
-            title:
-                Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
-            title: Text("Hidup"),
-          ),
-          ListTile(
-            title: Text("Mati"),
-          ),
-          ListTile(
-            title: Text("Terjual"),
           ),
         ],
       ),
