@@ -32,13 +32,13 @@ class _AnimalAddState extends State<AnimalAdd> {
   late String _kandang;
   late String _blokId;
   late String _blok;
+  late String _usia;
   late String _statusKesehatan = "Sehat";
   late String _status = "Hidup";
   String _jenisKelamin = "Jantan";
 
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
-  final TextEditingController _usiaController = TextEditingController();
   final TextEditingController _bobotController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -73,7 +73,7 @@ class _AnimalAddState extends State<AnimalAdd> {
     hewan.add({
       "user_uid": widget.user.uid,
       "nama": _namaController.text,
-      "usia": _usiaController.text,
+      "usia": _usia,
       "kategori": _kategori,
       "jenis_kelamin": _jenisKelamin,
       "jenis": _jenis,
@@ -218,19 +218,30 @@ class _AnimalAddState extends State<AnimalAdd> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _usiaController,
+              DropdownButtonFormField(
                 decoration: const InputDecoration(
                   labelText: 'Usia',
-                  suffix: Icon(Icons.timelapse),
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan usia";
-                  }
-
-                  return null;
+                validator: (value) => value == null ? 'Pilih Usia' : null,
+                items: <String>[
+                  'Gigi Susu (1< thn)',
+                  'Poet 1 (1-2 thn)',
+                  'Poet 2 (2-3 thn)',
+                  'Poet 3 (3-4 thn)',
+                  'Poet 4 (4-5 thn)',
+                  'Poet 5 (>5 thn)',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _usia = value;
+                    }
+                  });
                 },
               ),
               DropdownButtonFormField(

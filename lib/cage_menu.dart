@@ -42,12 +42,9 @@ class _CageMenuState extends State<CageMenu> {
     // refresh();
   }
 
-  // refresh() {
-  //   FirebaseFirestore.instance
-  //       .collection("kandang")
-  //       .where("user_uid", isEqualTo: widget.user.uid)
-  //       .get();
-  // }
+  refresh() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +153,8 @@ class _CageMenuState extends State<CageMenu> {
                                 }
 
                                 return TileCage(
+                                  user: widget.user,
+                                  refresh: refresh,
                                   doc: e,
                                   total: stringTotal,
                                 );

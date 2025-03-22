@@ -2,15 +2,17 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_menu.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class HealthyAdd extends StatefulWidget {
-  final User user;
+  final fire.User user;
   const HealthyAdd({super.key, required this.user});
 
   @override
@@ -106,9 +108,19 @@ class HealthyAddState extends State<HealthyAdd> {
       "gejala": gejala,
     }).then((value) {
       if (_image != null) {
-        final storageRef = FirebaseStorage.instance.ref().child("kesehatan");
-        final imagesRef = storageRef.child(value.id);
-        imagesRef.putFile(_image!);
+        // Ambil ekstensi file asli
+        String extension = path.extension(_image!.path);
+
+        // Buat nama file unik dengan UUID
+        String fileName = '${value.id}$extension';
+        Supabase.instance.client.storage
+            .from('terdom') // Ganti dengan nama bucket
+            .upload('kesehatan/$fileName', _image!)
+            .then((data) {
+          kesehatan.doc(value.id).update({
+            "image": fileName,
+          });
+        }).catchError((error) => {print("ERRORRR: $error")});
       }
 
       Navigator.pop(context);

@@ -1,20 +1,29 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/cage_detail.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 
 class TileCage extends StatelessWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>> doc;
   final String total;
+  final Function refresh;
+  final fire.User user;
 
-  const TileCage({super.key, required this.doc, required this.total});
+  const TileCage(
+      {super.key,
+      required this.doc,
+      required this.total,
+      required this.refresh,
+      required this.user});
 
   Future<Uint8List?> _getImage() async {
-    final storageRef = FirebaseStorage.instance.ref();
-    var value =
-        await storageRef.child("kandang/${doc.id}").getData(1024 * 1024);
+    String imageFile = doc.data()["image"];
+    var value = await Supabase.instance.client.storage
+        .from('terdom')
+        .download("kandang/$imageFile");
 
     return value;
   }
@@ -27,10 +36,11 @@ class TileCage extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => CageDetail(
+                user: user,
                 doc: doc,
                 total: total,
               ),
-            ));
+            )).then((value) => refresh());
       },
       child: Container(
         margin: const EdgeInsets.all(10),

@@ -35,11 +35,11 @@ class _AnimalEditState extends State<AnimalEdit> {
   late String _blok;
   late String _statusKesehatan;
   late String _status;
+  late String _usia;
   String _jenisKelamin = "Jantan";
 
   TextEditingController _namaController = TextEditingController();
   TextEditingController _tanggalController = TextEditingController();
-  TextEditingController _usiaController = TextEditingController();
   TextEditingController _bobotController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -74,7 +74,7 @@ class _AnimalEditState extends State<AnimalEdit> {
     hewan.doc(widget.doc.id).update({
       "user_uid": widget.user.uid,
       "nama": _namaController.text,
-      "usia": _usiaController.text,
+      "usia": _usia,
       "kategori": _kategori,
       "jenis_kelamin": _jenisKelamin,
       "jenis": _jenis,
@@ -102,7 +102,10 @@ class _AnimalEditState extends State<AnimalEdit> {
             .catchError((error) => {print("ERRORRR: $error")});
       }
 
-      Navigator.pop(context, true);
+      hewan.doc(widget.doc.id).get().then((value) => Navigator.pop(
+            context,
+            value,
+          ));
     });
   }
 
@@ -113,7 +116,6 @@ class _AnimalEditState extends State<AnimalEdit> {
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
     _tanggalController =
         TextEditingController(text: widget.doc.data()?["tanggal_masuk"]);
-    _usiaController = TextEditingController(text: widget.doc.data()?["usia"]);
     _bobotController =
         TextEditingController(text: widget.doc.data()?["bobot_akhir"]);
 
@@ -137,6 +139,7 @@ class _AnimalEditState extends State<AnimalEdit> {
     _blok = widget.doc.data()?["blok"];
     _kandangId = widget.doc.data()?["kandang_id"];
     _blokId = widget.doc.data()?["blok_id"];
+    _usia = widget.doc.data()?["usia"];
 
     _getListBlok(_kandangId);
   }
@@ -169,6 +172,14 @@ class _AnimalEditState extends State<AnimalEdit> {
       'Domba Suffolk',
       'Domba Awassi',
       'Domba Van Rooy'
+    ];
+    var dropdownUsia = <String>[
+      'Gigi Susu (1< thn)',
+      'Poet 1 (1-2 thn)',
+      'Poet 2 (2-3 thn)',
+      'Poet 3 (3-4 thn)',
+      'Poet 4 (4-5 thn)',
+      'Poet 5 (>5 thn)',
     ];
 
     return Scaffold(
@@ -253,19 +264,25 @@ class _AnimalEditState extends State<AnimalEdit> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _usiaController,
+              DropdownButtonFormField(
                 decoration: const InputDecoration(
                   labelText: 'Usia',
-                  suffix: Icon(Icons.timelapse),
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan usia";
-                  }
-
-                  return null;
+                validator: (value) => value == null ? 'Pilih usia' : null,
+                items:
+                    dropdownUsia.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                value: dropdownUsia.contains(_usia) ? (_usia) : null,
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) {
+                      _usia = value;
+                    }
+                  });
                 },
               ),
               DropdownButtonFormField(

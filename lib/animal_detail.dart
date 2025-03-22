@@ -6,12 +6,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ternak/animal_edit.dart';
 import 'package:ternak/components/riwayat_kesehatan.dart';
+import 'package:ternak/components/riwayat_penimbangan.dart';
 
 class AnimalDetail extends StatefulWidget {
   final User user;
@@ -23,13 +25,16 @@ class AnimalDetail extends StatefulWidget {
 }
 
 class _AnimalDetailState extends State<AnimalDetail> {
+  late DocumentSnapshot<Map<String, dynamic>> doc;
   final GlobalKey _globalKey = GlobalKey();
   TextEditingController _textController = TextEditingController();
+  final TextEditingController _tanggalBobotController = TextEditingController();
   final TextEditingController _textStatusController = TextEditingController();
   bool _readOnlyFinalWeight = true;
   bool _readOnlyStatus = true;
   IconData _icon = Icons.rebase_edit;
   IconData _iconStatus = Icons.rebase_edit;
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
@@ -42,7 +47,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
       Uint8List pngBytes = byteData!.buffer.asUint8List();
 
       final directory = (await getTemporaryDirectory()).path;
-      final filePath = '$directory/${widget.doc.id}.jpg';
+      final filePath = '$directory/${doc.id}.jpg';
       final file = File(filePath);
       await file.writeAsBytes(pngBytes);
 
@@ -64,7 +69,16 @@ class _AnimalDetailState extends State<AnimalDetail> {
   Future<QuerySnapshot<Map<String, dynamic>>> _getHealthyData() {
     return FirebaseFirestore.instance
         .collection("kesehatan")
-        .where("hewan_id", isEqualTo: widget.doc.id)
+        .where("hewan_id", isEqualTo: doc.id)
+        .orderBy("tanggal", descending: true)
+        .get();
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> _getWeightData() {
+    return FirebaseFirestore.instance
+        .collection("bobot")
+        .where("hewan_id", isEqualTo: doc.id)
+        .orderBy("tanggal", descending: true)
         .get();
   }
 
@@ -88,7 +102,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       child: Container(
                         color: Colors.white,
                         child: QrImageView(
-                          data: widget.doc.id,
+                          data: doc.id,
                           size: 300,
                           version: QrVersions.auto,
                         ),
@@ -122,8 +136,10 @@ class _AnimalDetailState extends State<AnimalDetail> {
   void initState() {
     super.initState();
 
+    doc = widget.doc;
+
     _textController =
-        TextEditingController(text: widget.doc.data()?["bobot_akhir"] ?? "");
+        TextEditingController(text: doc.data()?["bobot_akhir"] ?? "");
   }
 
   void _showDeleteConfirmation(BuildContext context) {
@@ -142,7 +158,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
               onPressed: () {
                 FirebaseFirestore.instance
                     .collection("hewan")
-                    .doc(widget.doc.id)
+                    .doc(doc.id)
                     .delete()
                     .then((value) {
                   Navigator.of(context).pop(); // Tutup dialog
@@ -240,14 +256,19 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       child: PopupMenuButton<String>(
                         onSelected: (value) {
                           if (value == "edit") {
-                            Navigator.push(
+                            Navigator.push<
+                                DocumentSnapshot<Map<String, dynamic>>>(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AnimalEdit(
-                                        doc: widget.doc,
+                                        doc: doc,
                                         user: widget.user,
                                       )),
-                            );
+                            ).then((value) {
+                              setState(() {
+                                doc = value!;
+                              });
+                            });
                           } else if (value == "delete") {
                             _showDeleteConfirmation(context);
                           }
@@ -275,13 +296,12 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           child: Row(
                             children: [
                               Icon(
-                                (widget.doc.data()?["jenis_kelamin"]) ==
-                                        "Jantan"
+                                (doc.data()?["jenis_kelamin"]) == "Jantan"
                                     ? Icons.male
                                     : Icons.female,
                               ),
                               Text(
-                                widget.doc.data()?["jenis_kelamin"] ?? "",
+                                doc.data()?["jenis_kelamin"] ?? "",
                                 style: const TextStyle(
                                   fontSize: 16,
                                 ),
@@ -291,14 +311,14 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ),
                       ),
                     ),
-                    if (widget.doc.data()?["status_kesehatan"] != null)
+                    if (doc.data()?["status_kesehatan"] != null)
                       Expanded(
                         flex: 2,
                         child: Row(
                           children: [
                             const Icon(Icons.healing),
                             Text(
-                              widget.doc.data()?["status_kesehatan"] ?? "",
+                              doc.data()?["status_kesehatan"] ?? "",
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
@@ -332,13 +352,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         tile(
                           text: "Kandang",
                           icon: Icons.cabin,
-                          value: widget.doc.data()?["kandang"] ?? "",
+                          value: doc.data()?["kandang"] ?? "",
                         ),
                         const SizedBox(width: 70),
                         tile(
                           text: "Blok",
                           icon: Icons.account_tree_outlined,
-                          value: widget.doc.data()?["blok"] ?? "",
+                          value: doc.data()?["blok"] ?? "",
                         ),
                       ],
                     ),
@@ -359,24 +379,23 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     fontSize: 17,
                   ),
                 ),
-                form(text: "Nama", value: widget.doc.data()?["nama"] ?? ""),
-                form(text: "Usia", value: widget.doc.data()?["usia"] ?? ""),
-                 form(
-                    text: "Jenis Hewan",
-                    value: widget.doc.data()?["jenis"] ?? ""),
+                Text(doc.data()?["nama"] ?? ""),
+                form(text: "Nama", value: doc.data()?["nama"] ?? ""),
+                form(text: "Usia", value: doc.data()?["usia"] ?? ""),
+                form(text: "Jenis Hewan", value: doc.data()?["jenis"] ?? ""),
                 form(
                     text: "Kategori Hewan",
-                    value: widget.doc.data()?["kategori"] ?? ""),
+                    value: doc.data()?["kategori"] ?? ""),
                 form(
                     text: "Kondisi Hewan",
-                    value: widget.doc.data()?["kondisi"] ?? ""),
+                    value: doc.data()?["status_kesehatan"] ?? ""),
                 formDropdown(
                     iconSuffix: GestureDetector(
                       onTap: () {
                         if (_iconStatus == Icons.save_rounded) {
                           FirebaseFirestore.instance
                               .collection("hewan")
-                              .doc(widget.doc.id)
+                              .doc(doc.id)
                               .update({"status": _textStatusController.text});
                         }
                         setState(() {
@@ -392,36 +411,79 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     dropdown: dropdownStatus,
                     textController: _textStatusController,
                     readOnly: _readOnlyStatus,
-                    value: widget.doc.data()?["status"] ?? ""),
-                form(
-                    text: "Bobot Masuk",
-                    value: widget.doc.data()?["bobot"] ?? ""),
-                form(
-                  iconSuffix: GestureDetector(
-                    onTap: () {
-                      if (_icon == Icons.save_rounded) {
-                        FirebaseFirestore.instance
-                            .collection("hewan")
-                            .doc(widget.doc.id)
-                            .update({"bobot_akhir": _textController.text});
-                      }
-                      setState(() {
-                        _readOnlyFinalWeight = !_readOnlyFinalWeight;
-                        _icon = _readOnlyFinalWeight
-                            ? Icons.rebase_edit
-                            : Icons.save_rounded;
-                      });
-                    },
-                    child: Icon(_icon),
+                    value: doc.data()?["status"] ?? ""),
+                form(text: "Bobot Masuk", value: doc.data()?["bobot"] ?? ""),
+                Form(
+                  key: _formKey,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: form(
+                          iconSuffix: _readOnlyFinalWeight
+                              ? GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _readOnlyFinalWeight =
+                                          !_readOnlyFinalWeight;
+                                      _icon = _readOnlyFinalWeight
+                                          ? Icons.rebase_edit
+                                          : Icons.save_rounded;
+                                    });
+                                  },
+                                  child: Icon(_icon),
+                                )
+                              : null,
+                          text: "Bobot Terkini",
+                          textController: _textController,
+                          validatorMessage: "Bobot Kosong",
+                          readOnly: _readOnlyFinalWeight,
+                          autoFocus: !_readOnlyFinalWeight,
+                        ),
+                      ),
+                      if (!_readOnlyFinalWeight)
+                        Expanded(
+                          flex: 2,
+                          child: form(
+                            iconSuffix: GestureDetector(
+                              onTap: () {
+                                if (_formKey.currentState?.validate() == true) {
+                                  if (_icon == Icons.save_rounded) {
+                                    FirebaseFirestore.instance
+                                        .collection("hewan")
+                                        .doc(doc.id)
+                                        .update({
+                                      "bobot_akhir": _textController.text
+                                    });
+                                    FirebaseFirestore.instance
+                                        .collection("bobot")
+                                        .add({
+                                      "hewan_id": doc.id,
+                                      "bobot_akhir": _textController.text,
+                                      "tanggal": _tanggalBobotController.text,
+                                    }).then((value) =>
+                                            _tanggalBobotController.clear());
+                                  }
+                                  setState(() {
+                                    _readOnlyFinalWeight =
+                                        !_readOnlyFinalWeight;
+                                    _icon = _readOnlyFinalWeight
+                                        ? Icons.rebase_edit
+                                        : Icons.save_rounded;
+                                  });
+                                }
+                              },
+                              child: Icon(_icon),
+                            ),
+                            text: "Tanggal",
+                            textController: _tanggalBobotController,
+                            validatorMessage: "Tanggal Kosong",
+                            onTap: () => _selectDate(context),
+                          ),
+                        ),
+                    ],
                   ),
-                  text: "Bobot Terkini",
-                  textController: _textController,
-                  readOnly: _readOnlyFinalWeight,
-                  autoFocus: !_readOnlyFinalWeight,
                 ),
-                form(
-                    text: "Day On Feed",
-                    value: widget.doc.data()?["day_on_feed"] ?? ""),
               ],
             ),
           ),
@@ -437,7 +499,30 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     fontSize: 17,
                   ),
                 ),
-                form(text: "Timbangan", value: ""),
+                const SizedBox(height: 20),
+                FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  future: _getWeightData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot.data != null) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Text("Tidak Terdapat Riwayat Penimbangan");
+                      }
+                      return Column(
+                        children: snapshot.data!.docs
+                            .map((e) => RiwayatPenimbangan(doc: e))
+                            .toList(),
+                      );
+                    }
+
+                    return const Text("Tidak Terdapat Riwayat Penimbangan");
+                  },
+                ),
               ],
             ),
           ),
@@ -469,7 +554,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       }
                       return Column(
                         children: snapshot.data!.docs
-                            .map((e) => RiwayatKesehatan(doc: e))
+                            .map((e) =>
+                                RiwayatKesehatan(doc: e, globalKey: _globalKey))
                             .toList(),
                       );
                     }
@@ -491,17 +577,29 @@ class _AnimalDetailState extends State<AnimalDetail> {
       Widget? iconSuffix,
       bool readOnly = true,
       bool autoFocus = false,
+      String? validatorMessage,
+      void Function()? onTap,
       TextEditingController? textController}) {
     return TextFormField(
       autofocus: autoFocus,
       keyboardType: TextInputType.number,
-      controller: textController,
+      controller:
+          value != null ? TextEditingController(text: value) : textController,
       decoration: InputDecoration(
         labelText: text,
         suffixIcon: iconSuffix,
       ),
       readOnly: readOnly,
-      initialValue: value,
+      onTap: onTap,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          if (validatorMessage != null) {
+            return validatorMessage;
+          }
+        }
+
+        return null;
+      },
     );
   }
 
@@ -532,6 +630,20 @@ class _AnimalDetailState extends State<AnimalDetail> {
               });
             },
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        _tanggalBobotController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
   }
 
   Container dash() {

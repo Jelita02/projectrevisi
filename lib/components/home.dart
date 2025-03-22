@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:ternak/animal_menu.dart';
 import 'package:ternak/cage_menu.dart';
 import 'package:ternak/healthy_add.dart';
@@ -31,133 +32,131 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
-        child: Column(
+        child: ListView(
           children: [
-            Expanded(
+            const SizedBox(height: 20),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: const Color.fromRGBO(29, 145, 170, 0.3),
+              ),
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: const Color.fromRGBO(29, 145, 170, 0.3),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: ListView(
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset("assets/images/icon-cage.png"),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Domba",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 17,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset("assets/images/icon-cage.png"),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Domba",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 17,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  "Total Populasi: ",
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                                  ),
                                 ),
-                              ),
-                              Row(
-                                children: [
-                                  const Text(
-                                    "Total Populasi: ",
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                Text("${widget.countAnimal} Ekor"),
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.male,
+                                      color: Color.fromRGBO(29, 145, 170, 1),
+                                      size: 28,
                                     ),
-                                  ),
-                                  Text("${widget.countAnimal} Ekor"),
-                                ],
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.male,
-                                        color: Color.fromRGBO(29, 145, 170, 1),
-                                        size: 28,
-                                      ),
-                                      Text("Jantan"),
-                                    ],
-                                  ),
-                                  Text("${widget.countMale} Ekor"),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.female,
-                                        color: Color.fromRGBO(29, 145, 170, 1),
-                                        size: 28,
-                                      ),
-                                      Text("Betina"),
-                                    ],
-                                  ),
-                                  Text("${widget.countFemale} Ekor"),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.local_activity_outlined,
-                                        color: Color.fromRGBO(29, 145, 170, 1),
-                                        size: 28,
-                                      ),
-                                      Text("Sehat"),
-                                    ],
-                                  ),
-                                  Text("${widget.countHealthy} Ekor"),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.healing,
-                                        color: Color.fromRGBO(29, 145, 170, 1),
-                                        size: 28,
-                                      ),
-                                      Text("Sakit"),
-                                    ],
-                                  ),
-                                  Text("${widget.countSick} Ekor"),
-                                ],
-                              ),
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                                    Text("Jantan"),
+                                  ],
+                                ),
+                                Text("${widget.countMale} Ekor"),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.female,
+                                      color: Color.fromRGBO(29, 145, 170, 1),
+                                      size: 28,
+                                    ),
+                                    Text("Betina"),
+                                  ],
+                                ),
+                                Text("${widget.countFemale} Ekor"),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_activity_outlined,
+                                      color: Color.fromRGBO(29, 145, 170, 1),
+                                      size: 28,
+                                    ),
+                                    Text("Sehat"),
+                                  ],
+                                ),
+                                Text("${widget.countHealthy} Ekor"),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.healing,
+                                      color: Color.fromRGBO(29, 145, 170, 1),
+                                      size: 28,
+                                    ),
+                                    Text("Sakit"),
+                                  ],
+                                ),
+                                Text("${widget.countSick} Ekor"),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Column(
                 children: [
                   Row(
@@ -176,9 +175,9 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/Dombar.png",
+                              "assets/images/Domba-fix.png",
                               width: 110,
-                              height:100,
+                              height: 100,
                             ),
                             const SizedBox(height: 5),
                             const Text(
@@ -221,7 +220,7 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -264,7 +263,7 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             Image.asset(
-                              "assets/images/laporanr.png",
+                              "assets/images/laporan-fix.png",
                               width: 100,
                               height: 90,
                             ),

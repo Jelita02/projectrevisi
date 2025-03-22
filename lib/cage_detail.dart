@@ -1,15 +1,19 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/block_detail.dart';
+import 'package:ternak/cage_edit.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 
 class CageDetail extends StatefulWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>> doc;
   final String total;
-  const CageDetail({super.key, required this.doc, required this.total});
+  final fire.User user;
+  const CageDetail(
+      {super.key, required this.doc, required this.total, required this.user});
 
   @override
   State<CageDetail> createState() => _CageDetailState();
@@ -19,20 +23,12 @@ class _CageDetailState extends State<CageDetail> {
   var canUse = 0;
   var totalBlok = 0;
 
-  @override
-  void initState() {
-    super.initState();
+  late DocumentSnapshot<Map<String, dynamic>> doc;
 
-    var kapasitasInt = int.tryParse(widget.doc.data()["kapasitas"] ?? "");
-    var totalInt = int.tryParse(widget.total);
-
-    if (kapasitasInt != null && totalInt != null) {
-      canUse = max(0, kapasitasInt - totalInt);
-    }
-
+  void getTotal() {
     FirebaseFirestore.instance
         .collection("blok")
-        .where("kandang_id", isEqualTo: widget.doc.id)
+        .where("kandang_id", isEqualTo: doc.id)
         .count()
         .get()
         .then((value) => setState(() {
@@ -40,12 +36,67 @@ class _CageDetailState extends State<CageDetail> {
             }));
   }
 
+  @override
+  void initState() {
+    super.initState();
+    doc = widget.doc;
+
+    getTotal();
+
+    var kapasitasInt = int.tryParse(doc.data()?["kapasitas"] ?? "");
+    var totalInt = int.tryParse(widget.total);
+
+    if (kapasitasInt != null && totalInt != null) {
+      canUse = max(0, kapasitasInt - totalInt);
+    }
+  }
+
   Future<Uint8List?> _getImage() async {
-    final storageRef = FirebaseStorage.instance.ref();
-    var value =
-        await storageRef.child("kandang/${widget.doc.id}").getData(1024 * 1024);
+    String imageFile = doc.data()?["image"];
+    var value = await Supabase.instance.client.storage
+        .from('terdom')
+        .download("kandang/$imageFile");
 
     return value;
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Hapus"),
+          content: const Text("Apakah kamu yakin ingin menghapus ini?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Tutup dialog
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection("kandang")
+                    .doc(doc.id)
+                    .delete()
+                    .then((value) {
+                  Navigator.of(context).pop(); // Tutup dialog
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Berhasil dihapus")),
+                  );
+                }).catchError((value) {
+                  Navigator.of(context).pop(); // Tutup dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Gagal menghapus")),
+                  );
+                });
+              },
+              child: const Text("Hapus"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -60,6 +111,39 @@ class _CageDetailState extends State<CageDetail> {
             fontWeight: FontWeight.w900,
           ),
         ),
+        actions: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == "delete") {
+                  _showDeleteConfirmation(context);
+                }
+
+                if (value == "edit") {
+                  Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CageEdit(
+                              doc: doc,
+                              user: widget.user,
+                            )),
+                  ).then((value) {
+                    setState(() {
+                      getTotal();
+                      doc = value!;
+                    });
+                  });
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(value: "edit", child: Text("Edit")),
+                const PopupMenuItem(value: "delete", child: Text("Hapus")),
+              ],
+              icon: const Icon(Icons.more_vert), // Titik tiga vertikal
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -84,7 +168,7 @@ class _CageDetailState extends State<CageDetail> {
                     );
                   }
                   return Image.asset(
-                    "assets/images/icon-cage.png",
+                    "assets/images/Kandangr.png",
                     fit: BoxFit.fill,
                   );
                 },
@@ -122,12 +206,12 @@ class _CageDetailState extends State<CageDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.doc.data()["nama"] ?? "",
+                              doc.data()?["nama"] ?? "",
                               style: const TextStyle(
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            Text(widget.doc.data()["kategori"] ?? ""),
+                            Text(doc.data()?["kategori"] ?? ""),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -136,7 +220,7 @@ class _CageDetailState extends State<CageDetail> {
                           children: [
                             Text(
                                 // ignore: prefer_interpolation_to_compose_strings
-                                "${widget.total + "/" + (widget.doc.data()["kapasitas"] ?? "")} Ekor"),
+                                "${widget.total + "/" + (doc.data()?["kapasitas"] ?? "")} Ekor"),
                             Text(
                               "Muat ${canUse.toString()} Ekor Lagi",
                               style: const TextStyle(
@@ -201,7 +285,7 @@ class _CageDetailState extends State<CageDetail> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => BlockDetail(
-                                          kandangId: widget.doc.id,
+                                          kandangId: doc.id,
                                           total: widget.total,
                                           totalBlok: totalBlok.toString(),
                                         ),

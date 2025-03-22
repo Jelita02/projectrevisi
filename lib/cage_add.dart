@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CageAdd extends StatefulWidget {
-  final User user;
+  final fire.User user;
   const CageAdd({super.key, required this.user});
 
   @override
@@ -48,9 +50,19 @@ class _CageAddState extends State<CageAdd> {
       "kategori": _kategori,
     }).then((value) {
       if (_image != null) {
-        final storageRef = FirebaseStorage.instance.ref().child("kandang");
-        final imagesRef = storageRef.child(value.id);
-        imagesRef.putFile(_image!);
+        // Ambil ekstensi file asli
+        String extension = path.extension(_image!.path);
+
+        // Buat nama file unik dengan UUID
+        String fileName = '${value.id}$extension';
+        Supabase.instance.client.storage
+            .from('terdom') // Ganti dengan nama bucket
+            .upload('kandang/$fileName', _image!)
+            .then((data) {
+          kandang.doc(value.id).update({
+            "image": fileName,
+          });
+        }).catchError((error) => {print("ERRORRR: $error")});
       }
 
       for (var v in blok) {
