@@ -257,7 +257,9 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LaporanScreen(),
+                                builder: (context) => LaporanScreen(
+                                  user: widget.user,
+                                ),
                               ));
                         },
                         child: Column(

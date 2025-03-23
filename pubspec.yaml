@@ -41,7 +41,7 @@ dependencies:
   firebase_core: ^2.32.0
   cloud_firestore: ^4.17.5
   firebase_auth: ^4.20.0
-  intl: ^0.19.0
+  intl: any
   firebase_storage: ^11.7.7
   image_picker: ^1.1.2
   permission_handler: ^11.3.1
@@ -51,6 +51,8 @@ dependencies:
   supabase_flutter: ^2.0.0
   uuid: ^4.1.0
   http: ^0.13.6
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
