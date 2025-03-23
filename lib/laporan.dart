@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ternak/components/colors.dart';
+import 'package:ternak/detail_laporan.dart';
 
 class LaporanScreen extends StatefulWidget {
   final User user;
@@ -194,9 +195,45 @@ class _LaporanScreenState extends State<LaporanScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(onPressed: () {}, child: const Text("Hidup")),
-                ElevatedButton(onPressed: () {}, child: const Text("Mati")),
-                ElevatedButton(onPressed: () {}, child: const Text("Terjual")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailLaporanScreen(
+                              user: widget.user,
+                              selectedRange: selectedRange,
+                              status: "Hidup",
+                            ),
+                          ));
+                    },
+                    child: const Text("Hidup")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailLaporanScreen(
+                              user: widget.user,
+                              selectedRange: selectedRange,
+                              status: "Mati",
+                            ),
+                          ));
+                    },
+                    child: const Text("Mati")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailLaporanScreen(
+                              user: widget.user,
+                              selectedRange: selectedRange,
+                              status: "Terjual",
+                            ),
+                          ));
+                    },
+                    child: const Text("Terjual")),
               ],
             ),
           ),
