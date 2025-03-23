@@ -55,8 +55,6 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
 
     lastDoc = newItems.docs.last;
 
-    print("DOC:: ${lastDoc!.data()}");
-
     var list = newItems.docs.map((e) => e.data()).toList();
 
     final isLastPage = list.length < _pageSize;

@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:ternak/login.dart';
 
 class Profile extends StatefulWidget {
   final Map<String, dynamic> docUser;
-  final User user;
-  const Profile({super.key, required this.docUser, required this.user});
+  const Profile({super.key, required this.docUser});
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -14,21 +16,18 @@ class _ProfileState extends State<Profile> {
   var canUse = 0;
   var totalBlok = 0;
 
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
-    User? user = _auth.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Profil'),
         backgroundColor: Colors.blueGrey[300],
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: _firestore.collection('users').doc(user?.uid).get(),
+        future:
+            FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -53,8 +52,11 @@ class _ProfileState extends State<Profile> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(userData['nama'], style: TextStyle(color: Colors.white, fontSize: 18)),
-                        Text(user.email ?? '', style: TextStyle(color: Colors.white70)),
+                        Text(userData['nama'],
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                        Text(user?.email ?? '',
+                            style: TextStyle(color: Colors.white70)),
                       ],
                     ),
                   ],
@@ -67,7 +69,8 @@ class _ProfileState extends State<Profile> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(userData['farmName'], style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(userData['farmName'],
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Text(userData['location']),
                     ],
                   ),
@@ -89,8 +92,13 @@ class _ProfileState extends State<Profile> {
                 leading: Icon(Icons.logout, color: Colors.black),
                 title: Text('Logout'),
                 onTap: () async {
-                  await _auth.signOut();
-                  Get.offAllNamed('/login');
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                    (Route<dynamic> route) =>
+                        false, // Menghapus semua halaman sebelumnya
+                  );
                 },
               ),
             ],

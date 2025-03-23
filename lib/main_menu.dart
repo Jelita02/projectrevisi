@@ -92,7 +92,6 @@ class _MainMenuState extends State<MainMenu> {
       QRScanner(user: widget.user),
       Profile(
         docUser: _docUser,
-        user: widget.user,
       ),
     ];
 
