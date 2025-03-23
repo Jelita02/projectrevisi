@@ -16,71 +16,87 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            width: double.infinity,
-            color: const Color.fromRGBO(26, 107, 125, 1),
-            child: ListTile(
-              leading: const Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.white,
-              ),
-              title: Text(
-                widget.docUser["name"] ?? "",
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              subtitle: Text(
-                widget.user.email ?? "",
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+    User? user = _auth.currentUser;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profil'),
+        backgroundColor: Colors.blueGrey[300],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Get.back(),
         ),
-        Expanded(
-          flex: 3,
-          child: Transform.translate(
-            offset: const Offset(0, -70),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(20),
-                  padding: const EdgeInsets.all(20),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.grey,
+      ),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: _firestore.collection('users').doc(user?.uid).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('Data tidak ditemukan'));
+          }
+          var userData = snapshot.data!.data() as Map<String, dynamic>;
+          return Column(
+            children: [
+              Container(
+                color: Colors.teal[700],
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 30, color: Colors.teal),
                     ),
-                  ),
-                  child: Column(
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userData['nama'], style: TextStyle(color: Colors.white, fontSize: 18)),
+                        Text(user.email ?? '', style: TextStyle(color: Colors.white70)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                margin: EdgeInsets.all(16),
+                child: ListTile(
+                  title: Text('Nama Peternakan'),
+                  subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Nama Peternakan"),
-                      Text(
-                        widget.docUser["nama_peternakan"] ?? "",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                      Text(userData['farmName'], style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(userData['location']),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ],
+              ),
+              ListTile(
+                title: Text('Ubah Password'),
+                subtitle: Text('Perbarui password demi keamanan'),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.notifications, color: Colors.teal),
+                title: Text('Pengingat'),
+                subtitle: Text('Buat Jadwal untuk pengingat aktivitas'),
+                onTap: () {},
+              ),
+              Spacer(),
+              ListTile(
+                leading: Icon(Icons.logout, color: Colors.black),
+                title: Text('Logout'),
+                onTap: () async {
+                  await _auth.signOut();
+                  Get.offAllNamed('/login');
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
