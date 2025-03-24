@@ -141,8 +141,11 @@ class LoginFormState extends State<LoginForm> {
               children: [
                 GestureDetector(
                   onTap: () {
+                    setState(() {
+                      _isLoading = true;
+                    });
                     // Aksi ketika teks ditekan
-                    print('Teks ditekan');
+                    sendResetPasswordEmail(_emailController.text);
                   },
                   child: const Text(
                     'Lupa Password?',
@@ -188,5 +191,27 @@ class LoginFormState extends State<LoginForm> {
         ),
       ),
     );
+  }
+
+  Future<void> sendResetPasswordEmail(String email) async {
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Email tidak boleh kosong")));
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Email reset password telah dikirim ke $email")));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
