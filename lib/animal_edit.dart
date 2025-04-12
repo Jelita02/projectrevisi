@@ -252,6 +252,7 @@ class _AnimalEditState extends State<AnimalEdit> {
               ),
               TextFormField(
                 controller: _namaController,
+                maxLength: 20,
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                   suffix: Icon(Icons.animation),

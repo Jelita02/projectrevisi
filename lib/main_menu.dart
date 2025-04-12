@@ -38,7 +38,9 @@ class _MainMenuState extends State<MainMenu> {
       setState(() {
         Map<String, dynamic>? dataUser = value.data();
         if (dataUser != null) {
-          _docUser = dataUser;
+          setState(() {
+            _docUser = dataUser;
+          });
         }
 
         FirebaseFirestore.instance
@@ -99,31 +101,21 @@ class _MainMenuState extends State<MainMenu> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
         // Tambahkan identitas pengguna di sini
-        title: Row(
-          children: [
-            Image.asset(
-              "assets/images/icon-user.png",
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(_docUser["name"] ?? ""),
-          ],
-        ),
+        title:Text(_docUser["farmName"] ?? ""),
         // Misalnya, aksi Logout
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_none_outlined,
-              size: 34,
-              color: Color.fromRGBO(26, 107, 125, 1),
-            ),
-            onPressed: () {
-              // Tambahkan logika untuk logout di sini
-              print("notif");
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.notifications_none_outlined,
+        //       size: 34,
+        //       color: Color.fromRGBO(26, 107, 125, 1),
+        //     ),
+        //     onPressed: () {
+        //       // Tambahkan logika untuk logout di sini
+        //       print("notif");
+        //     },
+        //   ),
+        // ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(

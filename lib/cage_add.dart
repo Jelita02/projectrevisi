@@ -65,7 +65,9 @@ class _CageAddState extends State<CageAdd> {
         }).catchError((error) => {print("ERRORRR: $error")});
       }
 
+      int kapasitasKandang = 0;
       for (var v in blok) {
+        kapasitasKandang += int.parse(v["kapasitas_blok"] ?? 0);
         blokStore.add({
           "user_uid": widget.user.uid,
           "kandang_id": value.id,
@@ -73,6 +75,10 @@ class _CageAddState extends State<CageAdd> {
           "kapasitas": v["kapasitas_blok"] ?? "",
         });
       }
+
+      kandang.doc(value.id).update({
+        "kapasitas": kapasitasKandang.toString()
+      });
 
       Navigator.pop(context, true);
     });
@@ -131,6 +137,7 @@ class _CageAddState extends State<CageAdd> {
                           padding: const EdgeInsets.all(10),
                           child: TextFormField(
                             controller: namaBlokController,
+                            maxLength: 20,
                             decoration: const InputDecoration(
                               labelText: 'Nama',
                             ),
@@ -234,6 +241,7 @@ class _CageAddState extends State<CageAdd> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _namaController,
+                maxLength: 20,
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                 ),
@@ -246,20 +254,20 @@ class _CageAddState extends State<CageAdd> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _kapasitasController,
-                decoration: const InputDecoration(
-                  labelText: 'Kapasitas',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan kapasitas";
-                  }
+              // TextFormField(
+              //   controller: _kapasitasController,
+              //   decoration: const InputDecoration(
+              //     labelText: 'Kapasitas',
+              //   ),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return "Masukan kapasitas";
+              //     }
 
-                  return null;
-                },
-              ),
+              //     return null;
+              //   },
+              // ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(
                   labelText: 'Kategori',

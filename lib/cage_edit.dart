@@ -65,8 +65,10 @@ class _CageEditState extends State<CageEdit> {
         }).catchError((error) => {print("ERRORRR: $error")});
       }
 
+      int kapasitasKandang = 0;
       Map<String, String> listId = {};
       for (var v in blok) {
+        kapasitasKandang += int.parse(v["kapasitas"] ?? 0);
         var doc = await blokStore.add({
           "user_uid": widget.user.uid,
           "kandang_id": widget.doc.id,
@@ -86,6 +88,10 @@ class _CageEditState extends State<CageEdit> {
         }
       }
       batch.commit();
+
+      kandang.doc(widget.doc.id).update({
+        "kapasitas": kapasitasKandang.toString()
+      });
 
       var value = await kandang.doc(widget.doc.id).get();
       Navigator.pop(
@@ -148,6 +154,7 @@ class _CageEditState extends State<CageEdit> {
                           padding: const EdgeInsets.all(10),
                           child: TextFormField(
                             controller: namaBlokController,
+                            maxLength: 20,
                             decoration: const InputDecoration(
                               labelText: 'Nama',
                             ),
@@ -252,7 +259,7 @@ class _CageEditState extends State<CageEdit> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
         title: const Text(
-          "Buat Kandang",
+          "Edit Kandang",
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w900,
@@ -275,6 +282,7 @@ class _CageEditState extends State<CageEdit> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _namaController,
+                maxLength: 20,
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                 ),
@@ -287,20 +295,20 @@ class _CageEditState extends State<CageEdit> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _kapasitasController,
-                decoration: const InputDecoration(
-                  labelText: 'Kapasitas',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan kapasitas";
-                  }
+              // TextFormField(
+              //   controller: _kapasitasController,
+              //   decoration: const InputDecoration(
+              //     labelText: 'Kapasitas',
+              //   ),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return "Masukan kapasitas";
+              //     }
 
-                  return null;
-                },
-              ),
+              //     return null;
+              //   },
+              // ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(
                   labelText: 'Kategori',
@@ -469,7 +477,7 @@ class _CageEditState extends State<CageEdit> {
                       }
                     },
                     child: const Text(
-                      'Buat Kandang',
+                      'Edit Kandang',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,

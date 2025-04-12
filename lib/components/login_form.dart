@@ -70,7 +70,7 @@ class LoginFormState extends State<LoginForm> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showErrorDialog(
           context,
-          e.toString(),
+          "Gagal melakukan login",
         );
       });
     });

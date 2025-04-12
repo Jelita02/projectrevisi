@@ -36,10 +36,31 @@ class _AnimalDetailState extends State<AnimalDetail> {
   IconData _iconStatus = Icons.rebase_edit;
   final _formKey = GlobalKey<FormState>();
 
+  Future<void> requestStoragePermission() async {
+    var status = await Permission.storage.status;
+    var status2 = await Permission.photos.status;
+    
+    if (!status.isGranted || !status2.isGranted) {
+      status = await Permission.storage.request();
+      
+      if (status.isGranted || status2.isGranted) {
+        print("Izin storage diberikan.");
+        _captureAndSaveQrCode();
+      } else if (status.isDenied || status2.isDenied) {
+        print("Izin storage ditolak.");
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Permission denied')));
+      } else if (status.isPermanentlyDenied || status2.isPermanentlyDenied) {
+        print("Izin storage ditolak permanen, buka pengaturan untuk mengaktifkan.");
+        openAppSettings();
+      }
+    }
+  }
+
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
-    var status = await Permission.photos.request();
-    if (status.isGranted) {
       RenderRepaintBoundary boundary = _globalKey.currentContext!
           .findRenderObject()! as RenderRepaintBoundary;
       var image = await boundary.toImage(pixelRatio: 5.0);
@@ -58,12 +79,6 @@ class _AnimalDetailState extends State<AnimalDetail> {
 
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('QR Code saved to gallery')));
-    } else {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Permission denied')));
-    }
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> _getHealthyData() {
@@ -117,7 +132,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
             TextButton(
               child: const Text('Download'),
               onPressed: () {
-                _captureAndSaveQrCode();
+                requestStoragePermission();
               },
             ),
             TextButton(

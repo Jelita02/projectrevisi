@@ -112,6 +112,7 @@ class _AnimalAddState extends State<AnimalAdd> {
     FirebaseFirestore.instance
         .collection("kandang")
         .where("user_uid", isEqualTo: widget.user.uid)
+        .orderBy("kategori", descending: false)
         .get()
         .then((value) {
       setState(() {
@@ -125,6 +126,7 @@ class _AnimalAddState extends State<AnimalAdd> {
     FirebaseFirestore.instance
         .collection("blok")
         .where("kandang_id", isEqualTo: kategoriId)
+        .orderBy("nama", descending: false)
         .get()
         .then((value) {
       setState(() {
@@ -206,6 +208,7 @@ class _AnimalAddState extends State<AnimalAdd> {
               ),
               TextFormField(
                 controller: _namaController,
+                maxLength: 20,
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                   suffix: Icon(Icons.animation),
@@ -348,7 +351,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  setState(() {
+                  setState(() { // reload halaman
                     if (value != null) {
                       _kandang = value["nama"] ?? "";
                       _kandangId = value["id"] ?? "";

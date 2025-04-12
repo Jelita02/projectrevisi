@@ -19,12 +19,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil'),
-        backgroundColor: Colors.blueGrey[300],
-      ),
-      body: FutureBuilder<DocumentSnapshot>(
+    return FutureBuilder<DocumentSnapshot>(
         future:
             FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
         builder: (context, snapshot) {
@@ -76,20 +71,44 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.key, color: Colors.teal),
                 title: const Text('Ubah Password'),
                 subtitle: const Text('Perbarui password demi keamanan'),
                 onTap: () => showUpdatePasswordDialog(context),
               ),
-              ListTile(
-                leading: const Icon(Icons.notifications, color: Colors.teal),
-                title: const Text('Pengingat'),
-                subtitle: const Text('Buat Jadwal untuk pengingat aktivitas'),
-                onTap: () {},
-              ),
+              // ListTile(
+              //   leading: const Icon(Icons.notifications, color: Colors.teal),
+              //   title: const Text('Pengingat'),
+              //   subtitle: const Text('Buat Jadwal untuk pengingat aktivitas'),
+              //   onTap: () {},
+              // ),
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.black),
                 title: const Text('Logout'),
                 onTap: () {
+                  _showLogoutConfirmation(context);
+                }
+              ),
+            ],
+          );
+        },
+      );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Logout"),
+          content: const Text("Apakah kamu yakin ingin keluar?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Tutup dialog
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
                   FirebaseAuth.instance.signOut().then((value) {
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -99,11 +118,11 @@ class _ProfileState extends State<Profile> {
                     );
                   });
                 },
-              ),
-            ],
-          );
-        },
-      ),
+              child: const Text("Logout"),
+            ),
+          ],
+        );
+      },
     );
   }
 
