@@ -20,79 +20,82 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-        future:
-            FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('Data tidak ditemukan'));
-          }
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
-          return ListView(
-            children: [
-              Container(
-                color: Colors.teal[700],
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 30, color: Colors.teal),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(userData['nama'],
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18)),
-                        Text(user?.email ?? '',
-                            style: const TextStyle(color: Colors.white70)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                margin: const EdgeInsets.all(16),
-                child: ListTile(
-                  title: const Text('Nama Peternakan'),
-                  subtitle: Column(
+      future:
+          FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Center(child: Text('Data tidak ditemukan'));
+        }
+        var userData = snapshot.data!.data() as Map<String, dynamic>;
+        return ListView(
+          children: [
+            Container(
+              color: Colors.teal[700],
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 30, color: Colors.teal),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(userData['farmName'],
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(userData['location']),
+                      Text(userData['nama'],
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18)),
+                      Text(user?.email ?? '',
+                          style: const TextStyle(color: Colors.white70)),
                     ],
                   ),
+                ],
+              ),
+            ),
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: ListTile(
+                title: const Text('Nama Peternakan'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(userData['farmName'],
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(userData['location']),
+                  ],
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => showUpdateAccount(context, userData),
                 ),
               ),
-              ListTile(
-                leading: const Icon(Icons.key, color: Colors.teal),
-                title: const Text('Ubah Password'),
-                subtitle: const Text('Perbarui password demi keamanan'),
-                onTap: () => showUpdatePasswordDialog(context),
-              ),
-              // ListTile(
-              //   leading: const Icon(Icons.notifications, color: Colors.teal),
-              //   title: const Text('Pengingat'),
-              //   subtitle: const Text('Buat Jadwal untuk pengingat aktivitas'),
-              //   onTap: () {},
-              // ),
-              ListTile(
+            ),
+            ListTile(
+              leading: const Icon(Icons.key, color: Colors.teal),
+              title: const Text('Ubah Password'),
+              subtitle: const Text('Perbarui password demi keamanan'),
+              onTap: () => showUpdatePasswordDialog(context),
+            ),
+            // ListTile(
+            //   leading: const Icon(Icons.notifications, color: Colors.teal),
+            //   title: const Text('Pengingat'),
+            //   subtitle: const Text('Buat Jadwal untuk pengingat aktivitas'),
+            //   onTap: () {},
+            // ),
+            ListTile(
                 leading: const Icon(Icons.logout, color: Colors.black),
                 title: const Text('Logout'),
                 onTap: () {
                   _showLogoutConfirmation(context);
-                }
-              ),
-            ],
-          );
-        },
-      );
+                }),
+          ],
+        );
+      },
+    );
   }
 
   void _showLogoutConfirmation(BuildContext context) {
@@ -109,15 +112,15 @@ class _ProfileState extends State<Profile> {
             ),
             ElevatedButton(
               onPressed: () {
-                  FirebaseAuth.instance.signOut().then((value) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Login()),
-                      (Route<dynamic> route) =>
-                          false, // Menghapus semua halaman sebelumnya
-                    );
-                  });
-                },
+                FirebaseAuth.instance.signOut().then((value) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                    (Route<dynamic> route) =>
+                        false, // Menghapus semua halaman sebelumnya
+                  );
+                });
+              },
               child: const Text("Logout"),
             ),
           ],
@@ -186,6 +189,92 @@ class _ProfileState extends State<Profile> {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("User tidak ditemukan!")));
                   }
+                } catch (e) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("Error: $e")));
+                }
+              },
+              child: const Text("Update"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showUpdateAccount(BuildContext context, Map<String, dynamic> userData) {
+    final TextEditingController farmNameController =
+        TextEditingController(text: userData['farmName']);
+    final TextEditingController locationController =
+        TextEditingController(text: userData['location']);
+    final TextEditingController namaController =
+        TextEditingController(text: userData['nama']);
+    final users = FirebaseFirestore.instance.collection('users');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Update Akun"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: namaController,
+                  decoration: const InputDecoration(labelText: "Nama"),
+                ),
+                TextField(
+                  controller: farmNameController,
+                  decoration:
+                      const InputDecoration(labelText: "Nama Peternakan"),
+                ),
+                TextField(
+                  controller: locationController,
+                  decoration: const InputDecoration(labelText: "Lokasi"),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Tutup dialog
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String farmName = farmNameController.text.trim();
+                String nama = namaController.text.trim();
+                String location = locationController.text.trim();
+
+                if (farmName.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Nama Peternakan tidak boleh kosong!")));
+                  return;
+                }
+
+                if (nama.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Nama tidak boleh kosong!")));
+                  return;
+                }
+
+                if (location.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Lokasi tidak boleh kosong!")));
+                  return;
+                }
+
+                try {
+                  await users.doc(user?.uid).update({
+                    "farmName": farmName,
+                    "location": location,
+                    "nama": nama,
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Akun berhasil diperbarui!")));
+                  Navigator.pop(context);
+                  setState(() {});
                 } catch (e) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("Error: $e")));

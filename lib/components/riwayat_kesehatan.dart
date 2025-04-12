@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,34 +25,50 @@ class RiwayatKesehatan extends StatefulWidget {
 }
 
 class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
+  Future<void> requestStoragePermission(imageUrl) async {
+    var status = await Permission.storage.status;
+    var status2 = await Permission.photos.status;
+
+    if (!status.isGranted || !status2.isGranted) {
+      status = await Permission.storage.request();
+
+      if (status.isGranted || status2.isGranted) {
+        print("Izin storage diberikan.");
+        _captureAndSave(imageUrl);
+      } else if (status.isDenied || status2.isDenied) {
+        print("Izin storage ditolak.");
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Permission denied')));
+      } else if (status.isPermanentlyDenied || status2.isPermanentlyDenied) {
+        print(
+            "Izin storage ditolak permanen, buka pengaturan untuk mengaktifkan.");
+        openAppSettings();
+      }
+    }
+  }
+
   Future<void> _captureAndSave(imageUrl) async {
     // Meminta izin penyimpanan
-    var status = await Permission.photos.request();
-    if (status.isGranted) {
-      RenderRepaintBoundary boundary = widget.globalKey.currentContext!
-          .findRenderObject()! as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 5.0);
-      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+    RenderRepaintBoundary boundary = widget.globalKey.currentContext!
+        .findRenderObject()! as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 5.0);
+    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-      final directory = (await getTemporaryDirectory()).path;
-      final filePath = '$directory/${widget.doc.id}.jpg';
-      final file = File(filePath);
-      await file.writeAsBytes(pngBytes);
+    final directory = (await getTemporaryDirectory()).path;
+    final filePath = '$directory/${widget.doc.id}.jpg';
+    final file = File(filePath);
+    await file.writeAsBytes(pngBytes);
 
-      // Simpan ke galeri
-      await ImageGallerySaver.saveFile(filePath);
+    // Simpan ke galeri
+    await ImageGallerySaver.saveFile(filePath);
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Image saved to gallery')));
-    } else {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Permission denied')));
-    }
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
   }
 
   void _showImage() async {
@@ -76,11 +93,19 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
                     child: RepaintBoundary(
                       key: widget.globalKey,
                       child: Container(
-                        color: Colors.white,
-                        child: Image.network(
-                          imageUrl,
-                        ),
-                      ),
+                          color: Colors.white,
+                          child: Image.network(
+                            imageUrl,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Gambar gagal dimuat, tampilkan widget pengganti
+                              return const Icon(Icons.broken_image,
+                                  size: 50, color: Colors.grey);
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const CircularProgressIndicator(); // Bisa diganti dengan placeholder
+                            },
+                          )),
                     ),
                   ),
                 )
@@ -89,10 +114,10 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Download'),
               onPressed: () {
-                _captureAndSave(imageUrl);
+                requestStoragePermission(imageUrl);
               },
+              child: const Text('Download'),
             ),
             TextButton(
               child: const Text('Close'),
@@ -127,16 +152,19 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text.rich(
-                TextSpan(
-                  style: const TextStyle(
-                    fontSize: 17,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: gejala.join(", "),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    style: const TextStyle(
+                      fontSize: 17,
                     ),
-                  ],
+                    children: [
+                      TextSpan(
+                        text: gejala.join(", "),
+                      ),
+                    ],
+                  ),
+                  softWrap: true,
                 ),
               ),
               IconButton(
