@@ -101,7 +101,7 @@ class _MainMenuState extends State<MainMenu> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
         // Tambahkan identitas pengguna di sini
-        title:Text(_docUser["farmName"] ?? ""),
+        title:Text("QR-Sheep"),
         // Misalnya, aksi Logout
         // actions: [
         //   IconButton(

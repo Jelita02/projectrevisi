@@ -68,7 +68,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
         totalPembiakan = list
             .where((element) => element.data()["kategori"] == "Pembiakan")
             .length;
-        totalPembiakan = list
+        totalPenggemukan = list
             .where((element) => element.data()["kategori"] == "Penggemukan")
             .length;
       });
@@ -112,7 +112,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
             buildCard(Icons.pie_chart, "Domba", "Populasi: $totalDomba Ekor"),
             buildGenderSection(),
             buildCard(Icons.favorite, "Jumlah Kasus Sakit", "$totalSick Kasus"),
-            buildCard(Icons.cake, "Usia", "Gigi susu"),
+            buildCard(Icons.cake, "Usia", ""),
             buildCategorySection(),
             buildStatusSection(),
           ],

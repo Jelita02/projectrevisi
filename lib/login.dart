@@ -16,7 +16,7 @@ class Login extends StatelessWidget {
               Column(
                 children: <Widget>[
                   const Text(
-                    "Domternak",
+                    "QR-Sheep",
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 30, // tulisan

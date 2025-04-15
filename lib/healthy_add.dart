@@ -25,7 +25,7 @@ class HealthyAddState extends State<HealthyAdd> {
   final TextEditingController _tanggalController = TextEditingController();
   final TextEditingController _textOtherController = TextEditingController();
 
-  bool _demamCheck = false;
+  bool _vaksinCheck = false;
   bool _nafsuCheck = false;
   bool _pinkEyeCheck = false;
   bool _busukCheck = false;
@@ -94,7 +94,7 @@ class HealthyAddState extends State<HealthyAdd> {
     var kesehatan = FirebaseFirestore.instance.collection('kesehatan');
 
     List<String> gejala = [];
-    _demamCheck ? gejala.add("Demam") : null;
+    _vaksinCheck ? gejala.add("Vaksin") : null;
     _nafsuCheck ? gejala.add("Nafsu Makan Turun") : null;
     _pinkEyeCheck ? gejala.add("Penyakit Mata (pink eye)") : null;
     _busukCheck ? gejala.add("Busuk Kuku") : null;
@@ -199,11 +199,11 @@ class HealthyAddState extends State<HealthyAdd> {
               ),
               const SizedBox(height: 20),
               CheckboxListTile(
-                value: _demamCheck,
+                value: _vaksinCheck,
                 onChanged: (value) => setState(() {
-                  _demamCheck = !_demamCheck;
+                  _vaksinCheck = !_vaksinCheck;
                 }),
-                title: const Text("Diare"),
+                title: const Text("Vaksin"),
               ),
               CheckboxListTile(
                 value: _nafsuCheck,
@@ -219,6 +219,7 @@ class HealthyAddState extends State<HealthyAdd> {
                 }),
                 title: const Text("Penyakit mata (pink eye)"),
               ),
+              
               CheckboxListTile(
                 value: _busukCheck,
                 onChanged: (value) => setState(() {

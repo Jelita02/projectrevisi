@@ -164,7 +164,7 @@ class _AnimalEditState extends State<AnimalEdit> {
     var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
     var dropdownJenis = <String>[
       'Domba Garut',
-      'Domba Gembel',
+      'Domba Lokal',
       'Domba Dorper',
       'Domba Ekor Tebal',
       'Domba Texel',
@@ -175,11 +175,11 @@ class _AnimalEditState extends State<AnimalEdit> {
     ];
     var dropdownUsia = <String>[
       'Gigi Susu (1< thn)',
-      'Poet 1 (1-2 thn)',
-      'Poet 2 (2-3 thn)',
-      'Poet 3 (3-4 thn)',
-      'Poet 4 (4-5 thn)',
-      'Poet 5 (>5 thn)',
+      'Poel 1 (1-2 thn)',
+      'Poel 2 (2-3 thn)',
+      'Poel 3 (3-4 thn)',
+      'Poel 4 (4-5 thn)',
+      'Poel 5 (>5 thn)',
     ];
 
     return Scaffold(

@@ -228,11 +228,11 @@ class _AnimalAddState extends State<AnimalAdd> {
                 validator: (value) => value == null ? 'Pilih Usia' : null,
                 items: <String>[
                   'Gigi Susu (1< thn)',
-                  'Poet 1 (1-2 thn)',
-                  'Poet 2 (2-3 thn)',
-                  'Poet 3 (3-4 thn)',
-                  'Poet 4 (4-5 thn)',
-                  'Poet 5 (>5 thn)',
+                  'Poel 1 (1-2 thn)',
+                  'Poel 2 (2-3 thn)',
+                  'Poel 3 (3-4 thn)',
+                  'Poel 4 (4-5 thn)',
+                  'Poel 5 (>5 thn)',
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -316,7 +316,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                 validator: (value) => value == null ? 'Pilih jenis' : null,
                 items: <String>[
                   'Domba Garut',
-                  'Domba Gembel',
+                  'Domba Lokal',
                   'Domba Dorper',
                   'Domba Ekor Tebal',
                   'Domba Texel',
