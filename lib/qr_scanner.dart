@@ -39,6 +39,7 @@ class _QRScannerState extends State<QRScanner> {
       isScanCompleted = true;
 
       controller.stop();
+      //proses scan
 
       var value = await FirebaseFirestore.instance
           .collection("hewan")

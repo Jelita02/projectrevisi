@@ -174,12 +174,12 @@ class _AnimalEditState extends State<AnimalEdit> {
       'Domba Van Rooy'
     ];
     var dropdownUsia = <String>[
-      'Gigi Susu (1< thn)',
-      'Poel 1 (1-2 thn)',
-      'Poel 2 (2-3 thn)',
-      'Poel 3 (3-4 thn)',
-      'Poel 4 (4-5 thn)',
-      'Poel 5 (>5 thn)',
+      '1< thn (Gigi Susu)',
+      '1-2 thn (Poel 1)',
+      '2-3 thn (Poel 2)',
+      '3-4 thn (Poel 3)',
+      '4-5 thn (Poel 4)',
+      '>5 thn (Poel 5)',
     ];
 
     return Scaffold(

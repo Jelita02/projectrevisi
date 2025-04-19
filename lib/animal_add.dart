@@ -68,6 +68,7 @@ class _AnimalAddState extends State<AnimalAdd> {
       _imgFile = File(img.path); // convert it to a Dart:io file
     });
   }
+  //nampilkan gambar
 
   _tambahHewan() {
     hewan.add({
@@ -212,6 +213,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                 decoration: const InputDecoration(
                   labelText: 'Nama',
                   suffix: Icon(Icons.animation),
+                  //nambah a=ican sebelum nama
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -227,12 +229,12 @@ class _AnimalAddState extends State<AnimalAdd> {
                 ),
                 validator: (value) => value == null ? 'Pilih Usia' : null,
                 items: <String>[
-                  'Gigi Susu (1< thn)',
-                  'Poel 1 (1-2 thn)',
-                  'Poel 2 (2-3 thn)',
-                  'Poel 3 (3-4 thn)',
-                  'Poel 4 (4-5 thn)',
-                  'Poel 5 (>5 thn)',
+                  '1< thn (Gigi Susu)',
+                  '1-2 thn (Poel 1)',
+                  '2-3 thn (Poel 2)',
+                  '3-4 thn (Poel 3)',
+                  '4-5 thn (Poel 4)',
+                  '>5 thn (Poel 5)',
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -378,6 +380,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                     if (value != null) {
                       _blok = value["nama"];
                       _blokId = value["id"];
+                      
                     }
                   });
                 },

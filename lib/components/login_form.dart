@@ -11,8 +11,10 @@ class LoginForm extends StatefulWidget {
 
 class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  //memvalidasi data
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  // nyimpen data
   bool _obscureText = true;
 
   bool _isLoading = false;
@@ -85,6 +87,7 @@ class LoginFormState extends State<LoginForm> {
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          //tampilan form
           children: <Widget>[
             const Center(
               child: Text(
@@ -108,6 +111,7 @@ class LoginFormState extends State<LoginForm> {
                 if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                   return 'Masukkan email yang valid';
                 }
+                // untukmentukan @email atau bukan
                 return null;
               },
             ),
@@ -115,6 +119,7 @@ class LoginFormState extends State<LoginForm> {
             TextFormField(
               controller: _passwordController,
               obscureText: _obscureText,
+              //untuk mengubah huruf 
               decoration: InputDecoration(
                 labelText: 'Password',
                 suffixIcon: IconButton(

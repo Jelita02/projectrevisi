@@ -108,6 +108,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                       _buildHeaderCell("No.", 50),
                       _buildHeaderCell("Nama", 100),
                       _buildHeaderCell("Jenis Kelamin", 130),
+                      _buildHeaderCell("Usia", 130),
                       _buildHeaderCell("Jenis Hewan", 130),
                       _buildHeaderCell("Kategori", 100),
                       _buildHeaderCell("Kondisi", 100),
@@ -136,6 +137,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                               _buildDataCell(item["nama"].toString(), 100),
                               _buildDataCell(
                                   item["jenis_kelamin"].toString(), 130),
+                              _buildDataCell(item["usia"].toString(), 130),  
                               _buildDataCell(item["jenis"].toString(), 130),
                               _buildDataCell(item["kategori"].toString(), 100),
                               _buildDataCell(item["status"].toString(), 100),

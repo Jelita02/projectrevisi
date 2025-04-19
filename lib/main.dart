@@ -9,25 +9,27 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   runApp(MyApp());
-
+//langkah awal buat aplikasi
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  // menghubungkan kefarebase
   await Supabase.initialize(
     url: 'https://ebihlwhphychpvauperi.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViaWhsd2hwaHljaHB2YXVwZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0NzczNTYsImV4cCI6MjA1ODA1MzM1Nn0.wPxyrLVMhWJJ2PjLnLHinLh3uko2mTQRbikjTnXfJpc',
   );
 }
+//menghubungkan ke supabase
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final MobileScannerController cameraController = MobileScannerController();
-
+ //penghubung untuk menyimpan data QR-CODE
   @override
   Widget build(BuildContext context) {
+    // fuction bawaan build kembalian widget
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
       ),
     );
     return MaterialApp(
+      // material tamplate ngatur forntend
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       localizationsDelegates: const [
+    //buat ngatur bahasa
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -50,14 +54,17 @@ class MyApp extends StatelessWidget {
         Locale('id', 'ID'), // Bahasa Indonesia
       ],
       debugShowCheckedModeBanner: false,
+      //
       title: 'QR Scan',
       home: Container(
         decoration: const BoxDecoration(
+          //
           image: DecorationImage(
               image: AssetImage("assets/images/france.jpg"),
               repeat: ImageRepeat.repeat),
         ),
         child: const Login(),
+        //buat tampilan login
       ),
     );
   }
