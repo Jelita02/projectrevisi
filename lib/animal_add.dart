@@ -109,20 +109,48 @@ class _AnimalAddState extends State<AnimalAdd> {
   void initState() {
     super.initState();
 
+    Map<String, int> kandangTotal = {};
+
     FirebaseFirestore.instance
-        .collection("kandang")
+        .collection("hewan")
         .where("user_uid", isEqualTo: widget.user.uid)
-        .orderBy("kategori", descending: false)
         .get()
         .then((value) {
-      setState(() {
-        _listKategori =
-            value.docs.map((e) => {"id": e.id, "nama": e['nama']}).toList();
+      for (var element in value.docs) {
+        kandangTotal[element['kandang_id']] =
+            (kandangTotal[element['kandang_id']] ?? 0) + 1;
+      }
+      FirebaseFirestore.instance
+          .collection("kandang")
+          .where("user_uid", isEqualTo: widget.user.uid)
+          .orderBy("kategori", descending: false)
+          .get()
+          .then((value) {
+        setState(() {
+          _listKategori = value.docs
+              .where((element) {
+                return (kandangTotal[element.id] ?? 0) <
+                    int.parse(element['kapasitas'] ?? 0);
+              })
+              .map((e) => {"id": e.id, "nama": e['nama']})
+              .toList();
+        });
       });
     });
   }
 
   void _getListBlok(String kategoriId) {
+    Map<String, int> blokTotal = {};
+    FirebaseFirestore.instance
+        .collection("hewan")
+        .where("user_uid", isEqualTo: widget.user.uid)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        blokTotal[element['blok_id']] =
+            (blokTotal[element['blok_id']] ?? 0) + 1;
+      }
+    });
     FirebaseFirestore.instance
         .collection("blok")
         .where("kandang_id", isEqualTo: kategoriId)
@@ -130,8 +158,12 @@ class _AnimalAddState extends State<AnimalAdd> {
         .get()
         .then((value) {
       setState(() {
-        _listBlok =
-            value.docs.map((e) => {"id": e.id, "nama": e['nama']}).toList();
+        _listBlok = value.docs
+            .where((element) =>
+                (blokTotal[element.id] ?? 0) <
+                int.parse(element['kapasitas'] ?? 0))
+            .map((e) => {"id": e.id, "nama": e['nama']})
+            .toList();
       });
     });
   }
@@ -351,7 +383,8 @@ class _AnimalAddState extends State<AnimalAdd> {
                   );
                 }).toList(),
                 onChanged: (value) {
-                  setState(() { // reload halaman
+                  setState(() {
+                    // reload halaman
                     if (value != null) {
                       _kandang = value["nama"] ?? "";
                       _kandangId = value["id"] ?? "";

@@ -119,14 +119,33 @@ class _AnimalEditState extends State<AnimalEdit> {
     _bobotController =
         TextEditingController(text: widget.doc.data()?["bobot_akhir"]);
 
+    Map<String, int> kandangTotal = {};
+
     FirebaseFirestore.instance
-        .collection("kandang")
+        .collection("hewan")
         .where("user_uid", isEqualTo: widget.user.uid)
+        .where(FieldPath.documentId, isNotEqualTo: widget.doc.id)
         .get()
         .then((value) {
-      setState(() {
-        _listKategori =
-            value.docs.map((e) => {"id": e.id, "nama": e['nama']}).toList();
+      for (var element in value.docs) {
+        kandangTotal[element['kandang_id']] =
+            (kandangTotal[element['kandang_id']] ?? 0) + 1;
+      }
+      FirebaseFirestore.instance
+          .collection("kandang")
+          .where("user_uid", isEqualTo: widget.user.uid)
+          .orderBy("kategori", descending: false)
+          .get()
+          .then((value) {
+        setState(() {
+          _listKategori = value.docs
+              .where((element) {
+                return (kandangTotal[element.id] ?? 0) <
+                    int.parse(element['kapasitas'] ?? 0);
+              })
+              .map((e) => {"id": e.id, "nama": e['nama']})
+              .toList();
+        });
       });
     });
 
@@ -145,14 +164,33 @@ class _AnimalEditState extends State<AnimalEdit> {
   }
 
   void _getListBlok(String kategoriId) {
+    Map<String, int> blokTotal = {};
+    FirebaseFirestore.instance
+        .collection("hewan")
+        .where("user_uid", isEqualTo: widget.user.uid)
+        .where(FieldPath.documentId, isNotEqualTo: widget.doc.id)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        blokTotal[element['blok_id']] =
+            (blokTotal[element['blok_id']] ?? 0) + 1;
+      }
+    });
     FirebaseFirestore.instance
         .collection("blok")
         .where("kandang_id", isEqualTo: kategoriId)
+        .orderBy("nama", descending: false)
         .get()
         .then((value) {
       setState(() {
-        _listBlok =
-            value.docs.map((e) => {"id": e.id, "nama": e['nama']}).toList();
+        _listBlok = value.docs
+            .where((element) =>
+                (blokTotal[element.id] ?? 0) <
+                int.parse(element['kapasitas'] ?? 0))
+            .map((e) => {"id": e.id, "nama": e['nama']})
+            .toList();
+
+        print("CHUAKC: $_listBlok");
       });
     });
   }
@@ -404,21 +442,26 @@ class _AnimalEditState extends State<AnimalEdit> {
                   labelText: 'Blok',
                 ),
                 validator: (value) => value == null ? 'Pilih blok' : null,
-                items: _listBlok
-                    .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: value,
+                items: _listBlok.map<DropdownMenuItem<String>>((value) {
+                  return DropdownMenuItem<String>(
+                    value: value["id"],
                     child: Text(value["nama"] ?? ""),
                   );
                 }).toList(),
-                value: _listBlok.firstWhere(
-                    (e) => e["id"] == widget.doc.data()?["blok_id"],
-                    orElse: () => {}),
+                value: _listBlok
+                        .firstWhere(
+                            (e) => e["id"] == widget.doc.data()?["blok_id"],
+                            orElse: () => {})
+                        .isEmpty
+                    ? null
+                    : widget.doc.data()?["blok_id"],
                 onChanged: (value) {
                   setState(() {
                     if (value != null) {
-                      _blok = value["nama"];
-                      _blokId = value["id"];
+                      Map<String, dynamic> choiceBlok =
+                          _listBlok.firstWhere((item) => item['id'] == value);
+                      _blok = choiceBlok["nama"];
+                      _blokId = choiceBlok["id"];
                     }
                   });
                 },
