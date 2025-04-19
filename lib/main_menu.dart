@@ -54,6 +54,7 @@ class _MainMenuState extends State<MainMenu> {
             _countMale = list
                 .where((element) => element.data()["jenis_kelamin"] == "Jantan")
                 .length;
+                //perhitungannya length
             _countFemale = list
                 .where((element) => element.data()["jenis_kelamin"] == "Betina")
                 .length;
@@ -78,7 +79,6 @@ class _MainMenuState extends State<MainMenu> {
       _currentIndex = index;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
@@ -130,12 +130,7 @@ class _MainMenuState extends State<MainMenu> {
         ),
         onPressed: () {
           setState(() {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => const QRScanner(),
-            //     ));
-            _currentIndex = 1; // Pindah ke tab search
+            _currentIndex = 1; // Pindah ke qr 
           });
         },
       ),
@@ -145,6 +140,7 @@ class _MainMenuState extends State<MainMenu> {
         selectedItemColor: Colors.white,
         currentIndex: _currentIndex,
         onTap: _onTapped,
+        // untuk pindah ke fitur selanjutnya
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -161,6 +157,7 @@ class _MainMenuState extends State<MainMenu> {
         ],
       ),
       body: pages[_currentIndex],
+      // untuk menampilkan tampilan
     );
   }
 }

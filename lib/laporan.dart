@@ -112,7 +112,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
             buildCard(Icons.pie_chart, "Domba", "Populasi: $totalDomba Ekor"),
             buildGenderSection(),
             buildCard(Icons.favorite, "Jumlah Kasus Sakit", "$totalSick Kasus"),
-            buildCard(Icons.cake, "Usia", ""),
+            // buildCard(Icons.cake, "Usia", ""),
             buildCategorySection(),
             buildStatusSection(),
           ],

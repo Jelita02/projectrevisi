@@ -247,7 +247,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         margin: const EdgeInsets.only(right: 20),
                         child: const Center(
                           child: Text(
-                            "DOM 1",
+                            "Dmba",
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
                               fontSize: 18,

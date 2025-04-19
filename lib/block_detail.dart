@@ -172,7 +172,7 @@ class _BlockDetailState extends State<BlockDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Total Blok"),
-                            Text("Kategori"),
+                            Text("Total Kapasitas"),
                           ],
                         ),
                         const SizedBox(height: 10),

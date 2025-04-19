@@ -3,7 +3,7 @@ import 'package:ternak/components/login_form.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
-
+//Stateless tampilan tidak bisa diubah
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +11,6 @@ class Login extends StatelessWidget {
         margin: const EdgeInsets.all(20),
         child: Center(
           child: ListView(
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Column(
                 children: <Widget>[
