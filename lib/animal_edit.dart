@@ -549,7 +549,7 @@ class _AnimalEditState extends State<AnimalEdit> {
                       ),
                       onPressed: () => _ambilGambar(),
                       child: const Text(
-                        "Pilih",
+                        "Upload",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )

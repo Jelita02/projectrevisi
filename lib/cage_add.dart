@@ -374,7 +374,7 @@ class _CageAddState extends State<CageAdd> {
                       ),
                       onPressed: () => _showAddBlok(context),
                       child: const Text(
-                        "Pilih",
+                        "Buat",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

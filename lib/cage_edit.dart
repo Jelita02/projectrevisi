@@ -374,7 +374,7 @@ class _CageEditState extends State<CageEdit> {
                       ),
                       onPressed: () => _showPicker(context),
                       child: const Text(
-                        "Pilih",
+                        "upluad",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )
@@ -417,7 +417,7 @@ class _CageEditState extends State<CageEdit> {
                       ),
                       onPressed: () => _showAddBlok(context),
                       child: const Text(
-                        "Pilih",
+                        "Buat",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

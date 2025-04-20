@@ -9,18 +9,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   runApp(MyApp());
-//langkah awal buat aplikasi
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // menghubungkan kefarebase
   await Supabase.initialize(
     url: 'https://ebihlwhphychpvauperi.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViaWhsd2hwaHljaHB2YXVwZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0NzczNTYsImV4cCI6MjA1ODA1MzM1Nn0.wPxyrLVMhWJJ2PjLnLHinLh3uko2mTQRbikjTnXfJpc',
   );
 }
-//menghubungkan ke supabase
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

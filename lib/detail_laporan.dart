@@ -111,7 +111,6 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                       _buildHeaderCell("Usia", 130),
                       _buildHeaderCell("Jenis Hewan", 130),
                       _buildHeaderCell("Kategori", 100),
-                      _buildHeaderCell("Kondisi", 100),
                     ],
                   ),
                 ),
@@ -130,7 +129,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                               ),
                             ),
                           ),
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(30),
                           child: Row(
                             children: [
                               _buildDataCell((index + 1).toString(), 50),
@@ -140,7 +139,6 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                               _buildDataCell(item["usia"].toString(), 130),  
                               _buildDataCell(item["jenis"].toString(), 130),
                               _buildDataCell(item["kategori"].toString(), 100),
-                              _buildDataCell(item["status"].toString(), 100),
                             ],
                           ),
                         );

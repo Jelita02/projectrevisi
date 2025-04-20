@@ -501,7 +501,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                       ),
                       onPressed: () => _ambilGambar(),
                       child: const Text(
-                        "Pilih",
+                        "Upload",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )
