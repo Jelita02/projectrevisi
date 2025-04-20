@@ -90,7 +90,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: 710,
+            width: 850,
             child: Column(
               children: [
                 Container(
@@ -110,7 +110,7 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                       _buildHeaderCell("Jenis Kelamin", 130),
                       _buildHeaderCell("Usia", 130),
                       _buildHeaderCell("Jenis Hewan", 130),
-                      _buildHeaderCell("Kategori", 100),
+                      _buildHeaderCell("Kategori", 130),
                     ],
                   ),
                 ),
@@ -136,9 +136,9 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
                               _buildDataCell(item["nama"].toString(), 100),
                               _buildDataCell(
                                   item["jenis_kelamin"].toString(), 130),
-                              _buildDataCell(item["usia"].toString(), 130),  
+                              _buildDataCell(item["usia"].toString(), 130),
                               _buildDataCell(item["jenis"].toString(), 130),
-                              _buildDataCell(item["kategori"].toString(), 100),
+                              _buildDataCell(item["kategori"].toString(), 130),
                             ],
                           ),
                         );
