@@ -197,27 +197,6 @@ class _AnimalDetailState extends State<AnimalDetail> {
       },
     );
   }
-Future<void> _captureAndSave(imageUrl) async {
-    // Meminta izin penyimpanan
-    RenderRepaintBoundary boundary = widget.globalKey.currentContext!
-        .findRenderObject()! as RenderRepaintBoundary;
-    var image = await boundary.toImage(pixelRatio: 5.0);
-    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-    Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-    final directory = (await getTemporaryDirectory()).path;
-    final filePath = '$directory/${widget.doc.id}.jpg';
-    final file = File(filePath);
-    await file.writeAsBytes(pngBytes);
-
-    // Simpan ke galeri
-    await ImageGallerySaver.saveFile(filePath);
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
-  }
   @override
   Widget build(BuildContext context) {
     var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
