@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -11,12 +11,13 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_edit.dart';
 import 'package:ternak/components/riwayat_kesehatan.dart';
 import 'package:ternak/components/riwayat_penimbangan.dart';
 
 class AnimalDetail extends StatefulWidget {
-  final User user;
+  final auth.User user;
   final DocumentSnapshot<Map<String, dynamic>> doc;
   const AnimalDetail({super.key, required this.doc, required this.user});
 
@@ -36,16 +37,21 @@ class _AnimalDetailState extends State<AnimalDetail> {
   IconData _iconStatus = Icons.rebase_edit;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> requestStoragePermission() async {
+  Future<void> requestStoragePermission({required String type}) async {
     var status = await Permission.storage.status;
     var status2 = await Permission.photos.status;
-    
+
     if (!status.isGranted || !status2.isGranted) {
       status = await Permission.storage.request();
-      
+
       if (status.isGranted || status2.isGranted) {
         print("Izin storage diberikan.");
-        _captureAndSaveQrCode();
+        if (type == "image") {
+          _captureAndSave();
+        }
+        if (type == "qrcode") {
+          _captureAndSaveQrCode();
+        }
       } else if (status.isDenied || status2.isDenied) {
         print("Izin storage ditolak.");
         if (!mounted) return;
@@ -53,33 +59,55 @@ class _AnimalDetailState extends State<AnimalDetail> {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Permission denied')));
       } else if (status.isPermanentlyDenied || status2.isPermanentlyDenied) {
-        print("Izin storage ditolak permanen, buka pengaturan untuk mengaktifkan.");
+        print(
+            "Izin storage ditolak permanen, buka pengaturan untuk mengaktifkan.");
         openAppSettings();
       }
     }
   }
 
+  Future<void> _captureAndSave() async {
+    // Meminta izin penyimpanan
+    RenderRepaintBoundary boundary =
+        _globalKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 5.0);
+    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+    final directory = (await getTemporaryDirectory()).path;
+    final filePath = '$directory/${widget.doc.id}.jpg';
+    final file = File(filePath);
+    await file.writeAsBytes(pngBytes);
+
+    // Simpan ke galeri
+    await ImageGallerySaver.saveFile(filePath);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
+  }
+
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
-      RenderRepaintBoundary boundary = _globalKey.currentContext!
-          .findRenderObject()! as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 5.0);
-      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+    RenderRepaintBoundary boundary =
+        _globalKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 5.0);
+    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-      final directory = (await getTemporaryDirectory()).path;
-      final filePath = '$directory/${doc.id}.jpg';
-      final file = File(filePath);
-      await file.writeAsBytes(pngBytes);
+    final directory = (await getTemporaryDirectory()).path;
+    final filePath = '$directory/${doc.id}.jpg';
+    final file = File(filePath);
+    await file.writeAsBytes(pngBytes);
 
-      // Simpan ke galeri
-      await ImageGallerySaver.saveFile(filePath);
+    // Simpan ke galeri
+    await ImageGallerySaver.saveFile(filePath);
 
-      if (!mounted) return;
+    if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('QR Code saved to gallery')));
-          
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('QR Code saved to gallery')));
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> _getHealthyData() {
@@ -133,7 +161,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
             TextButton(
               child: const Text('Download'),
               onPressed: () {
-                requestStoragePermission();
+                requestStoragePermission(type: "qrcode");
               },
             ),
             TextButton(
@@ -147,7 +175,6 @@ class _AnimalDetailState extends State<AnimalDetail> {
       },
     );
   }
-
 
   @override
   void initState() {
@@ -197,6 +224,69 @@ class _AnimalDetailState extends State<AnimalDetail> {
       },
     );
   }
+
+  void _showImage() async {
+    String imageUrl = Supabase.instance.client.storage
+        .from('terdom')
+        .getPublicUrl("hewan/${widget.doc.id}.jpg");
+
+    print("DEBUG:: $imageUrl");
+
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Dialog tidak dapat ditutup dengan menyentuh di luar dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.height * 0.4,
+                  child: Center(
+                    child: RepaintBoundary(
+                      key: _globalKey,
+                      child: Container(
+                          color: Colors.white,
+                          child: Image.network(
+                            imageUrl,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Gambar gagal dimuat, tampilkan widget pengganti
+                              return const Icon(Icons.broken_image,
+                                  size: 50, color: Colors.grey);
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const CircularProgressIndicator(); // Bisa diganti dengan placeholder
+                            },
+                          )),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                requestStoragePermission(type: "image");
+              },
+              child: const Text('Download'),
+            ),
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
@@ -238,23 +328,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.all(5),
-                        margin: const EdgeInsets.only(right: 20),
-                        child: const Center(
-                          child: Text(
-                            "domb",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
+                    Center(
+                      child: IconButton(
+                        iconSize: 18,
+                        icon: const Icon(Icons.archive),
+                        onPressed: () {
+                          _showImage();
+                        },
                       ),
                     ),
                     const Expanded(

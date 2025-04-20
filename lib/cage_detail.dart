@@ -1,8 +1,14 @@
+import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/block_detail.dart';
 import 'package:ternak/cage_edit.dart';
@@ -22,6 +28,8 @@ class CageDetail extends StatefulWidget {
 class _CageDetailState extends State<CageDetail> {
   var canUse = 0;
   var totalBlok = 0;
+
+  final GlobalKey _globalKey = GlobalKey();
 
   late DocumentSnapshot<Map<String, dynamic>> doc;
 
@@ -99,6 +107,112 @@ class _CageDetailState extends State<CageDetail> {
     );
   }
 
+  Future<void> requestStoragePermission(imageUrl) async {
+    var status = await Permission.storage.status;
+    var status2 = await Permission.photos.status;
+
+    if (!status.isGranted || !status2.isGranted) {
+      status = await Permission.storage.request();
+
+      if (status.isGranted || status2.isGranted) {
+        print("Izin storage diberikan.");
+        _captureAndSave();
+      } else if (status.isDenied || status2.isDenied) {
+        print("Izin storage ditolak.");
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Permission denied')));
+      } else if (status.isPermanentlyDenied || status2.isPermanentlyDenied) {
+        print(
+            "Izin storage ditolak permanen, buka pengaturan untuk mengaktifkan.");
+        openAppSettings();
+      }
+    }
+  }
+
+  Future<void> _captureAndSave() async {
+    // Meminta izin penyimpanan
+    RenderRepaintBoundary boundary =
+        _globalKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: 5.0);
+    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+    final directory = (await getTemporaryDirectory()).path;
+    final filePath = '$directory/${widget.doc.data()['image']}';
+    final file = File(filePath);
+    await file.writeAsBytes(pngBytes);
+
+    // Simpan ke galeri
+    await ImageGallerySaver.saveFile(filePath);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
+  }
+
+  void _showImage() async {
+    String imageUrl = Supabase.instance.client.storage
+        .from('terdom')
+        .getPublicUrl("kandang/${widget.doc.data()['image']}");
+
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Dialog tidak dapat ditutup dengan menyentuh di luar dialog
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.height * 0.4,
+                  child: Center(
+                    child: RepaintBoundary(
+                      key: _globalKey,
+                      child: Container(
+                          color: Colors.white,
+                          child: Image.network(
+                            imageUrl,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Gambar gagal dimuat, tampilkan widget pengganti
+                              return const Icon(Icons.broken_image,
+                                  size: 50, color: Colors.grey);
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const CircularProgressIndicator(); // Bisa diganti dengan placeholder
+                            },
+                          )),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                requestStoragePermission(imageUrl);
+              },
+              child: const Text('Download'),
+            ),
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +226,15 @@ class _CageDetailState extends State<CageDetail> {
           ),
         ),
         actions: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () {
+                _showImage();
+              },
+              child: const Icon(Icons.archive),
+            ), // Titik tiga vertikal
+          ),
           Align(
             alignment: Alignment.centerRight,
             child: PopupMenuButton<String>(

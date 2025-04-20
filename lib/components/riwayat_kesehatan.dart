@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,7 +24,7 @@ class RiwayatKesehatan extends StatefulWidget {
 }
 
 class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
-  Future<void> requestStoragePermission(imageUrl) async {
+  Future<void> requestStoragePermission() async {
     var status = await Permission.storage.status;
     var status2 = await Permission.photos.status;
 
@@ -34,7 +33,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
 
       if (status.isGranted || status2.isGranted) {
         print("Izin storage diberikan.");
-        _captureAndSave(imageUrl);
+        _captureAndSave();
       } else if (status.isDenied || status2.isDenied) {
         print("Izin storage ditolak.");
         if (!mounted) return;
@@ -49,7 +48,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
     }
   }
 
-  Future<void> _captureAndSave(imageUrl) async {
+  Future<void> _captureAndSave() async {
     // Meminta izin penyimpanan
     RenderRepaintBoundary boundary = widget.globalKey.currentContext!
         .findRenderObject()! as RenderRepaintBoundary;
@@ -115,7 +114,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                requestStoragePermission(imageUrl);
+                requestStoragePermission();
               },
               child: const Text('Download'),
             ),
@@ -135,7 +134,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
   Widget build(BuildContext context) {
     List<dynamic> gejala = [];
     if (widget.doc.data() != null) {
-      gejala = widget.doc.data()!["gejala"] as List<dynamic>;
+      gejala = widget.doc.data()?["gejala"] ?? [];
     }
 
     return Container(
