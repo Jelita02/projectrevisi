@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // ignore: depend_on_referenced_packages
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as path; //
 
 class AnimalAdd extends StatefulWidget {
   final userFire.User user;
@@ -20,6 +20,7 @@ class AnimalAdd extends StatefulWidget {
 
 class _AnimalAddState extends State<AnimalAdd> {
   final _formKey = GlobalKey<FormState>();
+  bool _imageError = false; // 
 
   File? _imgFile;
 

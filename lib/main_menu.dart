@@ -148,7 +148,7 @@ class _MainMenuState extends State<MainMenu> {
           ),
           BottomNavigationBarItem(
             icon: SizedBox.shrink(),
-            label: "",
+            label: '', //scanner
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -93,19 +93,19 @@ class HealthyAddState extends State<HealthyAdd> {
   void _addHealthy() {
     var kesehatan = FirebaseFirestore.instance.collection('kesehatan');
 
-    List<String> gejala = [];
-    _vaksinCheck ? gejala.add("Vaksin") : null;
-    _nafsuCheck ? gejala.add("Nafsu Makan Turun") : null;
-    _pinkEyeCheck ? gejala.add("Penyakit Mata (pink eye)") : null;
-    _busukCheck ? gejala.add("Busuk Kuku") : null;
-    _otherCheck ? gejala.add(_textOtherController.text) : null;
+    List<String> keterangan = [];
+    _vaksinCheck ? keterangan.add("Vaksin") : null;
+    _nafsuCheck ? keterangan.add("Nafsu Makan Turun") : null;
+    _pinkEyeCheck ? keterangan.add("Penyakit Mata (pink eye)") : null;
+    _busukCheck ? keterangan.add("Busuk Kuku") : null;
+    _otherCheck ? keterangan.add(_textOtherController.text) : null;
 
     kesehatan.add({
       "user_uid": widget.user.uid,
       "hewan_nama": animal?.data()?["nama"],
       "hewan_id": animal?.id,
       "tanggal": _tanggalController.text,
-      "gejala": gejala,
+      "keterangan": keterangan,
     }).then((value) {
       if (_image != null) {
         // Ambil ekstensi file asli
@@ -147,7 +147,7 @@ class HealthyAddState extends State<HealthyAdd> {
           child: ListView(
             children: [
               const Text(
-                "Foto Gejala",
+                "Foto Hewan",
                 style: TextStyle(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
                 ),
@@ -176,7 +176,7 @@ class HealthyAddState extends State<HealthyAdd> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  "Upload Gejala",
+                                  "Upload",
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Color.fromRGBO(26, 107, 125, 1),
@@ -191,7 +191,7 @@ class HealthyAddState extends State<HealthyAdd> {
               ),
               const SizedBox(height: 20),
               const Text(
-                "Gejala",
+                "keterangan",
                 style: TextStyle(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
                   fontSize: 16,
@@ -238,28 +238,28 @@ class HealthyAddState extends State<HealthyAdd> {
                 TextFormField(
                   validator: (value) {
                     if ((value == null || value.isEmpty) && _otherCheck) {
-                      return "Masukan gejala lainya";
+                      return "Masukan keterangan lainya";
                     }
 
                     return null;
                   },
                   controller: _textOtherController,
                   decoration: const InputDecoration(
-                    labelText: "Masukkan gejala lain",
+                    labelText: "Masukkan keterangan lain",
                     border: OutlineInputBorder(),
                   ),
                 ),
               TextFormField(
                 controller: _tanggalController,
                 decoration: const InputDecoration(
-                  labelText: 'Tanggal Sakit',
+                  labelText: 'Tanggal kesehatan',
                   suffix: Icon(Icons.date_range_outlined),
                 ),
                 readOnly: true,
                 onTap: () => _selectDate(context),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Masukan tanggal sakit";
+                    return "Masukan tanggal kesehatan";
                   }
 
                   return null;
@@ -267,7 +267,7 @@ class HealthyAddState extends State<HealthyAdd> {
               ),
               const SizedBox(height: 20),
               const Text(
-                "Hewan Sakit",
+                "Hewan ",
                 style: TextStyle(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
                   fontSize: 16,

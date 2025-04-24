@@ -37,10 +37,23 @@ class _AnimalEditState extends State<AnimalEdit> {
   late String _status;
   late String _usia;
   String _jenisKelamin = "Jantan";
+  String urlgambar = "";
 
   TextEditingController _namaController = TextEditingController();
   TextEditingController _tanggalController = TextEditingController();
   TextEditingController _bobotController = TextEditingController();
+
+void _showImage() async {
+  final url = Supabase.instance.client.storage
+      .from('terdom')
+      .getPublicUrl("hewan/${widget.doc.id}.jpg");
+
+  setState(() {
+    urlgambar = url;
+  });
+
+
+}
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -113,6 +126,7 @@ class _AnimalEditState extends State<AnimalEdit> {
   void initState() {
     super.initState();
 
+    _showImage();
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
     _tanggalController =
         TextEditingController(text: widget.doc.data()?["tanggal_masuk"]);
@@ -530,17 +544,27 @@ class _AnimalEditState extends State<AnimalEdit> {
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20)),
-                      child: (_imgFile == null)
-                          ? const Text(
-                              "Foto Hewan",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.grey),
-                            )
-                          : Image.file(
-                              _imgFile!,
+                      child: (_imgFile != null)
+                      ? Image.file(_imgFile!, height: 200, width: 200)
+                      : (urlgambar != "")
+                          ? Image.network(
+                              urlgambar,
                               height: 200,
                               width: 200,
-                            ),
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const CircularProgressIndicator();
+                              },
+                            )
+                          : const Text(
+                              "Foto Hewan",
+                              style: TextStyle(fontSize: 18, color: Colors.grey),
+                            )
+
+
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

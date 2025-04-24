@@ -18,12 +18,13 @@ class CageAdd extends StatefulWidget {
 
 class _CageAddState extends State<CageAdd> {
   final _formKey = GlobalKey<FormState>();
-
+  bool _imageError = false; // tambahkan di state
   File? _image;
 
   late String _kategori;
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _kapasitasController = TextEditingController();
+
 
   List<Map<String, dynamic>> blok = [];
 
@@ -33,6 +34,7 @@ class _CageAddState extends State<CageAdd> {
     final pickedFile = await picker.pickImage(source: source);
 
     setState(() {
+
       if (pickedFile != null) {
         _image = File(pickedFile.path);
       }
@@ -72,7 +74,9 @@ class _CageAddState extends State<CageAdd> {
           "user_uid": widget.user.uid,
           "kandang_id": value.id,
           "nama": v["nama_blok"] ?? "",
-          "kapasitas": v["kapasitas_blok"] ?? "",
+          "kapasitas": v["kapasitas_wblok"] ?? "",
+          
+
         });
       }
 
@@ -94,18 +98,33 @@ class _CageAddState extends State<CageAdd> {
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Gallery'),
-                onTap: () {
-                  _getImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
+                onTap: () 
+                async {
+                await _getImage(ImageSource.gallery);
+                setState(() {
+                  _imageError = _image == null; // update error state
+                });
+                Navigator.of(context).pop();
+              },
+                // {
+                //   _getImage(ImageSource.gallery);
+                //   Navigator.of(context).pop();
+                // },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Camera'),
-                onTap: () {
-                  _getImage(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
+                onTap: () async {
+                await _getImage(ImageSource.gallery);
+                setState(() {
+                  _imageError = _image == null; // update error state
+                });
+                Navigator.of(context).pop();
+              },
+                // {
+                //   _getImage(ImageSource.camera);
+                //   Navigator.of(context).pop();
+                // },
               ),
             ],
           ),
@@ -114,67 +133,215 @@ class _CageAddState extends State<CageAdd> {
     );
   }
 
+  // void _showAddBlok(context) {
+  //   final blokKey = GlobalKey<FormState>();
+  //   final TextEditingController namaBlokController = TextEditingController();
+  //   final TextEditingController kapasitasBlokController =
+  //       TextEditingController();
+
+  //   showModalBottomSheet(
+  //      isScrollControlled: true, // penting untuk menghindari tertutup keyboad
+  //     context: context,
+  //     builder: (BuildContext bc) {
+  //       return SafeArea(
+  //         child: Container(
+  //           padding: const EdgeInsets.all(20),
+  //           child: Form(
+  //             key: blokKey,
+  //             child: Wrap(
+  //               children: <Widget>[
+  //                 Row(
+  //                   children: [
+  //                     Expanded(
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.all(10),
+  //                         child: TextFormField(
+  //                           controller: namaBlokController,
+  //                           maxLength: 20, //permintaan dari gumukmas
+  //                           decoration: const InputDecoration(
+  //                             labelText: 'Nama',
+  //                           ),
+  //                           keyboardType: TextInputType.name,
+  //                           validator: (value) {
+  //                             if (value == null || value.isEmpty) {
+  //                               return "Masukan nama";
+  //                             }
+
+  //                             return null;
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     Expanded(
+  //                       child: Padding(
+  //                         padding: const EdgeInsets.all(10),
+  //                         child: TextFormField(
+  //                           controller: kapasitasBlokController,
+  //                           decoration: const InputDecoration(
+  //                             labelText: 'Kapasitas',
+  //                           ),
+  //                           keyboardType: TextInputType.number,
+  //                           validator: (value) {
+  //                             if (value == null || value.isEmpty) {
+  //                               return "Masukan kapasitas";
+  //                             }
+
+  //                             return null;
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 Center(
+  //                   child: SizedBox(
+  //                     width: double.infinity,
+  //                     child: ElevatedButton(
+  //                       style: ElevatedButton.styleFrom(
+  //                         backgroundColor:
+  //                             const Color.fromRGBO(26, 107, 125, 1),
+  //                       ),
+  //                       onPressed: () {
+  //                         if (blokKey.currentState?.validate() == true) {
+  //                           setState(() {
+  //                             blok.add({
+  //                               "nama_blok": namaBlokController.text,
+  //                               "kapasitas_blok": kapasitasBlokController.text,
+  //                             });
+
+  //                             Navigator.of(context).pop();
+  //                           });
+  //                         }
+  //                       },
+  //                       child: const Text(
+  //                         'Tambah Blok',
+  //                         style: TextStyle(
+  //                           color: Colors.white,
+  //                           fontSize: 20,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
   void _showAddBlok(context) {
-    final blokKey = GlobalKey<FormState>();
-    final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController =
-        TextEditingController();
+  final blokKey = GlobalKey<FormState>();
+  final TextEditingController namaBlokController = TextEditingController();
+  final TextEditingController kapasitasBlokController = TextEditingController();
 
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: blokKey,
-              child: Wrap(
-                children: <Widget>[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: TextFormField(
-                            controller: namaBlokController,
-                            maxLength: 20,
-                            decoration: const InputDecoration(
-                              labelText: 'Nama',
-                            ),
-                            keyboardType: TextInputType.name,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Masukan nama";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: TextFormField(
-                            controller: kapasitasBlokController,
-                            decoration: const InputDecoration(
-                              labelText: 'Kapasitas',
-                            ),
-                            keyboardType: TextInputType.number,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Masukan kapasitas";
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Center(
-                    child: SizedBox(
+  showModalBottomSheet(
+    isScrollControlled: true, // <- penting untuk menghindari tertutup keyboard
+    context: context,
+    builder: (BuildContext bc) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: blokKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(10),
+                    //         child: TextFormField(
+                    //           controller: namaBlokController,
+                    //           maxLength: 20,
+                    //           decoration: const InputDecoration(
+                    //             labelText: 'Nama',
+                    //           ),
+                    //           keyboardType: TextInputType.name,
+                    //           validator: (value) {
+                    //             if (value == null || value.isEmpty) {
+                    //               return "Masukan nama";
+                    //             }
+                    //             return null;
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(10),
+                    //         child: TextFormField(
+                    //           controller: kapasitasBlokController,
+                    //           decoration: const InputDecoration(
+                    //             labelText: 'Kapasitas',
+                    //           ),
+                    //           keyboardType: TextInputType.number,
+                    //           validator: (value) {
+                    //             if (value == null || value.isEmpty) {
+                    //               return "Masukan kapasitas";
+                    //             }
+                    //             return null;
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: TextFormField(
+          controller: namaBlokController,
+          maxLength: 20,
+          decoration: const InputDecoration(
+            labelText: 'Nama',
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+          ),
+          keyboardType: TextInputType.name,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Masukan nama";
+            }
+            return null;
+          },
+        ),
+      ),
+    ),
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: TextFormField(
+          controller: kapasitasBlokController,
+          decoration: const InputDecoration(
+            labelText: 'Kapasitas',
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+          ),
+          keyboardType: TextInputType.number,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return "Masukan kapasitas";
+            }
+            return null;
+          },
+        ),
+      ),
+    ),
+  ],
+),                
+                    const SizedBox(height: 10),
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -188,7 +355,6 @@ class _CageAddState extends State<CageAdd> {
                                 "nama_blok": namaBlokController.text,
                                 "kapasitas_blok": kapasitasBlokController.text,
                               });
-
                               Navigator.of(context).pop();
                             });
                           }
@@ -202,15 +368,17 @@ class _CageAddState extends State<CageAdd> {
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +441,7 @@ class _CageAddState extends State<CageAdd> {
                   labelText: 'Kategori',
                 ),
                 validator: (value) => value == null ? 'Pilih kategori' : null,
-                items: <String>['Pembiakan', 'Penggemukan']
+                items: <String>['Pembiakan', 'Penggemukan',]
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -288,7 +456,7 @@ class _CageAddState extends State<CageAdd> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), 
               Container(
                 // height: 80,
                 padding: const EdgeInsets.all(10),
@@ -430,6 +598,12 @@ class _CageAddState extends State<CageAdd> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() == true) {
+                      if (blok.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Minimal 1 blok harus ditambahkan')),
+                          );
+                          return;
+                        }
                         _addCage();
                       }
                     },

@@ -128,80 +128,115 @@ class _ProfileState extends State<Profile> {
       },
     );
   }
-
   void showUpdatePasswordDialog(BuildContext context) {
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController confirmPasswordController =
-        TextEditingController();
-    final FirebaseAuth auth = FirebaseAuth.instance;
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Update Password"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: "Password Baru"),
+  bool _obscureText = true;
+  bool _obscureConfirmText = true;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text("Update Password"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: passwordController,
+                  obscureText: _obscureText,
+                  decoration: InputDecoration(
+                    labelText: "Password Baru",
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                TextField(
+                  controller: confirmPasswordController,
+                  obscureText: _obscureConfirmText,
+                  decoration: InputDecoration(
+                    labelText: "Konfirmasi Password",
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmText
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmText = !_obscureConfirmText;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Batal"),
               ),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration:
-                    const InputDecoration(labelText: "Konfirmasi Password"),
+              ElevatedButton(
+                onPressed: () async {
+                  String newPassword = passwordController.text.trim();
+                  String confirmPassword =
+                      confirmPasswordController.text.trim();
+
+                  if (newPassword.isEmpty || confirmPassword.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Password tidak boleh kosong!")));
+                    return;
+                  }
+
+                  if (newPassword != confirmPassword) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Password tidak cocok!")));
+                    return;
+                  }
+
+                  try {
+                    User? user = auth.currentUser;
+                    if (user != null) {
+                      await user.updatePassword(newPassword);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Password berhasil diperbarui!")));
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("User tidak ditemukan!")));
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Error: $e")));
+                  }
+                },
+                child: const Text("Update"),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context), // Tutup dialog
-              child: const Text("Batal"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String newPassword = passwordController.text.trim();
-                String confirmPassword = confirmPasswordController.text.trim();
+          );
+        },
+      );
+    },
+  );
+}
 
-                if (newPassword.isEmpty || confirmPassword.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Password tidak boleh kosong!")));
-                  return;
-                }
-
-                if (newPassword != confirmPassword) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Password tidak cocok!")));
-                  return;
-                }
-
-                try {
-                  User? user = auth.currentUser;
-                  if (user != null) {
-                    await user.updatePassword(newPassword);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Password berhasil diperbarui!")));
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("User tidak ditemukan!")));
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("Error: $e")));
-                }
-              },
-              child: const Text("Update"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+  
   void showUpdateAccount(BuildContext context, Map<String, dynamic> userData) {
     final TextEditingController farmNameController =
         TextEditingController(text: userData['farmName']);

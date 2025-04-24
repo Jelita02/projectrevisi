@@ -40,7 +40,7 @@ dependencies:
   qr_scanner_overlay: ^0.0.2
   firebase_core: ^2.32.0
   cloud_firestore: ^4.17.5
-  firebase_auth: ^4.20.0
+  firebase_auth: ^4.20.0 
   intl: any
   firebase_storage: ^11.7.7
   image_picker: ^1.1.2

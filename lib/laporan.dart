@@ -23,6 +23,11 @@ class _LaporanScreenState extends State<LaporanScreen> {
   int totalSick = 0;
   int totalPembiakan = 0;
   int totalPenggemukan = 0;
+  int totalSakit = 0;
+  int totalHidup = 0;
+  int totalMati = 0;
+  int totalTerjual = 0;
+
 
   Future<void> pickDateRange() async {
     DateTimeRange? picked = await showDateRangePicker(
@@ -71,6 +76,16 @@ class _LaporanScreenState extends State<LaporanScreen> {
         totalPenggemukan = list
             .where((element) => element.data()["kategori"] == "Penggemukan")
             .length;
+        totalHidup = list
+            .where((element) => element.data()["status"] == "Hidup")
+            .length;
+        totalMati = list
+            .where((element) => element.data()["status"] == "Mati")
+            .length;
+        totalTerjual = list
+            .where((element) => element.data()["status"] == "Terjual")
+            .length;
+
       });
     });
   }
@@ -190,6 +205,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
             title:
                 Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -207,7 +223,28 @@ class _LaporanScreenState extends State<LaporanScreen> {
                             ),
                           ));
                     },
-                    child: const Text("Hidup")),
+                      child: Text.rich(
+                       TextSpan(
+                           children: [
+                               const TextSpan(
+                               text: "Hidup\n",style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                   text: "$totalHidup Ekor", style: const 
+                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
+                                   fontSize: 12,
+                                   )
+                                  ),
+                                 ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                ),
+                   // child: const 
+                   // Text("Hidup")
+                   // ),
+
+
                 ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -220,7 +257,23 @@ class _LaporanScreenState extends State<LaporanScreen> {
                             ),
                           ));
                     },
-                    child: const Text("Mati")),
+                     child: Text.rich(
+                       TextSpan(
+                           children: [
+                               const TextSpan(
+                               text: "Mati\n",style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                   text: "$totalMati Ekor", style: const 
+                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
+                                   fontSize: 12,
+                                   )
+                                  ),
+                                 ],
+                       ),
+                          textAlign: TextAlign.center,
+                      ),
+                ),
                 ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -233,7 +286,23 @@ class _LaporanScreenState extends State<LaporanScreen> {
                             ),
                           ));
                     },
-                    child: const Text("Terjual")),
+                    child: Text.rich(
+                       TextSpan(
+                           children: [
+                               const TextSpan(
+                               text: "Terjual\n",style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                   text: "$totalTerjual Ekor", style: const 
+                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
+                                   fontSize: 12,
+                                   )
+                                  ),
+                                 ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                ),
               ],
             ),
           ),

@@ -132,11 +132,10 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> gejala = [];
+    List<dynamic> keterangan= [];
     if (widget.doc.data() != null) {
-      gejala = widget.doc.data()?["gejala"] ?? [];
+      keterangan = widget.doc.data()?[""] ?? [];
     }
-
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       width: double.infinity,
@@ -159,7 +158,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
                     ),
                     children: [
                       TextSpan(
-                        text: gejala.join(", "),
+                        text: keterangan.join(", "),
                       ),
                     ],
                   ),
@@ -188,7 +187,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
                       child: Icon(Icons.healing),
                     ),
                     TextSpan(
-                      text: 'Sakit',
+                      text: 'Keterangan',
                     ),
                   ],
                 ),

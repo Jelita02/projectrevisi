@@ -20,49 +20,67 @@ class CageEdit extends StatefulWidget {
 class _CageEditState extends State<CageEdit> {
   final _formKey = GlobalKey<FormState>();
 
-  File? _image;
+ 
+  File? _imgFile;
 
   late String _kategori;
   TextEditingController _namaController = TextEditingController();
   TextEditingController _kapasitasController = TextEditingController();
 
   List<Map<String, dynamic>> blok = [];
+   String urlgambar = "";
 
   final picker = ImagePicker();
 
-  Future _getImage(ImageSource source) async {
-    final pickedFile = await picker.pickImage(source: source);
+  // Future _getImage(ImageSource source) async {
+  //   final pickedFile = await picker.pickImage(source: source);
 
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-    });
-  }
+    
+  // }
 
   var kandang = FirebaseFirestore.instance.collection('kandang');
   var blokStore = FirebaseFirestore.instance.collection('blok');
 
+  void _showImage() async {
+  final url = Supabase.instance.client.storage
+      .from('terdom')
+      .getPublicUrl("kandang/${widget.doc.data()['image']}");
+
+
+  setState(() {
+    urlgambar = url;
+  });
+   }
+  void _ambilGambar() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? img = await picker.pickImage(
+      source: ImageSource.camera, // alternatively, use ImageSource.gallery
+      maxWidth: 400,
+    );
+    if (img == null) return;
+    setState(() {
+      _imgFile = File(img.path); // convert it to a Dart:io file
+    });
+  }
+  
   void _editCage(context) {
     kandang.doc(widget.doc.id).update({
       "nama": _namaController.text,
       "kapasitas": _kapasitasController.text,
       "kategori": _kategori,
     }).then((value) async {
-      if (_image != null) {
+      if (_imgFile != null) {
         // Ambil ekstensi file asli
-        String extension = path.extension(_image!.path);
+        String extension = path.extension(_imgFile!.path);
 
         // Buat nama file unik dengan UUID
         String fileName = '${widget.doc.id}$extension';
+
         Supabase.instance.client.storage
             .from('terdom') // Ganti dengan nama bucket
-            .upload('kandang/$fileName', _image!)
-            .then((data) {
-          kandang.doc(widget.doc.id).update({
-            "image": fileName,
-          });
-        }).catchError((error) => {print("ERRORRR: $error")});
+            .upload('kandang/$fileName', _imgFile!)
+            .then((value) => print('File uploaded: $value'))
+            .catchError((error) => {print("ERRORRR: $error")});
       }
 
       int kapasitasKandang = 0;
@@ -75,7 +93,6 @@ class _CageEditState extends State<CageEdit> {
           "nama": v["nama"] ?? "",
           "kapasitas": v["kapasitas"] ?? "",
         });
-
         listId[doc.id] = doc.id;
       }
 
@@ -112,15 +129,14 @@ class _CageEditState extends State<CageEdit> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Gallery'),
                 onTap: () {
-                  _getImage(ImageSource.gallery);
+                  _ambilGambar(ImageSource.gallery);
                   Navigator.of(context).pop();
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Camera'),
-                onTap: () {
-                  _getImage(ImageSource.camera);
+                onTap: () {onPressed: () => _ambilGambar(),
                   Navigator.of(context).pop();
                 },
               ),
@@ -232,7 +248,8 @@ class _CageEditState extends State<CageEdit> {
   @override
   void initState() {
     super.initState();
-
+    
+    _showImage();
     _kategori = widget.doc.data()?["kategori"];
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
     _kapasitasController =
@@ -355,26 +372,36 @@ class _CageEditState extends State<CageEdit> {
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20)),
-                      child: (_image == null)
-                          ? const Text(
-                              "Foto Kandang",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.grey),
-                            )
-                          : Image.file(
-                              _image!,
-                              height: 200,
-                              width: 200,
-                            ),
+                      child:  _image != null
+    ? Image.file(_image!, height: 200, width: 200)
+    : _imgFile != null
+        ? Image.file(_imgFile!, height: 200, width: 200)
+        : urlgambar.isNotEmpty
+            ? Image.network(
+                urlgambar,
+                height: 200,
+                width: 200,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const CircularProgressIndicator();
+                },
+              )
+            : const Text(
+                "Foto Kandang",
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+              ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
                             const Color.fromRGBO(48, 130, 148, 0.45),
                       ),
-                      onPressed: () => _showPicker(context),
+                      onPressed: () => _ambilGambar(),
                       child: const Text(
-                        "upluad",
+                        "upload",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )

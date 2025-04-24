@@ -31,9 +31,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
   TextEditingController _textController = TextEditingController();
   final TextEditingController _tanggalBobotController = TextEditingController();
   final TextEditingController _textStatusController = TextEditingController();
+  final TextEditingController _textStatus_kesehatanController = TextEditingController();
+
   bool _readOnlyFinalWeight = true;
   bool _readOnlyStatus = true;
+  bool _readOnlyKondisi = true;
   IconData _icon = Icons.rebase_edit;
+  IconData _iconKondisi = Icons.rebase_edit;
   IconData _iconStatus = Icons.rebase_edit;
   final _formKey = GlobalKey<FormState>();
 
@@ -87,7 +91,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
   }
-
+                                        
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
     RenderRepaintBoundary boundary =
@@ -290,6 +294,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   @override
   Widget build(BuildContext context) {
     var dropdownStatus = <String>['Hidup', 'Mati', 'Terjual'];
+    var dropdownStatus_kesehatan = <String>['Sehat', 'Sakit'];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
@@ -340,7 +346,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     const Expanded(
                       flex: 2,
                       child: Text(
-                        "Domba",
+                        "Lihat Hewan",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 18,
@@ -482,8 +488,30 @@ class _AnimalDetailState extends State<AnimalDetail> {
                 form(
                     text: "Kategori Hewan",
                     value: doc.data()?["kategori"] ?? ""),
-                form(
-                    text: "Kondisi Hewan",
+                formDropdown(
+                    // text: "Kondisi Hewan",
+                    // value: doc.data()?["status_kesehatan"] ?? ""),
+                    iconSuffix: GestureDetector(
+                      onTap: () {
+                        if (_iconKondisi == Icons.save_rounded) {
+                          FirebaseFirestore.instance
+                              .collection("hewan")
+                              .doc(doc.id)
+                              .update({"status_kesehatan": _textStatus_kesehatanController.text});
+                        }
+                        setState(() {
+                          _readOnlyKondisi = !_readOnlyKondisi;
+                          _iconKondisi = _readOnlyKondisi
+                              ? Icons.rebase_edit
+                              : Icons.save_rounded;
+                        });
+                      },
+                      child: Icon(_iconKondisi),
+                    ),
+                    text: "Kondisi",
+                    dropdown: dropdownStatus_kesehatan,
+                    textController: _textStatus_kesehatanController,
+                    readOnly: _readOnlyKondisi,
                     value: doc.data()?["status_kesehatan"] ?? ""),
                 formDropdown(
                     iconSuffix: GestureDetector(
@@ -492,7 +520,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           FirebaseFirestore.instance
                               .collection("hewan")
                               .doc(doc.id)
-                              .update({"status": _textStatusController.text});
+                              .update({"s": _textStatusController.text});
                         }
                         setState(() {
                           _readOnlyStatus = !_readOnlyStatus;

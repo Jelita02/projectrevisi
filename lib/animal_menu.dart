@@ -17,6 +17,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
   int countList = 0;
   String searchQuery = "";
   String filterCategory = "";
+  String filterkondisi = "";
 
   Future<QuerySnapshot<Map<String, dynamic>>> _getListAnimal() {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
@@ -32,9 +33,14 @@ class _MenuAnimalState extends State<MenuAnimal> {
     if (filterCategory.isNotEmpty) {
       query = query.where("kategori", isEqualTo: filterCategory);
     }
+    if (filterkondisi.isNotEmpty) {
+      query = query.where("status_kesehatan", isEqualTo: filterkondisi);
+    }
+
 
     return query.get();
   }
+
 
   @override
   void initState() {
@@ -73,6 +79,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
               MaterialPageRoute(
                 builder: (context) => AnimalAdd(
                   user: widget.user,
+                  
                 ),
               )).then((value) => refresh());
         },
@@ -105,16 +112,32 @@ class _MenuAnimalState extends State<MenuAnimal> {
                     setState(() => filterCategory = value);
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(value: "", child: Text("Semua")),
                     const PopupMenuItem(
                         value: "Penggemukan", child: Text("Penggemukan")),
                     const PopupMenuItem(
                         value: "Pembiakan", child: Text("Pembiakan")),
                   ],
                   child: ElevatedButton.icon(
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text("Filter"),
-                    onPressed: null,
+                    // icon: const Icon(Icons.filter_list),
+                    label: const Text("Kategori"),
+                    onPressed: null, // tambahkan fungsi kosong agar tombol aktif
+                  ),
+                ),
+                const SizedBox(width: 10),
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    setState(() => filterkondisi = value);
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                        value: "Sehat", child: Text("Sehat")),
+                    const PopupMenuItem(
+                        value: "Sakit", child: Text("Sakit")),
+                  ],
+                  child: ElevatedButton.icon(
+                    // icon: const Icon(Icons.filter_list),
+                    label: const Text("Kondisi"),
+                    onPressed: null, // tambahkan fungsi kosong agar tombol aktif
                   ),
                 ),
               ],
