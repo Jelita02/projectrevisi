@@ -33,6 +33,9 @@ class HealthyAddState extends State<HealthyAdd> {
 
   File? _image;
   final picker = ImagePicker();
+  bool _isAnyCheckboxChecked() {
+  return _vaksinCheck || _nafsuCheck || _pinkEyeCheck || _busukCheck || _otherCheck;
+  }
 
   DocumentSnapshot<Map<String, dynamic>>? animal;
 
@@ -299,7 +302,7 @@ class HealthyAddState extends State<HealthyAdd> {
                           borderRadius: BorderRadius.circular(20)),
                       child: Text(
                         (animal == null)
-                            ? "Pilih Hewan yang Sakit"
+                            ? "Pilih Hewan"
                             : (animal!.data()?["nama"] ?? ""),
                         style: TextStyle(
                             fontSize: 18,
@@ -339,9 +342,42 @@ class HealthyAddState extends State<HealthyAdd> {
                   backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                 ),
                 onPressed: () {
-                  if (_formKey.currentState?.validate() == true) {
-                    _addHealthy();
-                  }
+                  
+            final isValid = _formKey.currentState?.validate() ?? false;
+            
+            if (!isValid) return;
+
+            if (!_isAnyCheckboxChecked()) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Pilih minimal satu keterangan kesehatan."),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
+            if (_image == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Harap unggah foto hewan."),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+            if (animal == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Harap pilih hewan terlebih dahulu."),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+            _addHealthy();
+
+
                 },
                 child: const Text(
                   'Simpan',

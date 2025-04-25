@@ -18,11 +18,8 @@ void main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViaWhsd2hwaHljaHB2YXVwZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI0NzczNTYsImV4cCI6MjA1ODA1MzM1Nn0.wPxyrLVMhWJJ2PjLnLHinLh3uko2mTQRbikjTnXfJpc',
   );
 }
-
-
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-
   final MobileScannerController cameraController = MobileScannerController();
  //penghubung untuk menyimpan data QR-CODE
   @override
@@ -34,16 +31,13 @@ class MyApp extends StatelessWidget {
         statusBarBrightness: Brightness.dark,
       ),
     );
-    return MaterialApp(
-      // material tamplate ngatur forntend
+    return MaterialApp(// material tamplate ngatur forntend
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-        ),
-      ),
-      localizationsDelegates: const [
-    //buat ngatur bahasa
+        ),),
+      localizationsDelegates: const [   //buat ngatur bahasa
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

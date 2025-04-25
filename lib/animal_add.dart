@@ -21,6 +21,7 @@ class AnimalAdd extends StatefulWidget {
 class _AnimalAddState extends State<AnimalAdd> {
   final _formKey = GlobalKey<FormState>();
   bool _imageError = false; // 
+  bool _isImgValid = true;
 
   File? _imgFile;
 
@@ -509,6 +510,14 @@ class _AnimalAddState extends State<AnimalAdd> {
                   ],
                 ),
               ),
+              if (!_isImgValid)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  "Harap unggah foto hewan terlebih dahulu.",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
               const SizedBox(height: 20),
               Center(
                 child: SizedBox(
@@ -519,7 +528,20 @@ class _AnimalAddState extends State<AnimalAdd> {
                       backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                     ),
                     onPressed: () {
-                      if (_formKey.currentState?.validate() == true) {
+                      final isValid = _formKey.currentState?.validate() ?? false;
+
+                      if (_imgFile == null) {
+                        setState(() {
+                          _isImgValid = false;
+                        });
+                        return;
+                      } else {
+                        setState(() {
+                          _isImgValid = true;
+                        });
+                      }
+
+                      if (isValid) {
                         _tambahHewan();
                       }
                     },

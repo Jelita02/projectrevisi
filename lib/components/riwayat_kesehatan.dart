@@ -134,7 +134,7 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
   Widget build(BuildContext context) {
     List<dynamic> keterangan= [];
     if (widget.doc.data() != null) {
-      keterangan = widget.doc.data()?[""] ?? [];
+      keterangan = widget.doc.data()?["keterangan"] ?? [];
     }
     return Container(
       margin: const EdgeInsets.only(bottom: 20),

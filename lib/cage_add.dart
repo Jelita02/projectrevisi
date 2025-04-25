@@ -133,104 +133,6 @@ class _CageAddState extends State<CageAdd> {
     );
   }
 
-  // void _showAddBlok(context) {
-  //   final blokKey = GlobalKey<FormState>();
-  //   final TextEditingController namaBlokController = TextEditingController();
-  //   final TextEditingController kapasitasBlokController =
-  //       TextEditingController();
-
-  //   showModalBottomSheet(
-  //      isScrollControlled: true, // penting untuk menghindari tertutup keyboad
-  //     context: context,
-  //     builder: (BuildContext bc) {
-  //       return SafeArea(
-  //         child: Container(
-  //           padding: const EdgeInsets.all(20),
-  //           child: Form(
-  //             key: blokKey,
-  //             child: Wrap(
-  //               children: <Widget>[
-  //                 Row(
-  //                   children: [
-  //                     Expanded(
-  //                       child: Padding(
-  //                         padding: const EdgeInsets.all(10),
-  //                         child: TextFormField(
-  //                           controller: namaBlokController,
-  //                           maxLength: 20, //permintaan dari gumukmas
-  //                           decoration: const InputDecoration(
-  //                             labelText: 'Nama',
-  //                           ),
-  //                           keyboardType: TextInputType.name,
-  //                           validator: (value) {
-  //                             if (value == null || value.isEmpty) {
-  //                               return "Masukan nama";
-  //                             }
-
-  //                             return null;
-  //                           },
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Padding(
-  //                         padding: const EdgeInsets.all(10),
-  //                         child: TextFormField(
-  //                           controller: kapasitasBlokController,
-  //                           decoration: const InputDecoration(
-  //                             labelText: 'Kapasitas',
-  //                           ),
-  //                           keyboardType: TextInputType.number,
-  //                           validator: (value) {
-  //                             if (value == null || value.isEmpty) {
-  //                               return "Masukan kapasitas";
-  //                             }
-
-  //                             return null;
-  //                           },
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 Center(
-  //                   child: SizedBox(
-  //                     width: double.infinity,
-  //                     child: ElevatedButton(
-  //                       style: ElevatedButton.styleFrom(
-  //                         backgroundColor:
-  //                             const Color.fromRGBO(26, 107, 125, 1),
-  //                       ),
-  //                       onPressed: () {
-  //                         if (blokKey.currentState?.validate() == true) {
-  //                           setState(() {
-  //                             blok.add({
-  //                               "nama_blok": namaBlokController.text,
-  //                               "kapasitas_blok": kapasitasBlokController.text,
-  //                             });
-
-  //                             Navigator.of(context).pop();
-  //                           });
-  //                         }
-  //                       },
-  //                       child: const Text(
-  //                         'Tambah Blok',
-  //                         style: TextStyle(
-  //                           color: Colors.white,
-  //                           fontSize: 20,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
   void _showAddBlok(context) {
   final blokKey = GlobalKey<FormState>();
   final TextEditingController namaBlokController = TextEditingController();
@@ -254,92 +156,51 @@ class _CageAddState extends State<CageAdd> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(10),
-                    //         child: TextFormField(
-                    //           controller: namaBlokController,
-                    //           maxLength: 20,
-                    //           decoration: const InputDecoration(
-                    //             labelText: 'Nama',
-                    //           ),
-                    //           keyboardType: TextInputType.name,
-                    //           validator: (value) {
-                    //             if (value == null || value.isEmpty) {
-                    //               return "Masukan nama";
-                    //             }
-                    //             return null;
-                    //           },
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     Expanded(
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.all(10),
-                    //         child: TextFormField(
-                    //           controller: kapasitasBlokController,
-                    //           decoration: const InputDecoration(
-                    //             labelText: 'Kapasitas',
-                    //           ),
-                    //           keyboardType: TextInputType.number,
-                    //           validator: (value) {
-                    //             if (value == null || value.isEmpty) {
-                    //               return "Masukan kapasitas";
-                    //             }
-                    //             return null;
-                    //           },
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: TextFormField(
-          controller: namaBlokController,
-          maxLength: 20,
-          decoration: const InputDecoration(
-            labelText: 'Nama',
-            isDense: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-          ),
-          keyboardType: TextInputType.name,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Masukan nama";
-            }
-            return null;
-          },
-        ),
-      ),
-    ),
-    Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: TextFormField(
-          controller: kapasitasBlokController,
-          decoration: const InputDecoration(
-            labelText: 'Kapasitas',
-            isDense: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-          ),
-          keyboardType: TextInputType.number,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Masukan kapasitas";
-            }
-            return null;
-          },
-        ),
-      ),
-    ),
-  ],
-),                
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                              controller: namaBlokController,
+                              maxLength: 20,
+                              decoration: const InputDecoration(
+                                labelText: 'Nama',
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                              ),
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan nama";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                              controller: kapasitasBlokController,
+                              decoration: const InputDecoration(
+                                labelText: 'Kapasitas',
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                              ),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan kapasitas";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),                
                     const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
@@ -378,7 +239,6 @@ class _CageAddState extends State<CageAdd> {
     },
   );
 }
-
 
   @override
   Widget build(BuildContext context) {
@@ -422,20 +282,6 @@ class _CageAddState extends State<CageAdd> {
                   return null;
                 },
               ),
-              // TextFormField(
-              //   controller: _kapasitasController,
-              //   decoration: const InputDecoration(
-              //     labelText: 'Kapasitas',
-              //   ),
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return "Masukan kapasitas";
-              //     }
-
-              //     return null;
-              //   },
-              // ),
               DropdownButtonFormField(
                 decoration: const InputDecoration(
                   labelText: 'Kategori',
@@ -492,6 +338,26 @@ class _CageAddState extends State<CageAdd> {
                               width: 200,
                             ),
                     ),
+                   if (_imageError)// validasi gambar wajib diupload
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Gambar kandang wajib diunggah',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                    Container(
+                    // ... Container Upload Gambar
+                  ),
+                  if (_imageError)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Gambar kandang wajib diunggah',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -499,7 +365,7 @@ class _CageAddState extends State<CageAdd> {
                       ),
                       onPressed: () => _showPicker(context),
                       child: const Text(
-                        "Pilih",
+                        "Upload",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )
@@ -596,16 +462,30 @@ class _CageAddState extends State<CageAdd> {
                       // padding: EdgeInsets.all(20),
                       backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() == true) {
+                  onPressed: () {
+                      final isFormValid = _formKey.currentState?.validate() == true;
+
+                      setState(() {
+                        _imageError = _image == null; // Update error image jika null
+                      });
+
+                      if (!isFormValid || _image == null) {
+                        if (_image == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Gambar kandang wajib diunggah')),
+                          );
+                        }
+                        return;
+                      }
+
                       if (blok.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Minimal 1 blok harus ditambahkan')),
-                          );
-                          return;
-                        }
-                        _addCage();
+                          const SnackBar(content: Text('Minimal 1 blok harus ditambahkan')),
+                        );
+                        return;
                       }
+
+                      _addCage();
                     },
                     child: const Text(
                       'Buat Kandang',

@@ -36,8 +36,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
     if (filterkondisi.isNotEmpty) {
       query = query.where("status_kesehatan", isEqualTo: filterkondisi);
     }
-
-
+    
     return query.get();
   }
 
@@ -112,6 +111,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
                     setState(() => filterCategory = value);
                   },
                   itemBuilder: (context) => [
+                    const PopupMenuItem(value: "", child: Text("Semua")),
                     const PopupMenuItem(
                         value: "Penggemukan", child: Text("Penggemukan")),
                     const PopupMenuItem(
@@ -129,6 +129,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
                     setState(() => filterkondisi = value);
                   },
                   itemBuilder: (context) => [
+                    const PopupMenuItem(value: "", child: Text("Semua")),
                     const PopupMenuItem(
                         value: "Sehat", child: Text("Sehat")),
                     const PopupMenuItem(

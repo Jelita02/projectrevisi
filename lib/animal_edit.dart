@@ -464,7 +464,7 @@ void _showImage() async {
                 }).toList(),
                 value: _listBlok
                         .firstWhere(
-                            (e) => e["id"] == widget.doc.data()?["blok_id"],
+                            (e) => e["id"] == widget.doc.data()?["nama_blok"],
                             orElse: () => {})
                         .isEmpty
                     ? null
@@ -476,6 +476,7 @@ void _showImage() async {
                           _listBlok.firstWhere((item) => item['id'] == value);
                       _blok = choiceBlok["nama"];
                       _blokId = choiceBlok["id"];
+                      //  "Blok: " + (e["nama_blok"] ?? ""),
                     }
                   });
                 },
@@ -563,8 +564,6 @@ void _showImage() async {
                               "Foto Hewan",
                               style: TextStyle(fontSize: 18, color: Colors.grey),
                             )
-
-
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

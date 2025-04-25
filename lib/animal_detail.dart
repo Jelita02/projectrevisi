@@ -520,7 +520,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           FirebaseFirestore.instance
                               .collection("hewan")
                               .doc(doc.id)
-                              .update({"s": _textStatusController.text});
+                              .update({"status": _textStatusController.text});
                         }
                         setState(() {
                           _readOnlyStatus = !_readOnlyStatus;
