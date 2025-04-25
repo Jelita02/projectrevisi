@@ -17,24 +17,20 @@ class _CageMenuState extends State<CageMenu> {
   String searchQuery = "";
   String filterCategory = "";
 
-  Future<QuerySnapshot<Map<String, dynamic>>> _getListCage() {
-    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-        .collection("kandang")
-        .where("user_uid", isEqualTo: widget.user.uid)
-        .orderBy("nama");
+  // 
+      Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _getListCage() async {
+      Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+          .collection("kandang")
+          .where("user_uid", isEqualTo: widget.user.uid);
 
-    if (searchQuery.isNotEmpty) {
-      query = query
-          .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
-          .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
+      if (filterCategory.isNotEmpty) {
+        query = query.where("kategori", isEqualTo: filterCategory);
+      }
+
+      final snapshot = await query.get();
+      return snapshot.docs;
     }
 
-    if (filterCategory.isNotEmpty) {
-      query = query.where("kategori", isEqualTo: filterCategory);
-    }
-
-    return query.get();
-  }
 
   @override
   void initState() {
@@ -43,8 +39,30 @@ class _CageMenuState extends State<CageMenu> {
   }
 
   refresh() {
-    setState(() {});
+    // setState(() {});
+     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+      .collection("kandang")
+      .where("user_uid", isEqualTo: widget.user.uid);
+
+  if (searchQuery.isNotEmpty) {
+    query = query
+        .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
+        .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
   }
+
+  if (filterCategory.isNotEmpty) {
+    query = query.where("kategori", isEqualTo: filterCategory);
+  }
+
+  
+
+  query.get().then((value) {
+    setState(() {
+      countList = value.size;
+    });
+  });
+}
+  
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +110,7 @@ class _CageMenuState extends State<CageMenu> {
                     ),
                     onChanged: (value) {
                       setState(() => searchQuery = value);
+                       refresh(); 
                     },
                   ),
                 ),
@@ -99,6 +118,7 @@ class _CageMenuState extends State<CageMenu> {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     setState(() => filterCategory = value);
+                     refresh(); 
                   },
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: "", child: Text("Semua")),
@@ -118,57 +138,61 @@ class _CageMenuState extends State<CageMenu> {
             const SizedBox(height: 10),
             Expanded(
               flex: 9,
-              child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                future: _getListCage(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    List<Widget> listData = List.empty();
-                    if (snapshot.data != null) {
-                      listData = snapshot.data!.docs.map(
-                        (e) {
-                          return FutureBuilder(
-                              future: FirebaseFirestore.instance
-                                  .collection("hewan")
-                                  .where("kandang_id", isEqualTo: e.id)
-                                  .count()
-                                  .get(),
-                              builder: (context, snap) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                }
+              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+  future: _getListCage(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return const Center(child: Text("Terjadi kesalahan"));
+    } else {
+      final docs = snapshot.data ?? [];
 
-                                var stringTotal = "0";
-                                var total = snap.data?.count;
-                                if (total != null) {
-                                  stringTotal = total.toString();
-                                }
+      // Filter nama secara lokal (case-insensitive)
+      final filteredDocs = docs.where((doc) {
+        final data = doc.data();
+        final nama = data["nama"]?.toString().toLowerCase() ?? "";
+        return nama.contains(searchQuery.toLowerCase());
+      }).toList();
 
-                                return TileCage(
-                                  user: widget.user,
-                                  refresh: refresh,
-                                  doc: e,
-                                  total: stringTotal,
-                                );
-                              });
-                        },
-                      ).toList();
-                    }
+      final listData = filteredDocs.map((e) {
+        return FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection("hewan")
+              .where("kandang_id", isEqualTo: e.id)
+              .count()
+              .get(),
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-                    return ListView(
-                      children: listData,
-                    );
-                  }
-                },
-              ),
+            final total = snap.data?.count ?? 0;
+            return TileCage(
+              user: widget.user,
+              refresh: refresh,
+              doc: e,
+              total: total.toString(),
+            );
+          },
+        );
+      }).toList();
+
+      return ListView(children: listData);
+    }
+  },
+)
+
+                        
+                      // ).toList(),
+  
+
+                    // return ListView(
+                    //   children: listData,
+                    // );
+              //     }
+              //   },
+              // ),
             ),
           ],
         ),
