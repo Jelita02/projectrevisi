@@ -43,17 +43,15 @@ class _AnimalEditState extends State<AnimalEdit> {
   TextEditingController _tanggalController = TextEditingController();
   TextEditingController _bobotController = TextEditingController();
 
-void _showImage() async {
-  final url = Supabase.instance.client.storage
-      .from('terdom')
-      .getPublicUrl("hewan/${widget.doc.id}.jpg");
+  void _showImage() async {
+    final url = Supabase.instance.client.storage
+        .from('terdom')
+        .getPublicUrl("hewan/${widget.doc.id}.jpg");
 
-  setState(() {
-    urlgambar = url;
-  });
-
-
-}
+    setState(() {
+      urlgambar = url;
+    });
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -87,6 +85,7 @@ void _showImage() async {
     hewan.doc(widget.doc.id).update({
       "user_uid": widget.user.uid,
       "nama": _namaController.text,
+      "nama_lower": _namaController.text.toLowerCase(),
       "usia": _usia,
       "kategori": _kategori,
       "jenis_kelamin": _jenisKelamin,
@@ -203,8 +202,6 @@ void _showImage() async {
                 int.parse(element['kapasitas'] ?? 0))
             .map((e) => {"id": e.id, "nama": e['nama']})
             .toList();
-
-        print("CHUAKC: $_listBlok");
       });
     });
   }
@@ -464,7 +461,7 @@ void _showImage() async {
                 }).toList(),
                 value: _listBlok
                         .firstWhere(
-                            (e) => e["id"] == widget.doc.data()?["nama_blok"],
+                            (e) => e["id"] == widget.doc.data()?["blok_id"],
                             orElse: () => {})
                         .isEmpty
                     ? null
@@ -543,28 +540,30 @@ void _showImage() async {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: (_imgFile != null)
-                      ? Image.file(_imgFile!, height: 200, width: 200)
-                      : (urlgambar != "")
-                          ? Image.network(
-                              urlgambar,
-                              height: 200,
-                              width: 200,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.broken_image, size: 50, color: Colors.grey);
-                              },
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return const CircularProgressIndicator();
-                              },
-                            )
-                          : const Text(
-                              "Foto Hewan",
-                              style: TextStyle(fontSize: 18, color: Colors.grey),
-                            )
-                    ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: (_imgFile != null)
+                            ? Image.file(_imgFile!, height: 200, width: 200)
+                            : (urlgambar != "")
+                                ? Image.network(
+                                    urlgambar,
+                                    height: 200,
+                                    width: 200,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.broken_image,
+                                          size: 50, color: Colors.grey);
+                                    },
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const CircularProgressIndicator();
+                                    },
+                                  )
+                                : const Text(
+                                    "Foto Hewan",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.grey),
+                                  )),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:

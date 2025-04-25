@@ -137,113 +137,114 @@ class _BlockDetailState extends State<BlockDetail> {
 //       );
 //     },
 //   );
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    builder: (BuildContext bc) {
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 20,
-          left: 20,
-          right: 20,
-        ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: blokKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(bc).viewInsets.bottom,
+              top: 20,
+              left: 20,
+              right: 20,
+            ),
+            child: SingleChildScrollView(
+              child: Form(
+                key: blokKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: TextFormField(
-                          controller: namaBlokController,
-                          maxLength: 20,
-                          decoration: const InputDecoration(
-                            labelText: 'Nama',
-                            isDense: true,
-                            contentPadding:
-                                EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                              controller: namaBlokController,
+                              maxLength: 20,
+                              decoration: const InputDecoration(
+                                labelText: 'Nama',
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 10),
+                              ),
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan nama";
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                          keyboardType: TextInputType.name,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Masukan nama";
-                            }
-                            return null;
-                          },
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: TextFormField(
+                              controller: kapasitasBlokController,
+                              decoration: const InputDecoration(
+                                labelText: 'Kapasitas',
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 10),
+                              ),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan kapasitas";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(26, 107, 125, 1),
+                        ),
+                        onPressed: () {
+                          if (blokKey.currentState?.validate() == true) {
+                            FirebaseFirestore.instance
+                                .collection("blok")
+                                .doc(blok.id)
+                                .update({
+                              "nama": namaBlokController.text,
+                              "kapasitas": kapasitasBlokController.text,
+                            }).then((value) {
+                              setState(() {
+                                Navigator.of(context).pop();
+                              });
+                            });
+                          }
+                        },
+                        child: const Text(
+                          'Edit Blok',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: TextFormField(
-                          controller: kapasitasBlokController,
-                          decoration: const InputDecoration(
-                            labelText: 'Kapasitas',
-                            isDense: true,
-                            contentPadding:
-                                EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Masukan kapasitas";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
-                    ),
-                    onPressed: () {
-                      if (blokKey.currentState?.validate() == true) {
-                        FirebaseFirestore.instance
-                            .collection("blok")
-                            .doc(blok.id)
-                            .update({
-                          "nama": namaBlokController.text,
-                          "kapasitas": kapasitasBlokController.text,
-                        }).then((value) {
-                          setState(() {
-                            Navigator.of(context).pop();
-                          });
-                        });
-                      }
-                    },
-                    child: const Text(
-                      'Edit Blok',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-
-}
-
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

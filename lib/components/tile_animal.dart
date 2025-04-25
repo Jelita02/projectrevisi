@@ -24,7 +24,6 @@ class TileAnimal extends StatelessWidget {
     var value = await Supabase.instance.client.storage
         .from('terdom')
         .download("hewan/${doc.id}.jpg");
-      print("TEST5 $value");
     return value;
   }
 

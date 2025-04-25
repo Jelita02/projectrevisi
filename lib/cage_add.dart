@@ -25,7 +25,6 @@ class _CageAddState extends State<CageAdd> {
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _kapasitasController = TextEditingController();
 
-
   List<Map<String, dynamic>> blok = [];
 
   final picker = ImagePicker();
@@ -34,7 +33,6 @@ class _CageAddState extends State<CageAdd> {
     final pickedFile = await picker.pickImage(source: source);
 
     setState(() {
-
       if (pickedFile != null) {
         _image = File(pickedFile.path);
       }
@@ -48,6 +46,7 @@ class _CageAddState extends State<CageAdd> {
     kandang.add({
       "user_uid": widget.user.uid,
       "nama": _namaController.text,
+      "nama_lower": _namaController.text.toLowerCase(),
       "kapasitas": _kapasitasController.text,
       "kategori": _kategori,
     }).then((value) {
@@ -75,14 +74,10 @@ class _CageAddState extends State<CageAdd> {
           "kandang_id": value.id,
           "nama": v["nama_blok"] ?? "",
           "kapasitas": v["kapasitas_wblok"] ?? "",
-          
-
         });
       }
 
-      kandang.doc(value.id).update({
-        "kapasitas": kapasitasKandang.toString()
-      });
+      kandang.doc(value.id).update({"kapasitas": kapasitasKandang.toString()});
 
       Navigator.pop(context, true);
     });
@@ -98,14 +93,13 @@ class _CageAddState extends State<CageAdd> {
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Gallery'),
-                onTap: () 
-                async {
-                await _getImage(ImageSource.gallery);
-                setState(() {
-                  _imageError = _image == null; // update error state
-                });
-                Navigator.of(context).pop();
-              },
+                onTap: () async {
+                  await _getImage(ImageSource.gallery);
+                  setState(() {
+                    _imageError = _image == null; // update error state
+                  });
+                  Navigator.of(context).pop();
+                },
                 // {
                 //   _getImage(ImageSource.gallery);
                 //   Navigator.of(context).pop();
@@ -115,12 +109,12 @@ class _CageAddState extends State<CageAdd> {
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Camera'),
                 onTap: () async {
-                await _getImage(ImageSource.gallery);
-                setState(() {
-                  _imageError = _image == null; // update error state
-                });
-                Navigator.of(context).pop();
-              },
+                  await _getImage(ImageSource.gallery);
+                  setState(() {
+                    _imageError = _image == null; // update error state
+                  });
+                  Navigator.of(context).pop();
+                },
                 // {
                 //   _getImage(ImageSource.camera);
                 //   Navigator.of(context).pop();
@@ -134,111 +128,116 @@ class _CageAddState extends State<CageAdd> {
   }
 
   void _showAddBlok(context) {
-  final blokKey = GlobalKey<FormState>();
-  final TextEditingController namaBlokController = TextEditingController();
-  final TextEditingController kapasitasBlokController = TextEditingController();
+    final blokKey = GlobalKey<FormState>();
+    final TextEditingController namaBlokController = TextEditingController();
+    final TextEditingController kapasitasBlokController =
+        TextEditingController();
 
-  showModalBottomSheet(
-    isScrollControlled: true, // <- penting untuk menghindari tertutup keyboard
-    context: context,
-    builder: (BuildContext bc) {
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: SingleChildScrollView(
-          child: SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: blokKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: TextFormField(
-                              controller: namaBlokController,
-                              maxLength: 20,
-                              decoration: const InputDecoration(
-                                labelText: 'Nama',
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+    showModalBottomSheet(
+      isScrollControlled:
+          true, // <- penting untuk menghindari tertutup keyboard
+      context: context,
+      builder: (BuildContext bc) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: SafeArea(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: blokKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextFormField(
+                                controller: namaBlokController,
+                                maxLength: 20,
+                                decoration: const InputDecoration(
+                                  labelText: 'Nama',
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 10),
+                                ),
+                                keyboardType: TextInputType.name,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Masukan nama";
+                                  }
+                                  return null;
+                                },
                               ),
-                              keyboardType: TextInputType.name,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Masukan nama";
-                                }
-                                return null;
-                              },
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: TextFormField(
-                              controller: kapasitasBlokController,
-                              decoration: const InputDecoration(
-                                labelText: 'Kapasitas',
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: TextFormField(
+                                controller: kapasitasBlokController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Kapasitas',
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 10),
+                                ),
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Masukan kapasitas";
+                                  }
+                                  return null;
+                                },
                               ),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Masukan kapasitas";
-                                }
-                                return null;
-                              },
                             ),
                           ),
-                        ),
-                      ],
-                    ),                
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(26, 107, 125, 1),
-                        ),
-                        onPressed: () {
-                          if (blokKey.currentState?.validate() == true) {
-                            setState(() {
-                              blok.add({
-                                "nama_blok": namaBlokController.text,
-                                "kapasitas_blok": kapasitasBlokController.text,
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(26, 107, 125, 1),
+                          ),
+                          onPressed: () {
+                            if (blokKey.currentState?.validate() == true) {
+                              setState(() {
+                                blok.add({
+                                  "nama_blok": namaBlokController.text,
+                                  "kapasitas_blok":
+                                      kapasitasBlokController.text,
+                                });
+                                Navigator.of(context).pop();
                               });
-                              Navigator.of(context).pop();
-                            });
-                          }
-                        },
-                        child: const Text(
-                          'Tambah Blok',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                            }
+                          },
+                          child: const Text(
+                            'Tambah Blok',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,8 +286,10 @@ class _CageAddState extends State<CageAdd> {
                   labelText: 'Kategori',
                 ),
                 validator: (value) => value == null ? 'Pilih kategori' : null,
-                items: <String>['Pembiakan', 'Penggemukan',]
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: <String>[
+                  'Pembiakan',
+                  'Penggemukan',
+                ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -302,7 +303,7 @@ class _CageAddState extends State<CageAdd> {
                   });
                 },
               ),
-              const SizedBox(height: 20), 
+              const SizedBox(height: 20),
               Container(
                 // height: 80,
                 padding: const EdgeInsets.all(10),
@@ -338,26 +339,25 @@ class _CageAddState extends State<CageAdd> {
                               width: 200,
                             ),
                     ),
-                   if (_imageError)// validasi gambar wajib diupload
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Text(
-                      'Gambar kandang wajib diunggah',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                    Container(
-                    // ... Container Upload Gambar
-                  ),
-                  if (_imageError)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Gambar kandang wajib diunggah',
-                        style: TextStyle(color: Colors.red),
+                    if (_imageError) // validasi gambar wajib diupload
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Gambar kandang wajib diunggah',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
-                    ),
-
+                    Container(
+                        // ... Container Upload Gambar
+                        ),
+                    if (_imageError)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Gambar kandang wajib diunggah',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -462,17 +462,20 @@ class _CageAddState extends State<CageAdd> {
                       // padding: EdgeInsets.all(20),
                       backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                     ),
-                  onPressed: () {
-                      final isFormValid = _formKey.currentState?.validate() == true;
+                    onPressed: () {
+                      final isFormValid =
+                          _formKey.currentState?.validate() == true;
 
                       setState(() {
-                        _imageError = _image == null; // Update error image jika null
+                        _imageError =
+                            _image == null; // Update error image jika null
                       });
 
                       if (!isFormValid || _image == null) {
                         if (_image == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Gambar kandang wajib diunggah')),
+                            const SnackBar(
+                                content: Text('Gambar kandang wajib diunggah')),
                           );
                         }
                         return;
@@ -480,7 +483,9 @@ class _CageAddState extends State<CageAdd> {
 
                       if (blok.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Minimal 1 blok harus ditambahkan')),
+                          const SnackBar(
+                              content:
+                                  Text('Minimal 1 blok harus ditambahkan')),
                         );
                         return;
                       }

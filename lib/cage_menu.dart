@@ -25,8 +25,8 @@ class _CageMenuState extends State<CageMenu> {
 
     if (searchQuery.isNotEmpty) {
       query = query
-          .where("nama", isGreaterThanOrEqualTo: searchQuery)
-          .where("nama", isLessThan: '$searchQuery\uf8ff');
+          .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
+          .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
     }
 
     if (filterCategory.isNotEmpty) {

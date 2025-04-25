@@ -26,8 +26,8 @@ class _MenuAnimalState extends State<MenuAnimal> {
         .orderBy("nama");
     if (searchQuery.isNotEmpty) {
       query = query
-          .where("nama", isGreaterThanOrEqualTo: searchQuery)
-          .where("nama", isLessThan: '$searchQuery\uf8ff');
+          .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
+          .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
     }
 
     if (filterCategory.isNotEmpty) {
@@ -36,10 +36,9 @@ class _MenuAnimalState extends State<MenuAnimal> {
     if (filterkondisi.isNotEmpty) {
       query = query.where("status_kesehatan", isEqualTo: filterkondisi);
     }
-    
+
     return query.get();
   }
-
 
   @override
   void initState() {
@@ -78,7 +77,6 @@ class _MenuAnimalState extends State<MenuAnimal> {
               MaterialPageRoute(
                 builder: (context) => AnimalAdd(
                   user: widget.user,
-                  
                 ),
               )).then((value) => refresh());
         },
@@ -118,9 +116,10 @@ class _MenuAnimalState extends State<MenuAnimal> {
                         value: "Pembiakan", child: Text("Pembiakan")),
                   ],
                   child: ElevatedButton.icon(
-                    // icon: const Icon(Icons.filter_list),
+                    icon: const Icon(Icons.filter_list),
                     label: const Text("Kategori"),
-                    onPressed: null, // tambahkan fungsi kosong agar tombol aktif
+                    onPressed:
+                        null, // tambahkan fungsi kosong agar tombol aktif
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -130,15 +129,14 @@ class _MenuAnimalState extends State<MenuAnimal> {
                   },
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: "", child: Text("Semua")),
-                    const PopupMenuItem(
-                        value: "Sehat", child: Text("Sehat")),
-                    const PopupMenuItem(
-                        value: "Sakit", child: Text("Sakit")),
+                    const PopupMenuItem(value: "Sehat", child: Text("Sehat")),
+                    const PopupMenuItem(value: "Sakit", child: Text("Sakit")),
                   ],
                   child: ElevatedButton.icon(
-                    // icon: const Icon(Icons.filter_list),
+                    icon: const Icon(Icons.filter_list),
                     label: const Text("Kondisi"),
-                    onPressed: null, // tambahkan fungsi kosong agar tombol aktif
+                    onPressed:
+                        null, // tambahkan fungsi kosong agar tombol aktif
                   ),
                 ),
               ],

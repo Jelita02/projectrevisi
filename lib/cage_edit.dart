@@ -29,6 +29,7 @@ class _CageEditState extends State<CageEdit> {
   List<Map<String, dynamic>> blok = [];
 
   final picker = ImagePicker();
+  String urlgambar = "";
 
   Future _getImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -46,6 +47,7 @@ class _CageEditState extends State<CageEdit> {
   void _editCage(context) {
     kandang.doc(widget.doc.id).update({
       "nama": _namaController.text,
+      "nama_lower": _namaController.text.toLowerCase(),
       "kapasitas": _kapasitasController.text,
       "kategori": _kategori,
     }).then((value) async {
@@ -89,9 +91,9 @@ class _CageEditState extends State<CageEdit> {
       }
       batch.commit();
 
-      kandang.doc(widget.doc.id).update({
-        "kapasitas": kapasitasKandang.toString()
-      });
+      kandang
+          .doc(widget.doc.id)
+          .update({"kapasitas": kapasitasKandang.toString()});
 
       var value = await kandang.doc(widget.doc.id).get();
       Navigator.pop(
@@ -227,8 +229,9 @@ class _CageEditState extends State<CageEdit> {
     //     );
     //   },
     // );
-      showModalBottomSheet(
-      isScrollControlled: true, // <- penting untuk menghindari tertutup keyboard
+    showModalBottomSheet(
+      isScrollControlled:
+          true, // <- penting untuk menghindari tertutup keyboard
       context: context,
       builder: (BuildContext bc) {
         return Padding(
@@ -256,7 +259,8 @@ class _CageEditState extends State<CageEdit> {
                                 decoration: const InputDecoration(
                                   labelText: 'Nama',
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 10),
                                 ),
                                 keyboardType: TextInputType.name,
                                 validator: (value) {
@@ -276,7 +280,8 @@ class _CageEditState extends State<CageEdit> {
                                 decoration: const InputDecoration(
                                   labelText: 'Kapasitas',
                                   isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 12, horizontal: 10),
                                 ),
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
@@ -289,7 +294,7 @@ class _CageEditState extends State<CageEdit> {
                             ),
                           ),
                         ],
-                      ),                
+                      ),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: double.infinity,
@@ -302,8 +307,8 @@ class _CageEditState extends State<CageEdit> {
                             if (blokKey.currentState?.validate() == true) {
                               setState(() {
                                 blok.add({
-                                  "nama_blok": namaBlokController.text,
-                                  "kapasitas_blok": kapasitasBlokController.text,
+                                  "nama": namaBlokController.text,
+                                  "kapasitas": kapasitasBlokController.text,
                                 });
                                 Navigator.of(context).pop();
                               });
@@ -349,6 +354,10 @@ class _CageEditState extends State<CageEdit> {
         return data;
       }).toList();
     });
+
+    urlgambar = Supabase.instance.client.storage
+        .from('terdom')
+        .getPublicUrl("kandang/${widget.doc.data()?['image']}");
   }
 
   @override
@@ -455,17 +464,32 @@ class _CageEditState extends State<CageEdit> {
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20)),
-                      child: (_image == null)
-                          ? const Text(
-                              "Foto Kandang",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.grey),
-                            )
-                          : Image.file(
-                              _image!,
+                      child: (urlgambar != null && _image == null)
+                          ? Image.network(
+                              urlgambar,
                               height: 200,
                               width: 200,
-                            ),
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image,
+                                    size: 50, color: Colors.grey);
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const CircularProgressIndicator();
+                              },
+                            )
+                          : (_image != null)
+                              ? Image.file(
+                                  _image!,
+                                  height: 200,
+                                  width: 200,
+                                )
+                              : const Text(
+                                  "Foto Kandang",
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.grey),
+                                ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -525,39 +549,41 @@ class _CageEditState extends State<CageEdit> {
                 ),
               ),
               const SizedBox(height: 20),
-                Column(
-                  children: blok
-                      .map((e) => Card(
-                            child: ListTile(
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      "Blok: ${e["nama"] ?? ""}",
-                                      style: const TextStyle(
-                                          overflow: TextOverflow.ellipsis),
-                                    ),
+              Column(
+                children: blok
+                    .map((e) => Card(
+                          child: ListTile(
+                            title: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "Blok: ${e["nama"] ?? ""}",
+                                    style: const TextStyle(
+                                        overflow: TextOverflow.ellipsis),
                                   ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      "Kapasitas: ${e["kapasitas"] ?? ""}",
-                                      style: const TextStyle(
-                                          overflow: TextOverflow.ellipsis),
-                                    ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "Kapasitas: ${e["kapasitas"] ?? ""}",
+                                    style: const TextStyle(
+                                        overflow: TextOverflow.ellipsis),
                                   ),
-                                ],
-                              ),
-                              trailing: GestureDetector(
-                                child: const Icon(Icons.delete),
-                                onTap: () {
-                               showDialog(
-                                  context: context, // <- pastikan context ini adalah context milik Scaffold
+                                ),
+                              ],
+                            ),
+                            trailing: GestureDetector(
+                              child: const Icon(Icons.delete),
+                              onTap: () {
+                                showDialog(
+                                  context:
+                                      context, // <- pastikan context ini adalah context milik Scaffold
                                   builder: (BuildContext dialogContext) {
                                     return AlertDialog(
                                       title: const Text("Konfirmasi"),
-                                      content: const Text("Apakah kamu yakin ingin menghapus blok ini?"),
+                                      content: const Text(
+                                          "Apakah kamu yakin ingin menghapus blok ini?"),
                                       actions: [
                                         TextButton(
                                           child: const Text("Batal"),
@@ -566,24 +592,26 @@ class _CageEditState extends State<CageEdit> {
                                           },
                                         ),
                                         TextButton(
-                                          child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+                                          child: const Text("Hapus",
+                                              style:
+                                                  TextStyle(color: Colors.red)),
                                           onPressed: () {
                                             setState(() {
                                               blok.remove(e);
                                             });
                                             Navigator.of(dialogContext).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
                             ),
-                          ))
-                      .toList(),
-                ),
+                          ),
+                        ))
+                    .toList(),
+              ),
 
               Center(
                 child: SizedBox(

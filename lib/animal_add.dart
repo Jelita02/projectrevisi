@@ -20,7 +20,7 @@ class AnimalAdd extends StatefulWidget {
 
 class _AnimalAddState extends State<AnimalAdd> {
   final _formKey = GlobalKey<FormState>();
-  bool _imageError = false; // 
+  bool _imageError = false; //
   bool _isImgValid = true;
 
   File? _imgFile;
@@ -76,6 +76,7 @@ class _AnimalAddState extends State<AnimalAdd> {
     hewan.add({
       "user_uid": widget.user.uid,
       "nama": _namaController.text,
+      "nama_lower": _namaController.text.toLowerCase(),
       "usia": _usia,
       "kategori": _kategori,
       "jenis_kelamin": _jenisKelamin,
@@ -415,7 +416,6 @@ class _AnimalAddState extends State<AnimalAdd> {
                     if (value != null) {
                       _blok = value["nama"];
                       _blokId = value["id"];
-                      
                     }
                   });
                 },
@@ -511,13 +511,13 @@ class _AnimalAddState extends State<AnimalAdd> {
                 ),
               ),
               if (!_isImgValid)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text(
-                  "Harap unggah foto hewan terlebih dahulu.",
-                  style: TextStyle(color: Colors.red),
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text(
+                    "Harap unggah foto hewan terlebih dahulu.",
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
-              ),
               const SizedBox(height: 20),
               Center(
                 child: SizedBox(
@@ -528,7 +528,8 @@ class _AnimalAddState extends State<AnimalAdd> {
                       backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                     ),
                     onPressed: () {
-                      final isValid = _formKey.currentState?.validate() ?? false;
+                      final isValid =
+                          _formKey.currentState?.validate() ?? false;
 
                       if (_imgFile == null) {
                         setState(() {
