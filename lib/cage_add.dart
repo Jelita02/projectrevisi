@@ -22,7 +22,7 @@ class _CageAddState extends State<CageAdd> {
   File? _image;
 
   late String _kategori;
-  final TextEditingController _namaController = TextEditingController();
+  final TextEditingController _namaController = TextEditingController(); 
   final TextEditingController _kapasitasController = TextEditingController();
 
   List<Map<String, dynamic>> blok = [];
@@ -130,8 +130,7 @@ class _CageAddState extends State<CageAdd> {
   void _showAddBlok(context) {
     final blokKey = GlobalKey<FormState>();
     final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController =
-        TextEditingController();
+    final TextEditingController kapasitasBlokController = TextEditingController();
 
     showModalBottomSheet(
       isScrollControlled:

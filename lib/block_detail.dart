@@ -187,7 +187,6 @@ class _BlockDetailState extends State<BlockDetail> {
                               controller: kapasitasBlokController,
                               decoration: const InputDecoration(
                                 labelText: 'Kapasitas',
-                                isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 10),
                               ),

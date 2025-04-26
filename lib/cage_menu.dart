@@ -85,7 +85,7 @@ class _CageMenuState extends State<CageMenu> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CageAdd(
+                builder: (context) => CageAdd(//mengarah kehalaman
                   user: widget.user,
                 ),
               )).then((value) => setState(() {}));

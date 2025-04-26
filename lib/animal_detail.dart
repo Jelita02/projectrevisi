@@ -171,7 +171,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
             TextButton(
               child: const Text('Close'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); //menarik
               },
             ),
           ],
@@ -358,11 +358,11 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       child: PopupMenuButton<String>(
                         onSelected: (value) {
                           if (value == "edit") {
-                            Navigator.push<
+                            Navigator.push< //menumpuk / menambah
                                 DocumentSnapshot<Map<String, dynamic>>>(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => AnimalEdit(
+                              MaterialPageRoute(//
+                                  builder: (context) => AnimalEdit( //mengarah ke halaman enimal edit
                                         doc: doc,
                                         user: widget.user,
                                       )),
@@ -695,7 +695,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  TextFormField form(
+  TextFormField form( 
       {required String text,
       String? value,
       Widget? iconSuffix,

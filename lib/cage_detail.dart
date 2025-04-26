@@ -88,7 +88,7 @@ class _CageDetailState extends State<CageDetail> {
                     .delete()
                     .then((value) {
                   Navigator.of(context).pop(); // Tutup dialog
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // penumpuk
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Berhasil dihapus")),
                   );
@@ -213,7 +213,7 @@ class _CageDetailState extends State<CageDetail> {
     );
   }
 
-  @override
+  @override //tampilan
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -246,7 +246,7 @@ class _CageDetailState extends State<CageDetail> {
                 if (value == "edit") {
                   Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
                     context,
-                    MaterialPageRoute(
+                    MaterialPageRoute(// pindah ke halaman edit
                         builder: (context) => CageEdit(
                               doc: doc,
                               user: widget.user,
@@ -404,7 +404,7 @@ class _CageDetailState extends State<CageDetail> {
                                       const Color.fromRGBO(48, 130, 148, 0.45),
                                 ),
                                 onPressed: () {
-                                  Navigator.push(
+                                  Navigator.push(// pindah ke blok detail
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => BlockDetail(

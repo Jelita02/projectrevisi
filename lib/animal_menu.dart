@@ -17,7 +17,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
   int countList = 0;
   String searchQuery = "";
   String filterCategory = "";
-  String filterkondisi = "";
+  // String filterkondisi = "";
 
   // Future<QuerySnapshot<Map<String, dynamic>>> _getListAnimal() {
   //   Query<Map<String, dynamic>> query = FirebaseFirestore.instance
@@ -80,9 +80,9 @@ class _MenuAnimalState extends State<MenuAnimal> {
     query = query.where("kategori", isEqualTo: filterCategory);
   }
 
-  if (filterkondisi.isNotEmpty) {
-    query = query.where("status_kesehatan", isEqualTo: filterkondisi);
-  }
+  // if (filterkondisi.isNotEmpty) {
+  //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
+  // }
 
   query.get().then((value) {
     setState(() {
@@ -114,7 +114,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AnimalAdd(
+                builder: (context) => AnimalAdd(//mengarah kehalaman animal add
                   user: widget.user,
                 ),
               )).then((value) => refresh());
@@ -164,24 +164,24 @@ class _MenuAnimalState extends State<MenuAnimal> {
                         null, // tambahkan fungsi kosong agar tombol aktif
                   ),
                 ),
-                const SizedBox(width: 10),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    setState(() => filterkondisi = value);
-                    refresh(); 
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: "", child: Text("Semua")),
-                    const PopupMenuItem(value: "Sehat", child: Text("Sehat")),
-                    const PopupMenuItem(value: "Sakit", child: Text("Sakit")),
-                  ],
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text("Kondisi"),
-                    onPressed:
-                        null, // tambahkan fungsi kosong agar tombol aktif
-                  ),
-                ),
+                // const SizedBox(width: 10),
+                // PopupMenuButton<String>(
+                //   onSelected: (value) {
+                //     setState(() => filterkondisi = value);
+                //     refresh(); 
+                //   },
+                //   itemBuilder: (context) => [
+                //     const PopupMenuItem(value: "", child: Text("Semua")),
+                //     const PopupMenuItem(value: "Sehat", child: Text("Sehat")),
+                //     const PopupMenuItem(value: "Sakit", child: Text("Sakit")),
+                //   ],
+                //   child: ElevatedButton.icon(
+                //     icon: const Icon(Icons.filter_list),
+                //     label: const Text("Kondisi"),
+                //     onPressed:
+                //         null, // tambahkan fungsi kosong agar tombol aktif
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 10),

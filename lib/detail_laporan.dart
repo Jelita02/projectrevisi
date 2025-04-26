@@ -87,8 +87,8 @@ class _DetailLaporanScreenState extends State<DetailLaporanScreen> {
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView(//
+          scrollDirection: Axis.horizontal,//biar geser kesamping 
           child: SizedBox(
             width: 1100,
             child: Column  (

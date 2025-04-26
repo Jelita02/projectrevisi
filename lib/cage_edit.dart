@@ -311,6 +311,7 @@ class _CageEditState extends State<CageEdit> {
                                   "kapasitas": kapasitasBlokController.text,
                                 });
                                 Navigator.of(context).pop();
+                                
                               });
                             }
                           },
