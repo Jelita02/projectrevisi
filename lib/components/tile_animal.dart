@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // ignore: library_prefixes
 import 'package:firebase_auth/firebase_auth.dart' as userFire;
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_detail.dart';
 
@@ -133,7 +134,13 @@ class TileAnimal extends StatelessWidget {
                             child: Row(
                               children: [
                                 const Icon(Icons.monitor_weight_outlined),
-                                Text((doc.data()?["bobot"] ?? "") + " kg"),
+                                Expanded(
+                                  child: Text(
+                                    (doc.data()?["bobot"] ?? "") + " kg",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
                               ],
                             ),
                           ),

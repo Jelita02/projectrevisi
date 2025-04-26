@@ -33,25 +33,33 @@ class _MenuAnimalState extends State<MenuAnimal> {
   //   if (filterCategory.isNotEmpty) {
   //     query = query.where("kategori", isEqualTo: filterCategory);
   //   }
-    // if (filterkondisi.isNotEmpty) {
-    //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
-    // }
+  // if (filterkondisi.isNotEmpty) {
+  //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
+  // }
 
   //   return query.get();
   // }
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _getListAnimal() async {
-  Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-      .collection("hewan")
-      .where("user_uid", isEqualTo: widget.user.uid);
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      _getListAnimal() async {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("hewan")
+        .where("user_uid", isEqualTo: widget.user.uid);
 
-  if (filterCategory.isNotEmpty) {
-    query = query.where("kategori", isEqualTo: filterCategory);
+    if (searchQuery.isNotEmpty) {
+      query = query
+          .where("nama_lower",
+              isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+          .where("nama_lower",
+              isLessThan: '${searchQuery.toLowerCase()}\uf8ff');
+    }
+
+    if (filterCategory.isNotEmpty) {
+      query = query.where("kategori", isEqualTo: filterCategory);
+    }
+
+    final snapshot = await query.get();
+    return snapshot.docs;
   }
-
-  final snapshot = await query.get();
-  return snapshot.docs;
-}
-
 
   @override
   void initState() {
@@ -66,32 +74,32 @@ class _MenuAnimalState extends State<MenuAnimal> {
     //     .get()
     //     .then((value) => setState(() => countList = value.size));
 
-  Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-      .collection("hewan")
-      .where("user_uid", isEqualTo: widget.user.uid);
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("hewan")
+        .where("user_uid", isEqualTo: widget.user.uid);
 
-  if (searchQuery.isNotEmpty) {
-    query = query
-        .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
-        .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
-  }
+    if (searchQuery.isNotEmpty) {
+      query = query
+          .where("nama_lower",
+              isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+          .where("nama_lower",
+              isLessThan: '${searchQuery.toLowerCase()}\uf8ff');
+    }
 
-  if (filterCategory.isNotEmpty) {
-    query = query.where("kategori", isEqualTo: filterCategory);
-  }
+    if (filterCategory.isNotEmpty) {
+      query = query.where("kategori", isEqualTo: filterCategory);
+    }
 
-  // if (filterkondisi.isNotEmpty) {
-  //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
-  // }
+    // if (filterkondisi.isNotEmpty) {
+    //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
+    // }
 
-  query.get().then((value) {
-    setState(() {
-      countList = value.size;
+    query.get().then((value) {
+      setState(() {
+        countList = value.size;
+      });
     });
-  });
-}
-
-  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +122,8 @@ class _MenuAnimalState extends State<MenuAnimal> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AnimalAdd(//mengarah kehalaman animal add
+                builder: (context) => AnimalAdd(
+                  //mengarah kehalaman animal add
                   user: widget.user,
                 ),
               )).then((value) => refresh());
@@ -139,7 +148,6 @@ class _MenuAnimalState extends State<MenuAnimal> {
                     ),
                     onChanged: (value) {
                       setState(() => searchQuery = value);
-                      
                     },
                   ),
                 ),
@@ -147,9 +155,8 @@ class _MenuAnimalState extends State<MenuAnimal> {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     setState(() => filterCategory = value);
-                     refresh(); 
+                    refresh();
                   },
-                  
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: "", child: Text("Semua")),
                     const PopupMenuItem(
@@ -168,7 +175,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
                 // PopupMenuButton<String>(
                 //   onSelected: (value) {
                 //     setState(() => filterkondisi = value);
-                //     refresh(); 
+                //     refresh();
                 //   },
                 //   itemBuilder: (context) => [
                 //     const PopupMenuItem(value: "", child: Text("Semua")),
@@ -193,39 +200,42 @@ class _MenuAnimalState extends State<MenuAnimal> {
               ),
             ),
             const SizedBox(height: 10),
-                      Expanded(
-            child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-              future: _getListAnimal(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text("Terjadi kesalahan"));
-                } else {
-                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.data ?? [];
+            Expanded(
+              child: FutureBuilder<
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+                future: _getListAnimal(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text("Terjadi kesalahan"));
+                  } else {
+                    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                        snapshot.data ?? [];
 
-                  // 🔍 Filter lokal dengan toLowerCase()
-                  final filteredDocs = docs.where((doc) {
-                    final data = doc.data();
-                    final nama = data["nama"]?.toString().toLowerCase() ?? "";
-                    return nama.contains(searchQuery.toLowerCase());
-                  }).toList();
+                    // 🔍 Filter lokal dengan toLowerCase()
+                    final filteredDocs = docs.where((doc) {
+                      final data = doc.data();
+                      final nama = data["nama"]?.toString().toLowerCase() ?? "";
+                      return nama.contains(searchQuery.toLowerCase());
+                    }).toList();
 
-                  countList = filteredDocs.length; // update jumlah hasil
+                    countList = filteredDocs.length; // update jumlah hasil
 
-                  return ListView(
-                    children: filteredDocs.map((e) => TileAnimal(
-                      user: widget.user,
-                      doc: e,
-                      refresh: refresh,
-                      isForHealthy: widget.isForHealthy,
-                    )).toList(),
-                  );
-                }
-              },
+                    return ListView(
+                      children: filteredDocs
+                          .map((e) => TileAnimal(
+                                user: widget.user,
+                                doc: e,
+                                refresh: refresh,
+                                isForHealthy: widget.isForHealthy,
+                              ))
+                          .toList(),
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-            
           ],
         ),
       ),

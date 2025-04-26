@@ -18,7 +18,7 @@ class TileCage extends StatelessWidget {
       required this.total,
       required this.refresh,
       required this.user});
-      //data yang dibutuhkan
+  //data yang dibutuhkan
 
   Future<Uint8List?> _getImage() async {
     String imageFile = doc.data()["image"];

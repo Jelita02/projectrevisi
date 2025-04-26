@@ -22,7 +22,7 @@ class _CageAddState extends State<CageAdd> {
   File? _image;
 
   late String _kategori;
-  final TextEditingController _namaController = TextEditingController(); 
+  final TextEditingController _namaController = TextEditingController();
   final TextEditingController _kapasitasController = TextEditingController();
 
   List<Map<String, dynamic>> blok = [];
@@ -130,7 +130,8 @@ class _CageAddState extends State<CageAdd> {
   void _showAddBlok(context) {
     final blokKey = GlobalKey<FormState>();
     final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController = TextEditingController();
+    final TextEditingController kapasitasBlokController =
+        TextEditingController();
 
     showModalBottomSheet(
       isScrollControlled:
@@ -338,25 +339,6 @@ class _CageAddState extends State<CageAdd> {
                               width: 200,
                             ),
                     ),
-                    if (_imageError) // validasi gambar wajib diupload
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Gambar kandang wajib diunggah',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    Container(
-                        // ... Container Upload Gambar
-                        ),
-                    if (_imageError)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Gambar kandang wajib diunggah',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -371,6 +353,14 @@ class _CageAddState extends State<CageAdd> {
                   ],
                 ),
               ),
+              if (_imageError)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Gambar kandang wajib diunggah',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: 20),
               Container(
                 // height: 80,
