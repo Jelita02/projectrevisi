@@ -71,7 +71,7 @@ class _CageEditState extends State<CageEdit> {
       int kapasitasKandang = 0;
       Map<String, String> listId = {};
       for (var v in blok) {
-        kapasitasKandang += int.parse(v["kapasitas"] ?? 0);
+        kapasitasKandang += int.tryParse(v["kapasitas"] ?? 0) ?? 0;
         var doc = await blokStore.add({
           "user_uid": widget.user.uid,
           "kandang_id": widget.doc.id,

@@ -73,7 +73,7 @@ class _CageAddState extends State<CageAdd> {
           "user_uid": widget.user.uid,
           "kandang_id": value.id,
           "nama": v["nama_blok"] ?? "",
-          "kapasitas": v["kapasitas_wblok"] ?? "",
+          "kapasitas": v["kapasitas_blok"] ?? "",
         });
       }
 
