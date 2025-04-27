@@ -57,14 +57,15 @@ class _CageEditState extends State<CageEdit> {
 
         // Buat nama file unik dengan UUID
         String fileName = '${widget.doc.id}$extension';
-        Supabase.instance.client.storage
+        await Supabase.instance.client.storage
             .from('terdom') // Ganti dengan nama bucket
-            .upload('kandang/$fileName', _image!)
-            .then((data) {
-          kandang.doc(widget.doc.id).update({
-            "image": fileName,
-          });
-        }).catchError((error) => {print("ERRORRR: $error")});
+            .remove(['kandang/$fileName']);
+        await Supabase.instance.client.storage
+            .from('terdom') // Ganti dengan nama bucket
+            .upload('kandang/$fileName', _image!);
+        kandang.doc(widget.doc.id).update({
+          "image": fileName,
+        });
       }
 
       int kapasitasKandang = 0;
@@ -311,7 +312,6 @@ class _CageEditState extends State<CageEdit> {
                                   "kapasitas": kapasitasBlokController.text,
                                 });
                                 Navigator.of(context).pop();
-                                
                               });
                             }
                           },

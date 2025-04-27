@@ -27,6 +27,7 @@ class _BlockDetailState extends State<BlockDetail> {
   void _showEditBlok(
       context, QueryDocumentSnapshot<Map<String, dynamic>> blok) {
     final blokKey = GlobalKey<FormState>();
+    final int kapasitasBlokLama = int.tryParse(blok.data()["kapasitas"]) ?? 0;
     final TextEditingController namaBlokController =
         TextEditingController(text: blok.data()["nama"] ?? "");
     final TextEditingController kapasitasBlokController =
@@ -219,8 +220,24 @@ class _BlockDetailState extends State<BlockDetail> {
                               "nama": namaBlokController.text,
                               "kapasitas": kapasitasBlokController.text,
                             }).then((value) {
-                              setState(() {
-                                Navigator.of(context).pop();
+                              final kandang = FirebaseFirestore.instance
+                                  .collection('kandang')
+                                  .doc(widget.kandangId);
+
+                              kandang.get().then((value) {
+                                int kapasitasKandang =
+                                    int.tryParse(value["kapasitas"] ?? 0) ?? 0;
+                                kapasitasKandang -= kapasitasBlokLama;
+                                kapasitasKandang += (int.tryParse(
+                                        kapasitasBlokController.text) ??
+                                    0);
+                                kandang.update({
+                                  "kapasitas": kapasitasKandang.toString()
+                                }).then((value) {
+                                  setState(() {
+                                    Navigator.of(context).pop();
+                                  });
+                                });
                               });
                             });
                           }
@@ -256,6 +273,18 @@ class _BlockDetailState extends State<BlockDetail> {
             fontSize: 17,
             fontWeight: FontWeight.w900,
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // <- back icon
+          onPressed: () {
+            FirebaseFirestore.instance
+                .collection('kandang')
+                .doc(widget.kandangId)
+                .get()
+                .then((value) {
+              Navigator.pop(context, value);
+            });
+          },
         ),
       ),
       body: SingleChildScrollView(

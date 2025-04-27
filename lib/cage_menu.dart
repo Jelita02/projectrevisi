@@ -182,7 +182,9 @@ class _CageMenuState extends State<CageMenu> {
                             final total = snap.data?.count ?? 0;
                             return TileCage(
                               user: widget.user,
-                              refresh: () {},
+                              refresh: () => setState(() {
+                                print("SIP");
+                              }),
                               doc: e,
                               total: total.toString(),
                             );

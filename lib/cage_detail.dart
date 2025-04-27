@@ -40,6 +40,12 @@ class _CageDetailState extends State<CageDetail> {
         .count()
         .get()
         .then((value) => setState(() {
+              var kapasitasInt = int.tryParse(doc.data()?["kapasitas"] ?? "");
+              var totalInt = int.tryParse(widget.total);
+
+              if (kapasitasInt != null && totalInt != null) {
+                canUse = max(0, kapasitasInt - totalInt);
+              }
               totalBlok = value.count ?? 0;
             }));
   }
@@ -156,7 +162,7 @@ class _CageDetailState extends State<CageDetail> {
   void _showImage() async {
     String imageUrl = Supabase.instance.client.storage
         .from('terdom')
-        .getPublicUrl("kandang/${widget.doc.data()['image']}");
+        .getPublicUrl("kandang/${doc.data()?['image']}");
 
     showDialog(
       context: context,
@@ -225,6 +231,12 @@ class _CageDetailState extends State<CageDetail> {
             fontWeight: FontWeight.w900,
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // <- back icon
+          onPressed: () {
+            Navigator.pop(context, 'refresh'); // <- custom aksi back
+          },
+        ),
         actions: [
           Align(
             alignment: Alignment.centerRight,
@@ -246,15 +258,16 @@ class _CageDetailState extends State<CageDetail> {
                 if (value == "edit") {
                   Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
                     context,
-                    MaterialPageRoute(// pindah ke halaman edit
+                    MaterialPageRoute(
+                        // pindah ke halaman edit
                         builder: (context) => CageEdit(
                               doc: doc,
                               user: widget.user,
                             )),
                   ).then((value) {
                     setState(() {
-                      getTotal();
                       doc = value!;
+                      getTotal();
                     });
                   });
                 }
@@ -404,7 +417,8 @@ class _CageDetailState extends State<CageDetail> {
                                       const Color.fromRGBO(48, 130, 148, 0.45),
                                 ),
                                 onPressed: () {
-                                  Navigator.push(// pindah ke blok detail
+                                  Navigator.push(
+                                      // pindah ke blok detail
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => BlockDetail(
@@ -412,7 +426,10 @@ class _CageDetailState extends State<CageDetail> {
                                           total: widget.total,
                                           totalBlok: totalBlok.toString(),
                                         ),
-                                      )).then((value) => setState(() {}));
+                                      )).then((value) => setState(() {
+                                        doc = value!;
+                                        getTotal();
+                                      }));
                                 },
                                 child: const Text(
                                   "Lihat Blok",

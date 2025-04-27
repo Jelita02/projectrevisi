@@ -41,7 +41,9 @@ class TileCage extends StatelessWidget {
                 doc: doc,
                 total: total,
               ),
-            )).then((value) => refresh());
+            )).then((value) {
+          refresh();
+        });
       },
       child: Container(
         margin: const EdgeInsets.all(10),
