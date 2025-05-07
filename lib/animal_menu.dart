@@ -14,31 +14,11 @@ class MenuAnimal extends StatefulWidget {
 }
 
 class _MenuAnimalState extends State<MenuAnimal> {
-  int countList = 0;
+  // int countList = 0;
   String searchQuery = "";
   String filterCategory = "";
-  String filterkondisi = "";
+  // String filterkondisi = "";
 
-  // Future<QuerySnapshot<Map<String, dynamic>>> _getListAnimal() {
-  //   Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-  //       .collection("hewan")
-  //       .where("user_uid", isEqualTo: widget.user.uid)
-  //       .orderBy("nama");
-  //   if (searchQuery.isNotEmpty) {
-  //     query = query
-  //         .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
-  //         .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
-  //   }
-
-  //   if (filterCategory.isNotEmpty) {
-  //     query = query.where("kategori", isEqualTo: filterCategory);
-  //   }
-    // if (filterkondisi.isNotEmpty) {
-    //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
-    // }
-
-  //   return query.get();
-  // }
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _getListAnimal() async {
   Query<Map<String, dynamic>> query = FirebaseFirestore.instance
       .collection("hewan")
@@ -80,13 +60,13 @@ class _MenuAnimalState extends State<MenuAnimal> {
     query = query.where("kategori", isEqualTo: filterCategory);
   }
 
-  if (filterkondisi.isNotEmpty) {
-    query = query.where("status_kesehatan", isEqualTo: filterkondisi);
-  }
+  // if (filterkondisi.isNotEmpty) {
+  //   query = query.where("status_kesehatan", isEqualTo: filterkondisi);
+  // }
 
   query.get().then((value) {
     setState(() {
-      countList = value.size;
+      // countList = value.size;
     });
   });
 }
@@ -114,7 +94,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AnimalAdd(
+                builder: (context) => AnimalAdd(//mengarah kehalaman animal add
                   user: widget.user,
                 ),
               )).then((value) => refresh());
@@ -164,34 +144,34 @@ class _MenuAnimalState extends State<MenuAnimal> {
                         null, // tambahkan fungsi kosong agar tombol aktif
                   ),
                 ),
-                const SizedBox(width: 10),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    setState(() => filterkondisi = value);
-                    refresh(); 
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: "", child: Text("Semua")),
-                    const PopupMenuItem(value: "Sehat", child: Text("Sehat")),
-                    const PopupMenuItem(value: "Sakit", child: Text("Sakit")),
-                  ],
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text("Kondisi"),
-                    onPressed:
-                        null, // tambahkan fungsi kosong agar tombol aktif
-                  ),
-                ),
+                // const SizedBox(width: 10),
+                // PopupMenuButton<String>(
+                //   onSelected: (value) {
+                //     setState(() => filterkondisi = value);
+                //     refresh(); 
+                //   },
+                //   itemBuilder: (context) => [
+                //     const PopupMenuItem(value: "", child: Text("Semua")),
+                //     const PopupMenuItem(value: "Sehat", child: Text("Sehat")),
+                //     const PopupMenuItem(value: "Sakit", child: Text("Sakit")),
+                //   ],
+                //   child: ElevatedButton.icon(
+                //     icon: const Icon(Icons.filter_list),
+                //     label: const Text("Kondisi"),
+                //     onPressed:
+                //         null, // tambahkan fungsi kosong agar tombol aktif
+                //   ),
+                // ),
               ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              "$countList Hewan",
-              style: const TextStyle(
-                color: Color.fromRGBO(0, 0, 0, 0.5),
-                fontSize: 15,
-              ),
-            ),
+            // const SizedBox(height: 10),
+            // Text(
+            //   "$countList Hewan",
+            //   style: const TextStyle(
+            //     color: Color.fromRGBO(0, 0, 0, 0.5),
+            //     fontSize: 15,
+            //   ),
+            // ),
             const SizedBox(height: 10),
                       Expanded(
             child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
@@ -205,13 +185,26 @@ class _MenuAnimalState extends State<MenuAnimal> {
                   List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.data ?? [];
 
                   // 🔍 Filter lokal dengan toLowerCase()
-                  final filteredDocs = docs.where((doc) {
-                    final data = doc.data();
-                    final nama = data["nama"]?.toString().toLowerCase() ?? "";
-                    return nama.contains(searchQuery.toLowerCase());
-                  }).toList();
+                  // final filteredDocs = docs.where((doc) {
+                  //   final data = doc.data();
+                  //   final nama = data["nama"]?.toString().toLowerCase() ?? "";
+                  //   return nama.contains(searchQuery.toLowerCase());
+                  // }).toList();
+                      final filteredDocs = docs.where((doc) {
+                      final data = doc.data();
+                      final nama = data["nama"]?.toString().toLowerCase() ?? "";
+                      return nama.contains(searchQuery.toLowerCase());
+                    }).toList();
 
-                  countList = filteredDocs.length; // update jumlah hasil
+                    // Tambahkan sorting disini
+                    filteredDocs.sort((a, b) {
+                      final namaA = a.data()["nama"]?.toString().toLowerCase() ?? "";
+                      final namaB = b.data()["nama"]?.toString().toLowerCase() ?? "";
+                      return namaA.compareTo(namaB);
+                    });
+
+
+                  // countList = filteredDocs.length; // update jumlah hasil
 
                   return ListView(
                     children: filteredDocs.map((e) => TileAnimal(

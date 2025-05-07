@@ -40,6 +40,12 @@ class _CageDetailState extends State<CageDetail> {
         .count()
         .get()
         .then((value) => setState(() {
+              var kapasitasInt = int.tryParse(doc.data()?["kapasitas"] ?? "");
+              var totalInt = int.tryParse(widget.total);
+
+              if (kapasitasInt != null && totalInt != null) {
+                canUse = max(0, kapasitasInt - totalInt);
+              }
               totalBlok = value.count ?? 0;
             }));
   }
@@ -88,7 +94,7 @@ class _CageDetailState extends State<CageDetail> {
                     .delete()
                     .then((value) {
                   Navigator.of(context).pop(); // Tutup dialog
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // penumpuk
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Berhasil dihapus")),
                   );
@@ -156,7 +162,7 @@ class _CageDetailState extends State<CageDetail> {
   void _showImage() async {
     String imageUrl = Supabase.instance.client.storage
         .from('terdom')
-        .getPublicUrl("kandang/${widget.doc.data()['image']}");
+        .getPublicUrl("kandang/${doc.data()?['image']}");
 
     showDialog(
       context: context,
@@ -213,7 +219,7 @@ class _CageDetailState extends State<CageDetail> {
     );
   }
 
-  @override
+  @override //tampilan
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -224,6 +230,12 @@ class _CageDetailState extends State<CageDetail> {
             fontSize: 17,
             fontWeight: FontWeight.w900,
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // <- back icon
+          onPressed: () {
+            Navigator.pop(context, 'refresh'); // <- custom aksi back
+          },
         ),
         actions: [
           Align(
@@ -247,14 +259,15 @@ class _CageDetailState extends State<CageDetail> {
                   Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
                     context,
                     MaterialPageRoute(
+                        // pindah ke halaman edit
                         builder: (context) => CageEdit(
                               doc: doc,
                               user: widget.user,
                             )),
                   ).then((value) {
                     setState(() {
-                      getTotal();
                       doc = value!;
+                      getTotal();
                     });
                   });
                 }
@@ -405,6 +418,7 @@ class _CageDetailState extends State<CageDetail> {
                                 ),
                                 onPressed: () {
                                   Navigator.push(
+                                      // pindah ke blok detail
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => BlockDetail(
@@ -412,7 +426,10 @@ class _CageDetailState extends State<CageDetail> {
                                           total: widget.total,
                                           totalBlok: totalBlok.toString(),
                                         ),
-                                      )).then((value) => setState(() {}));
+                                      )).then((value) => setState(() {
+                                        doc = value!;
+                                        getTotal();
+                                      }));
                                 },
                                 child: const Text(
                                   "Lihat Blok",

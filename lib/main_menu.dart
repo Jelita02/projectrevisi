@@ -102,22 +102,8 @@ class _MainMenuState extends State<MainMenu> {
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
         // Tambahkan identitas pengguna di sini
         title:Text("QR-Sheep"),
-        // Misalnya, aksi Logout
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(
-        //       Icons.notifications_none_outlined,
-        //       size: 34,
-        //       color: Color.fromRGBO(26, 107, 125, 1),
-        //     ),
-        //     onPressed: () {
-        //       // Tambahkan logika untuk logout di sini
-        //       print("notif");
-        //     },
-        //   ),
-        // ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,//widget untuk +
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),

@@ -497,87 +497,87 @@ class _AnimalEditState extends State<AnimalEdit> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _tanggalController,
-                      decoration: const InputDecoration(
-                        labelText: 'Tanggal Masuk',
-                        suffix: Icon(Icons.date_range_outlined),
-                      ),
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Masukan tanggal";
-                        }
+                  // const SizedBox(width: 20),
+                  // Expanded(
+                  //   child: TextFormField(
+                  //     controller: _tanggalController,
+                  //     decoration: const InputDecoration(
+                  //       labelText: 'Tanggal Masuk',
+                  //       suffix: Icon(Icons.date_range_outlined),
+                  //     ),
+                  //     readOnly: true,
+                  //     onTap: () => _selectDate(context),
+                  //     validator: (value) {
+                  //       if (value == null || value.isEmpty) {
+                  //         return "Masukan tanggal";
+                  //       }
 
-                        return null;
-                      },
-                    ),
-                  ),
+                  //       return null;
+                  //     },
+                  //   ),
+                  // ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Container(
-                // height: 80,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 10.0,
-                      offset: Offset(1, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: (_imgFile != null)
-                            ? Image.file(_imgFile!, height: 200, width: 200)
-                            : (urlgambar != "")
-                                ? Image.network(
-                                    urlgambar,
-                                    height: 200,
-                                    width: 200,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.broken_image,
-                                          size: 50, color: Colors.grey);
-                                    },
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const CircularProgressIndicator();
-                                    },
-                                  )
-                                : const Text(
-                                    "Foto Hewan",
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.grey),
-                                  )),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(48, 130, 148, 0.45),
-                      ),
-                      onPressed: () => _ambilGambar(),
-                      child: const Text(
-                        "Upload",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   // height: 80,
+              //   padding: const EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(20),
+              //     border: Border.all(
+              //       color: Colors.black,
+              //     ),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.grey,
+              //         blurRadius: 10.0,
+              //         offset: Offset(1, 3),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Container(
+              //           decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(20)),
+              //           child: (_imgFile != null)
+              //               ? Image.file(_imgFile!, height: 200, width: 200)
+              //               : (urlgambar != "")
+              //                   ? Image.network(
+              //                       urlgambar,
+              //                       height: 200,
+              //                       width: 200,
+              //                       errorBuilder: (context, error, stackTrace) {
+              //                         return const Icon(Icons.broken_image,
+              //                             size: 50, color: Colors.grey);
+              //                       },
+              //                       loadingBuilder:
+              //                           (context, child, loadingProgress) {
+              //                         if (loadingProgress == null) return child;
+              //                         return const CircularProgressIndicator();
+              //                       },
+              //                     )
+              //                   : const Text(
+              //                       "Foto Hewan",
+              //                       style: TextStyle(
+              //                           fontSize: 18, color: Colors.grey),
+              //                     )),
+              //       ElevatedButton(
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor:
+              //               const Color.fromRGBO(48, 130, 148, 0.45),
+              //         ),
+              //         onPressed: () => _ambilGambar(),
+              //         child: const Text(
+              //           "Upload",
+              //           style: TextStyle(fontWeight: FontWeight.bold),
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 20),
               Center(
                 child: SizedBox(

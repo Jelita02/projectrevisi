@@ -40,7 +40,7 @@ class _CageAddState extends State<CageAdd> {
   }
 
   var kandang = FirebaseFirestore.instance.collection('kandang');
-  var blokStore = FirebaseFirestore.instance.collection('blok');
+  var blokStore = FirebaseFirestore.instance.collection('blok'); 
 
   void _addCage() {
     kandang.add({
@@ -54,13 +54,13 @@ class _CageAddState extends State<CageAdd> {
         // Ambil ekstensi file asli
         String extension = path.extension(_image!.path);
 
-        // Buat nama file unik dengan UUID
+        // Buat nama file berdasarkan doc.id firebase
         String fileName = '${value.id}$extension';
         Supabase.instance.client.storage
             .from('terdom') // Ganti dengan nama bucket
-            .upload('kandang/$fileName', _image!)
+            .upload('kandang/$fileName', _image!)// supabase buatin floder kandang otomatis
             .then((data) {
-          kandang.doc(value.id).update({
+          kandang.doc(value.id).update({ // firebase
             "image": fileName,
           });
         }).catchError((error) => {print("ERRORRR: $error")});
@@ -73,7 +73,7 @@ class _CageAddState extends State<CageAdd> {
           "user_uid": widget.user.uid,
           "kandang_id": value.id,
           "nama": v["nama_blok"] ?? "",
-          "kapasitas": v["kapasitas_wblok"] ?? "",
+          "kapasitas": v["kapasitas_blok"] ?? "",
         });
       }
 
@@ -83,6 +83,36 @@ class _CageAddState extends State<CageAdd> {
     });
   }
 
+  // 
+  // void _showPicker(context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext bc) {
+  //       return SafeArea(
+  //         child: Wrap(
+  //           children: <Widget>[
+  //             ListTile(
+  //               leading: const Icon(Icons.photo_library),
+  //               title: const Text('Gallery'),
+  //               onTap: () {
+  //                 _getImage(ImageSource.gallery);
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: const Icon(Icons.photo_camera),
+  //               title: const Text('Camera'),
+  //               onTap: () {
+  //                 _getImage(ImageSource.camera);
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
   void _showPicker(context) {
     showModalBottomSheet(
       context: context,
@@ -93,32 +123,18 @@ class _CageAddState extends State<CageAdd> {
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Gallery'),
-                onTap: () async {
-                  await _getImage(ImageSource.gallery);
-                  setState(() {
-                    _imageError = _image == null; // update error state
-                  });
+                onTap: () {
+                  _getImage(ImageSource.gallery);
                   Navigator.of(context).pop();
                 },
-                // {
-                //   _getImage(ImageSource.gallery);
-                //   Navigator.of(context).pop();
-                // },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Camera'),
-                onTap: () async {
-                  await _getImage(ImageSource.gallery);
-                  setState(() {
-                    _imageError = _image == null; // update error state
-                  });
+                onTap: () {
+                  _getImage(ImageSource.camera);
                   Navigator.of(context).pop();
                 },
-                // {
-                //   _getImage(ImageSource.camera);
-                //   Navigator.of(context).pop();
-                // },
               ),
             ],
           ),
@@ -130,8 +146,7 @@ class _CageAddState extends State<CageAdd> {
   void _showAddBlok(context) {
     final blokKey = GlobalKey<FormState>();
     final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController =
-        TextEditingController();
+    final TextEditingController kapasitasBlokController =TextEditingController();
 
     showModalBottomSheet(
       isScrollControlled:
@@ -339,25 +354,6 @@ class _CageAddState extends State<CageAdd> {
                               width: 200,
                             ),
                     ),
-                    if (_imageError) // validasi gambar wajib diupload
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Gambar kandang wajib diunggah',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    Container(
-                        // ... Container Upload Gambar
-                        ),
-                    if (_imageError)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text(
-                          'Gambar kandang wajib diunggah',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -372,6 +368,14 @@ class _CageAddState extends State<CageAdd> {
                   ],
                 ),
               ),
+              if (_imageError)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Gambar kandang wajib diunggah',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               const SizedBox(height: 20),
               Container(
                 // height: 80,

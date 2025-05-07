@@ -88,7 +88,7 @@ class HealthyAddState extends State<HealthyAdd> {
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        _tanggalController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _tanggalController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
       });
     }
   }

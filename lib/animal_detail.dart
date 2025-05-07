@@ -171,7 +171,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
             TextButton(
               child: const Text('Close'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); //menarik
               },
             ),
           ],
@@ -358,11 +358,11 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       child: PopupMenuButton<String>(
                         onSelected: (value) {
                           if (value == "edit") {
-                            Navigator.push<
+                            Navigator.push< //menumpuk / menambah
                                 DocumentSnapshot<Map<String, dynamic>>>(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => AnimalEdit(
+                              MaterialPageRoute(//
+                                  builder: (context) => AnimalEdit( //mengarah ke halaman enimal edit
                                         doc: doc,
                                         user: widget.user,
                                       )),
@@ -536,7 +536,10 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     textController: _textStatusController,
                     readOnly: _readOnlyStatus,
                     value: doc.data()?["status"] ?? ""),
-                form(text: "Bobot Masuk", value: doc.data()?["bobot"] ?? ""),
+                form(text: "Bobot Masuk",
+                    //  value: {doc.data()?["bobot"] ?? ""}| ${doc.data()?["tanggal_masuk"] ?? ""
+                     value: "${doc.data()?["bobot"] ?? ""} Kg | ${doc.data()?["tanggal_masuk"] ?? ""}"
+                     ),
                 Form(
                   key: _formKey,
                   child: Row(
@@ -695,7 +698,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  TextFormField form(
+  TextFormField form( 
       {required String text,
       String? value,
       Widget? iconSuffix,
@@ -765,7 +768,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        _tanggalBobotController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _tanggalBobotController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
       });
     }
   }

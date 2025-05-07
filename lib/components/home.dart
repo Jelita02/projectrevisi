@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/widgets.dart';
 import 'package:ternak/animal_menu.dart';
 import 'package:ternak/cage_menu.dart';
 import 'package:ternak/healthy_add.dart';
@@ -243,7 +243,7 @@ class _HomeState extends State<Home> {
                             ),
                             const SizedBox(height: 5),
                             const Text(
-                              "Kesehatan",
+                              "Keterangan",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,

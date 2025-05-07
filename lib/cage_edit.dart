@@ -57,20 +57,21 @@ class _CageEditState extends State<CageEdit> {
 
         // Buat nama file unik dengan UUID
         String fileName = '${widget.doc.id}$extension';
-        Supabase.instance.client.storage
+        await Supabase.instance.client.storage
             .from('terdom') // Ganti dengan nama bucket
-            .upload('kandang/$fileName', _image!)
-            .then((data) {
-          kandang.doc(widget.doc.id).update({
-            "image": fileName,
-          });
-        }).catchError((error) => {print("ERRORRR: $error")});
+            .remove(['kandang/$fileName']);
+        await Supabase.instance.client.storage
+            .from('terdom') // Ganti dengan nama bucket
+            .upload('kandang/$fileName', _image!);
+        kandang.doc(widget.doc.id).update({
+          "image": fileName,
+        });
       }
 
       int kapasitasKandang = 0;
       Map<String, String> listId = {};
       for (var v in blok) {
-        kapasitasKandang += int.parse(v["kapasitas"] ?? 0);
+        kapasitasKandang += int.tryParse(v["kapasitas"] ?? 0) ?? 0;
         var doc = await blokStore.add({
           "user_uid": widget.user.uid,
           "kandang_id": widget.doc.id,
@@ -440,71 +441,71 @@ class _CageEditState extends State<CageEdit> {
                   });
                 },
               ),
-              const SizedBox(height: 20),
-              Container(
-                // height: 80,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 10.0,
-                      offset: Offset(1, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: (urlgambar != null && _image == null)
-                          ? Image.network(
-                              urlgambar,
-                              height: 200,
-                              width: 200,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.broken_image,
-                                    size: 50, color: Colors.grey);
-                              },
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return const CircularProgressIndicator();
-                              },
-                            )
-                          : (_image != null)
-                              ? Image.file(
-                                  _image!,
-                                  height: 200,
-                                  width: 200,
-                                )
-                              : const Text(
-                                  "Foto Kandang",
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.grey),
-                                ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(48, 130, 148, 0.45),
-                      ),
-                      onPressed: () => _showPicker(context),
-                      child: const Text(
-                        "upload",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   // height: 80,
+              //   padding: const EdgeInsets.all(10),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(20),
+              //     border: Border.all(
+              //       color: Colors.black,
+              //     ),
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.grey,
+              //         blurRadius: 10.0,
+              //         offset: Offset(1, 3),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Container(
+              //         decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(20)),
+              //         child: (urlgambar != null && _image == null)
+              //             ? Image.network(
+              //                 urlgambar,
+              //                 height: 200,
+              //                 width: 200,
+              //                 errorBuilder: (context, error, stackTrace) {
+              //                   return const Icon(Icons.broken_image,
+              //                       size: 50, color: Colors.grey);
+              //                 },
+              //                 loadingBuilder:
+              //                     (context, child, loadingProgress) {
+              //                   if (loadingProgress == null) return child;
+              //                   return const CircularProgressIndicator();
+              //                 },
+              //               )
+              //             : (_image != null)
+              //                 ? Image.file(
+              //                     _image!,
+              //                     height: 200,
+              //                     width: 200,
+              //                   )
+              //                 : const Text(
+              //                     "Foto Kandang",
+              //                     style: TextStyle(
+              //                         fontSize: 18, color: Colors.grey),
+              //                   ),
+              //       ),
+              //       ElevatedButton(
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor:
+              //               const Color.fromRGBO(48, 130, 148, 0.45),
+              //         ),
+              //         onPressed: () => _showPicker(context),
+              //         child: const Text(
+              //           "upload",
+              //           style: TextStyle(fontWeight: FontWeight.bold),
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 20),
               Container(
                 // height: 80,

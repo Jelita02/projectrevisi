@@ -13,24 +13,32 @@ class CageMenu extends StatefulWidget {
 }
 
 class _CageMenuState extends State<CageMenu> {
-  int countList = 0;
+  // int countList = 0;
   String searchQuery = "";
   String filterCategory = "";
 
-  // 
-      Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> _getListCage() async {
-      Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-          .collection("kandang")
-          .where("user_uid", isEqualTo: widget.user.uid);
+  //
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      _getListCage() async {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("kandang")
+        .where("user_uid", isEqualTo: widget.user.uid);
 
-      if (filterCategory.isNotEmpty) {
-        query = query.where("kategori", isEqualTo: filterCategory);
-      }
-
-      final snapshot = await query.get();
-      return snapshot.docs;
+    if (searchQuery.isNotEmpty) {
+      query = query
+          .where("nama_lower",
+              isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+          .where("nama_lower",
+              isLessThan: '${searchQuery.toLowerCase()}\uf8ff');
     }
 
+    if (filterCategory.isNotEmpty) {
+      query = query.where("kategori", isEqualTo: filterCategory);
+    }
+
+    final snapshot = await query.get();
+    return snapshot.docs;
+  }
 
   @override
   void initState() {
@@ -38,31 +46,30 @@ class _CageMenuState extends State<CageMenu> {
     // refresh();
   }
 
-  refresh() {
-    // setState(() {});
-     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-      .collection("kandang")
-      .where("user_uid", isEqualTo: widget.user.uid);
+  // refresh() {
+  //   // setState(() {});
+  //   Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+  //       .collection("kandang")
+  //       .where("user_uid", isEqualTo: widget.user.uid);
 
-  if (searchQuery.isNotEmpty) {
-    query = query
-        .where("nama_lower", isGreaterThanOrEqualTo: searchQuery)
-        .where("nama_lower", isLessThan: '$searchQuery\uf8ff');
-  }
+  //   if (searchQuery.isNotEmpty) {
+  //     query = query
+  //         .where("nama_lower",
+  //             isGreaterThanOrEqualTo: searchQuery.toLowerCase())
+  //         .where("nama_lower",
+  //             isLessThan: '${searchQuery.toLowerCase()}\uf8ff');
+  //   }
 
-  if (filterCategory.isNotEmpty) {
-    query = query.where("kategori", isEqualTo: filterCategory);
-  }
+  //   if (filterCategory.isNotEmpty) {
+  //     query = query.where("kategori", isEqualTo: filterCategory);
+  //   }
 
-  
-
-  query.get().then((value) {
-    setState(() {
-      countList = value.size;
-    });
-  });
-}
-  
+  //   query.get().then((value) {
+  //     setState(() {
+  //       countList = value.size;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +93,7 @@ class _CageMenuState extends State<CageMenu> {
               context,
               MaterialPageRoute(
                 builder: (context) => CageAdd(
+                  //mengarah kehalaman
                   user: widget.user,
                 ),
               )).then((value) => setState(() {}));
@@ -110,7 +118,7 @@ class _CageMenuState extends State<CageMenu> {
                     ),
                     onChanged: (value) {
                       setState(() => searchQuery = value);
-                       refresh(); 
+                      // refresh();
                     },
                   ),
                 ),
@@ -118,7 +126,7 @@ class _CageMenuState extends State<CageMenu> {
                 PopupMenuButton<String>(
                   onSelected: (value) {
                     setState(() => filterCategory = value);
-                     refresh(); 
+                    // refresh();
                   },
                   itemBuilder: (context) => [
                     const PopupMenuItem(value: "", child: Text("Semua")),
@@ -136,64 +144,125 @@ class _CageMenuState extends State<CageMenu> {
               ],
             ),
             const SizedBox(height: 10),
+            // Expanded(
+            //     flex: 9,
+            //     child: FutureBuilder<
+            //         List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+            //       future: _getListCage(),
+            //       builder: (context, snapshot) {
+            //         if (snapshot.connectionState == ConnectionState.waiting) {
+            //           return const Center(child: CircularProgressIndicator());
+            //         } else if (snapshot.hasError) {
+            //           return const Center(child: Text("Terjadi kesalahan"));
+            //         } else {
+            //           final docs = snapshot.data ?? [];
+
+            //           // Filter nama secara lokal (case-insensitive)
+            //           final filteredDocs = docs.where((doc) {
+            //             final data = doc.data();
+            //             final nama =
+            //                 data["nama"]?.toString().toLowerCase() ?? "";
+            //             return nama.contains(searchQuery.toLowerCase());
+            //           }).toList();
+
+            //           final listData = filteredDocs.map((e) {
+            //             return FutureBuilder(
+            //               future: FirebaseFirestore.instance
+            //                   .collection("hewan")
+            //                   .where("kandang_id", isEqualTo: e.id)
+            //                   .count()
+            //                   .get(),
+            //               builder: (context, snap) {
+            //                 if (snap.connectionState ==
+            //                     ConnectionState.waiting) {
+            //                   return const Center(
+            //                       child: CircularProgressIndicator());
+            //                 }
+
+            //                 final total = snap.data?.count ?? 0;
+            //                 return TileCage(
+            //                   user: widget.user,
+            //                   refresh: () => setState(() {
+            //                     print("SIP");
+            //                   }),
+            //                   doc: e,
+            //                   total: total.toString(),
+            //                 );
+            //               },
+            //             );
+            //           }).toList();
+
+            //           return ListView(children: listData);
+            //         }
+            //       },
+            //     )
+
+            //     // ).toList(),
+
+            //     // return ListView(
+            //     //   children: listData,
+            //     // );
+            //     //     }
+            //     //   },
+            //     // ),
+            //     ),
             Expanded(
-              flex: 9,
-              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-  future: _getListCage(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return const Center(child: Text("Terjadi kesalahan"));
-    } else {
-      final docs = snapshot.data ?? [];
+  flex: 9,
+  child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+    future: _getListCage(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return const Center(child: Text("Terjadi kesalahan"));
+      } else {
+        final docs = snapshot.data ?? [];
 
-      // Filter nama secara lokal (case-insensitive)
-      final filteredDocs = docs.where((doc) {
-        final data = doc.data();
-        final nama = data["nama"]?.toString().toLowerCase() ?? "";
-        return nama.contains(searchQuery.toLowerCase());
-      }).toList();
+        // Filter nama secara lokal (case-insensitive)
+        final filteredDocs = docs.where((doc) {
+          final data = doc.data();
+          final nama = data["nama"]?.toString().toLowerCase() ?? "";
+          return nama.contains(searchQuery.toLowerCase());
+        }).toList();
 
-      final listData = filteredDocs.map((e) {
-        return FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection("hewan")
-              .where("kandang_id", isEqualTo: e.id)
-              .count()
-              .get(),
-          builder: (context, snap) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        // 🔥 Tambahkan sorting disini
+        filteredDocs.sort((a, b) {
+          final namaA = a.data()["nama"]?.toString().toLowerCase() ?? "";
+          final namaB = b.data()["nama"]?.toString().toLowerCase() ?? "";
+          return namaA.compareTo(namaB); // ASC (A ke Z)
+        });
 
-            final total = snap.data?.count ?? 0;
-            return TileCage(
-              user: widget.user,
-              refresh: refresh,
-              doc: e,
-              total: total.toString(),
+        return ListView.builder(
+          itemCount: filteredDocs.length,
+          itemBuilder: (context, index) {
+            final e = filteredDocs[index];
+            return FutureBuilder<AggregateQuerySnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection("hewan")
+                  .where("kandang_id", isEqualTo: e.id)
+                  .count()
+                  .get(),
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final total = snap.data?.count ?? 0;
+                return TileCage(
+                  user: widget.user,
+                  refresh: () => setState(() {}),
+                  doc: e,
+                  total: total.toString(),
+                );
+              },
             );
           },
         );
-      }).toList();
+      }
+    },
+  ),
+),
 
-      return ListView(children: listData);
-    }
-  },
-)
-
-                        
-                      // ).toList(),
-  
-
-                    // return ListView(
-                    //   children: listData,
-                    // );
-              //     }
-              //   },
-              // ),
-            ),
           ],
         ),
       ),
