@@ -98,6 +98,12 @@ class _BlockDetailState extends State<BlockDetail> {
                                 if (value == null || value.isEmpty) {
                                   return "Masukan kapasitas";
                                 }
+                                int? nilai = int.tryParse(value);
+                                if (nilai != null) {
+                                  if (nilai <= 0 || nilai >= 15) {
+                                    return "Input dari 1-15";
+                                  }
+                                }
                                 return null;
                               },
                             ),
