@@ -191,14 +191,14 @@ class _MenuAnimalState extends State<MenuAnimal> {
                 // ),
               ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              "$countList Hewan",
-              style: const TextStyle(
-                color: Color.fromRGBO(0, 0, 0, 0.5),
-                fontSize: 15,
-              ),
-            ),
+            // const SizedBox(height: 10),
+            // Text(
+            //   "$countList Hewan",
+            //   style: const TextStyle(
+            //     color: Color.fromRGBO(0, 0, 0, 0.5),
+            //     fontSize: 15,
+            //   ),
+            // ),
             const SizedBox(height: 10),
             Expanded(
               child: FutureBuilder<

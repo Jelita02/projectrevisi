@@ -70,49 +70,61 @@ class _AnimalAddState extends State<AnimalAdd> {
       _imgFile = File(img.path); // convert it to a Dart:io file
     });
   }
-  //nampilkan gambar
+  _tambahHewan() async {
+  final newHewan = await hewan.add({
+    "user_uid": widget.user.uid,
+    "nama": _namaController.text,
+    "nama_lower": _namaController.text.toLowerCase(),
+    "usia": _usia,
+    "kategori": _kategori,
+    "jenis_kelamin": _jenisKelamin,
+    "jenis": _jenis,
+    "kandang_id": _kandangId,
+    "kandang": _kandang,
+    "blok_id": _blokId,
+    "blok": _blok,
+    "bobot": _bobotController.text,
+    "bobot_akhir": _bobotController.text,
+    "tanggal_masuk": _tanggalController.text,
+    "status_kesehatan": _statusKesehatan,
+    "status": _status,
+    "foto_url": "", // sementara kosong
+  });
 
-  _tambahHewan() {
-    hewan.add({
-      "user_uid": widget.user.uid,
-      "nama": _namaController.text,
-      "nama_lower": _namaController.text.toLowerCase(),
-      "usia": _usia,
-      "kategori": _kategori,
-      "jenis_kelamin": _jenisKelamin,
-      "jenis": _jenis,
-      "kandang_id": _kandangId,
-      "kandang": _kandang,
-      "blok_id": _blokId,
-      "blok": _blok,
-      "bobot": _bobotController.text,
-      "bobot_akhir": _bobotController.text,
-      "tanggal_masuk": _tanggalController.text,
-      "status_kesehatan": _statusKesehatan,
-      "status": _status,
-    }).then((value) {
-      if (_imgFile != null) {
-        // Ambil ekstensi file asli
-        String extension = path.extension(_imgFile!.path);
+  if (_imgFile != null) {
+    // Ambil ekstensi file
+    String extension = path.extension(_imgFile!.path);
+    // Buat nama file unik pakai id doc
+    String fileName = '${newHewan.id}$extension';
 
-        // Buat nama file unik dengan UUID
-        String fileName = '${value.id}$extension';
+    try {
+      await Supabase.instance.client.storage
+          .from('terdom') // ganti sesuai bucket kamu
+          .upload('hewan/$fileName', _imgFile!);
 
-        Supabase.instance.client.storage
-            .from('terdom') // Ganti dengan nama bucket
-            .upload('hewan/$fileName', _imgFile!)
-            .then((value) => print('File uploaded: $value'))
-            .catchError((error) => {print("ERRORRR: $error")});
-      }
+      // Setelah upload berhasil, ambil public URL
+      final String imageUrl = Supabase.instance.client.storage
+          .from('terdom')
+          .getPublicUrl('hewan/$fileName');
 
-      Navigator.pop(context, true);
-    });
+      // Update Firestore dengan foto_url
+      await hewan.doc(newHewan.id).update({
+        "foto_url": imageUrl,
+      });
+    } catch (e) {
+      print('Upload error: $e');
+    }
   }
+
+  Navigator.pop(context, true);
+}
+
 
   @override
   void initState() {
     super.initState();
 
+    _tanggalController.text = DateFormat('yyyy-MM-dd').format(DateTime.now()); // ← Tambahkan ini
     Map<String, int> kandangTotal = {};
 
     FirebaseFirestore.instance
@@ -124,8 +136,8 @@ class _AnimalAddState extends State<AnimalAdd> {
         kandangTotal[element['kandang_id']] =
             (kandangTotal[element['kandang_id']] ?? 0) + 1;
       }
-      FirebaseFirestore.instance
-          .collection("kandang")
+      FirebaseFirestore.instance// otmatis dibautin berdasarkan kodig=ngan dibawhah ini 
+          .collection("kandang") 
           .where("user_uid", isEqualTo: widget.user.uid)
           .orderBy("kategori", descending: false)
           .get()
@@ -441,14 +453,30 @@ class _AnimalAddState extends State<AnimalAdd> {
                   ),
                   const SizedBox(width: 20),
                   Expanded(
-                    child: TextFormField(
+                    // child: TextFormField(
+                    //   controller: _tanggalController,
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Tanggal Masuk',
+                    //     suffix: Icon(Icons.date_range_outlined),
+                    //   ),
+                    //   readOnly: true,
+                    //   onTap: () => _selectDate(context),
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return "Masukan tanggal";
+                    //     }
+
+                    //     return null;
+                    //   },
+                    // ),
+                                        child: TextFormField(
                       controller: _tanggalController,
                       decoration: const InputDecoration(
                         labelText: 'Tanggal Masuk',
                         suffix: Icon(Icons.date_range_outlined),
                       ),
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
+                      readOnly: true, // masih bisa dibaca, tapi tidak bisa diubah
+                      enabled: false,  // kalau ingin benar-benar tidak bisa diakses sama sekali
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Masukan tanggal";
@@ -527,23 +555,120 @@ class _AnimalAddState extends State<AnimalAdd> {
                       // padding: EdgeInsets.all(20),
                       backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                     ),
+                    // onPressed: () {
+                    //   final isValid =
+                    //       _formKey.currentState?.validate() ?? false;
+
+                    //   if (_imgFile == null) {
+                    //     setState(() {
+                    //       _isImgValid = false;
+                    //     });
+                    //     return;
+                    //   } else {
+                    //     setState(() {
+                    //       _isImgValid = true;
+                    //     });
+                    //   }
+
+                    //   if (isValid) {
+                    //     _tambahHewan();
+                    //   }
+                    // },
                     onPressed: () {
-                      final isValid =
-                          _formKey.currentState?.validate() ?? false;
+  final isValid = _formKey.currentState?.validate() ?? false;
 
-                      if (_imgFile == null) {
-                        setState(() {
-                          _isImgValid = false;
-                        });
-                        return;
+  if (_imgFile == null) {
+    setState(() {
+      _isImgValid = false;
+    });
+  } else {
+    setState(() {
+      _isImgValid = true;
+    });
+  }
+
+  if (!isValid || !_isImgValid) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Harap lengkapi semua data yang diperlukan."),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return;
+  }
+
+                  //   // Konfirmasi sebelum simpan
+                  //   showDialog(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return AlertDialog(
+                  //         title: const Text("Konfirmasi Tambah Hewan"),
+                  //         content: const Text("Apakah semua data sudah benar dan ingin disimpan?"),
+                  //         actions: [
+                  //           TextButton(
+                  //             onPressed: () {
+                  //               Navigator.of(context).pop(); // tutup dialog
+                  //             },
+                  //             child: const Text("Batal"),
+                  //           ),
+                  //           ElevatedButton(
+                  //             onPressed: () {
+                  //               Navigator.of(context).pop(); // tutup dialog
+                  //               _tambahHewan(); // jalankan fungsi tambah
+                  //             },
+                  //             child: const Text("Ya"),
+                  //           ),
+                  //         ],
+                  //         );
+                  //       },
+                  //     );
+                  //     },
+                  //   child: const Text(
+                  //     'Tambah Hewan',
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 20,
+                  //     ),
+                  //   ),
+                  // ),
+                  if (isValid && _isImgValid) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text("Konfirmasi Tambah Hewan"),
+                              content: const Text("Apakah semua data sudah benar dan ingin disimpan?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Tutup dialog
+                                  },
+                                  child: const Text("Batal"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Tutup dialog
+                                    _tambahHewan(); // Jalankan fungsi simpan data
+                                    // Halaman tetap di form, tidak pindah
+                                    // Kamu bisa reset form di sini kalau mau mulai input baru
+                                    // _formKey.currentState?.reset();
+                                    // setState(() {
+                                    //   _imgFile = null;
+                                    // });
+                                  },
+                                  child: const Text("Ya"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       } else {
-                        setState(() {
-                          _isImgValid = true;
-                        });
-                      }
-
-                      if (isValid) {
-                        _tambahHewan();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Harap lengkapi semua data terlebih dahulu."),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     },
                     child: const Text(

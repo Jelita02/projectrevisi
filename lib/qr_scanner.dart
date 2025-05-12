@@ -30,41 +30,107 @@ class _QRScannerState extends State<QRScanner> {
     super.dispose();
   }
 
-  void _getHewan(BarcodeCapture barcodes) async {
-    if (!isScanCompleted) {
-      String code = '';
-      for (var element in barcodes.barcodes) {
-        code = element.rawValue ?? '-----';
-      }
-      isScanCompleted = true;
+  // void _getHewan(BarcodeCapture barcodes) async {
+  //   if (!isScanCompleted) {
+  //     String code = '';
+  //     for (var element in barcodes.barcodes) {
+  //       code = element.rawValue ?? '-----';
+  //     }
+  //     isScanCompleted = true;
 
-      controller.stop();
-      //proses scan
+  //     controller.stop();
+  //     //proses scan
 
-      var value = await FirebaseFirestore.instance
+  //     var value = await FirebaseFirestore.instance
+  //         .collection("hewan")
+  //         .doc(code)
+  //         .snapshots()
+  //         .first;
+
+  //     if (!mounted) return;
+
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) {
+  //           return AnimalDetail(
+  //             user: widget.user,
+  //             doc: value,
+  //           );
+  //         },
+  //       ),
+  //     ).then((value) => setState(() {
+  //           closeScreen();
+  //           controller.start();
+  //         }));
+  //   }
+   //}
+   void _getHewan(BarcodeCapture barcodes) async {
+  if (!isScanCompleted) {
+    String code = '';
+    for (var element in barcodes.barcodes) {
+      code = element.rawValue ?? '-----';
+    }
+    isScanCompleted = true;
+
+    controller.stop();
+    try {
+      var docSnapshot = await FirebaseFirestore.instance
           .collection("hewan")
           .doc(code)
-          .snapshots()
-          .first;
+          .get();
 
       if (!mounted) return;
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return AnimalDetail(
-              user: widget.user,
-              doc: value,
-            );
-          },
+      if (docSnapshot.exists) {
+        // Kalau data ada, masuk ke detail
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return AnimalDetail(
+                user: widget.user,
+                doc: docSnapshot,
+              );
+            },
+          ),
+        ).then((value) => setState(() {
+              closeScreen();
+              controller.start();
+            }));
+      } else {
+        // Kalau data tidak ada, tampilkan snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Data hewan tidak ditemukan.'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        // Reset scanner supaya bisa scan lagi
+        setState(() {
+          closeScreen();
+          controller.start();
+        });
+      }
+    } catch (e) {
+      // print('Error fetching document: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Data tidak ditemukan'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
         ),
-      ).then((value) => setState(() {
-            closeScreen();
-            controller.start();
-          }));
+      );
+      setState(() {
+        closeScreen();
+        controller.start();
+      });
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

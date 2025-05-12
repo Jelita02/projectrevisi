@@ -24,6 +24,14 @@ class _BlockDetailState extends State<BlockDetail> {
         .get();
   }
 
+  Future<int> _getJumlahHewanInBlok(String blokId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('hewan')
+        .where('blok_id', isEqualTo: blokId)
+        .get();
+    return snapshot.size;
+  }
+
   void _showEditBlok(
       context, QueryDocumentSnapshot<Map<String, dynamic>> blok) {
     final blokKey = GlobalKey<FormState>();
@@ -32,112 +40,6 @@ class _BlockDetailState extends State<BlockDetail> {
         TextEditingController(text: blok.data()["nama"] ?? "");
     final TextEditingController kapasitasBlokController =
         TextEditingController(text: blok.data()["kapasitas"] ?? "");
-//  showModalBottomSheet(
-//     isScrollControlled: true, // penting agar keyboard tidak menutupi
-//     context: context,
-//     builder: (BuildContext bc) {
-//       return Padding(
-//         padding: EdgeInsets.only(
-//           bottom: MediaQuery.of(context).viewInsets.bottom,
-//         ),
-//         child: SingleChildScrollView(
-//           child: SafeArea(
-//             child: Container(
-//               padding: const EdgeInsets.all(20),
-//               child: Form(
-//                 key: blokKey,
-//                 child: Column(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: <Widget>[
-//                     Row(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Expanded(
-//                           child: Padding(
-//                             padding: const EdgeInsets.all(10),
-//                             child: TextFormField(
-//                               controller: namaBlokController,
-//                               maxLength: 20,
-//                               decoration: const InputDecoration(
-//                                 labelText: 'Nama',
-//                                 isDense: true,
-//                                 contentPadding: EdgeInsets.symmetric(
-//                                     vertical: 12, horizontal: 10),
-//                               ),
-//                               keyboardType: TextInputType.name,
-//                               validator: (value) {
-//                                 if (value == null || value.isEmpty) {
-//                                   return "Masukan nama";
-//                                 }
-//                                 return null;
-//                               },
-//                             ),
-//                           ),
-//                         ),
-//                         Expanded(
-//                           child: Padding(
-//                             padding: const EdgeInsets.all(10),
-//                             child: TextFormField(
-//                               controller: kapasitasBlokController,
-//                               decoration: const InputDecoration(
-//                                 labelText: 'Kapasitas',
-//                                 isDense: true,
-//                                 contentPadding: EdgeInsets.symmetric(
-//                                     vertical: 12, horizontal: 10),
-//                               ),
-//                               keyboardType: TextInputType.number,
-//                               validator: (value) {
-//                                 if (value == null || value.isEmpty) {
-//                                   return "Masukan kapasitas";
-//                                 }
-//                                 return null;
-//                               },
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     const SizedBox(height: 10),
-//                     SizedBox(
-//                       width: double.infinity,
-//                       child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor:
-//                               const Color.fromRGBO(26, 107, 125, 1),
-//                         ),
-//                         onPressed: () {
-//                           if (blokKey.currentState?.validate() == true) {
-//                             FirebaseFirestore.instance
-//                                 .collection("blok")
-//                                 .doc(blok.id)
-//                                 .update({
-//                               "nama": namaBlokController.text,
-//                               "kapasitas": kapasitasBlokController.text,
-//                             }).then((value) {
-//                               setState(() {
-//                                 Navigator.of(context).pop();
-//                               });
-//                             });
-//                           }
-//                         },
-//                         child: const Text(
-//                           'Edit Blok',
-//                           style: TextStyle(
-//                             color: Colors.white,
-//                             fontSize: 20,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//       );
-//     },
-//   );
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -371,6 +273,42 @@ class _BlockDetailState extends State<BlockDetail> {
                                 ),
                               ),
                               child: Row(
+                                //   children: [
+                                //     Expanded(
+                                //       flex: 4,
+                                //       child: ListTile(
+                                //         contentPadding: const EdgeInsets.all(0),
+                                //         horizontalTitleGap: 1,
+                                //         title: Text(
+                                //           e.data()["nama"] ?? "",
+                                //           style: const TextStyle(fontSize: 14),
+                                //         ),
+                                //         subtitle: Text(
+                                //           // ignore: prefer_interpolation_to_compose_strings
+                                //           "Kapasitas " +
+                                //               e.data()["kapasitas"] +
+                                //               " Ekor",
+                                //           style: const TextStyle(
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.w900),
+                                //         ),
+                                //         leading: Image.asset(
+                                //           "assets/images/icon-block.png",
+                                //           fit: BoxFit.fill,
+                                //           height: 40,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //     Expanded(
+                                //       child: GestureDetector(
+                                //         onTap: () {
+                                //           _showEditBlok(context, e);
+                                //         },
+                                //         child: const Icon(Icons.edit),
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 children: [
                                   Expanded(
                                     flex: 4,
@@ -381,14 +319,21 @@ class _BlockDetailState extends State<BlockDetail> {
                                         e.data()["nama"] ?? "",
                                         style: const TextStyle(fontSize: 14),
                                       ),
-                                      subtitle: Text(
-                                        // ignore: prefer_interpolation_to_compose_strings
-                                        "Kapasitas " +
-                                            e.data()["kapasitas"] +
-                                            " Ekor",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w900),
+                                      subtitle: FutureBuilder<int>(
+                                        future: _getJumlahHewanInBlok(e.id),
+                                        builder: (context, snapshotJumlah) {
+                                          if (snapshotJumlah.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Text("Menghitung...");
+                                          }
+                                          return Text(
+                                            "Kapasitas ${e.data()["kapasitas"]} Ekor\nTerisi ${snapshotJumlah.data ?? 0} Ekor",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          );
+                                        },
                                       ),
                                       leading: Image.asset(
                                         "assets/images/icon-block.png",

@@ -34,6 +34,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   final TextEditingController _textStatus_kesehatanController =
       TextEditingController();
 
+  late bool status = true;
+
   bool _readOnlyFinalWeight = true;
   bool _readOnlyStatus = true;
   bool _readOnlyKondisi = true;
@@ -186,6 +188,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     super.initState();
 
     doc = widget.doc;
+    status = doc.data()?['status'] == "Hidup";
 
     _textController =
         TextEditingController(text: doc.data()?["bobot_akhir"] ?? "");
@@ -380,9 +383,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         },
                         itemBuilder: (context) => [
                           PopupMenuItem(
-                              enabled: doc.data()?["status"] == "Hidup"
-                                  ? true
-                                  : false,
+                              enabled: status ? true : false,
                               value: "edit",
                               child: const Text("Edit")),
                           const PopupMenuItem(
@@ -525,12 +526,14 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     value: doc.data()?["status_kesehatan"] ?? ""),
                 formDropdown(
                     iconSuffix: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         if (_iconStatus == Icons.save_rounded) {
-                          FirebaseFirestore.instance
+                          await FirebaseFirestore.instance
                               .collection("hewan")
                               .doc(doc.id)
                               .update({"status": _textStatusController.text});
+                          doc.data()?["status"] = _textStatusController.text;
+                          status = _textStatusController.text == "Hidup";
                         }
                         setState(() {
                           _readOnlyStatus = !_readOnlyStatus;
@@ -546,7 +549,11 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     textController: _textStatusController,
                     readOnly: _readOnlyStatus,
                     value: doc.data()?["status"] ?? ""),
-                form(text: "Bobot Masuk", value: doc.data()?["bobot"] ?? ""),
+                form(
+                    text: "Bobot Masuk",
+                    //  value: {doc.data()?["bobot"] ?? ""}| ${doc.data()?["tanggal_masuk"] ?? ""
+                    value:
+                        "${doc.data()?["bobot"] ?? ""} Kg | ${doc.data()?["tanggal_masuk"] ?? ""}"),
                 Form(
                   key: _formKey,
                   child: Row(
@@ -554,8 +561,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       Expanded(
                         flex: 1,
                         child: form(
-                          iconSuffix: _readOnlyFinalWeight &&
-                                  doc.data()?['status'] == "Hidup"
+                          iconSuffix: _readOnlyFinalWeight && status
                               ? GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -580,7 +586,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         Expanded(
                           flex: 2,
                           child: form(
-                            iconSuffix: doc.data()?['status'] != "Hidup"
+                            iconSuffix: !status
                                 ? null
                                 : GestureDetector(
                                     onTap: () {
@@ -755,7 +761,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     return DropdownButtonFormField(
       decoration: InputDecoration(
           labelText: text,
-          suffixIcon: doc.data()?['status'] == "Hidup" ? iconSuffix : null,
+          suffixIcon: status ? iconSuffix : null,
           isDense: true),
       value: dropdown.contains(value) ? (value) : null,
       items: dropdown.map<DropdownMenuItem<String>>((String value) {
@@ -785,7 +791,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        _tanggalBobotController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _tanggalBobotController.text =
+            DateFormat('yyyy-MM-dd').format(DateTime.now());
       });
     }
   }
