@@ -50,21 +50,29 @@ class _MainMenuState extends State<MainMenu> {
             .then((value) {
           var list = value.docs.toList();
           setState(() {
-            _countAnimal = value.size;
-            _countMale = list
-                .where((element) => element.data()["jenis_kelamin"] == "Jantan")
+            _countAnimal = list
+                .where((element) => element.data()["status"] == "Hidup")
                 .length;
-                //perhitungannya length
+            _countMale = list
+                .where((element) =>
+                    element.data()["jenis_kelamin"] == "Jantan" &&
+                    element.data()["status"] == "Hidup")
+                .length;
+            //perhitungannya length
             _countFemale = list
-                .where((element) => element.data()["jenis_kelamin"] == "Betina")
+                .where((element) =>
+                    element.data()["jenis_kelamin"] == "Betina" &&
+                    element.data()["status"] == "Hidup")
                 .length;
             _countHealthy = list
-                .where(
-                    (element) => element.data()["status_kesehatan"] == "Sehat")
+                .where((element) =>
+                    element.data()["status_kesehatan"] == "Sehat" &&
+                    element.data()["status"] == "Hidup")
                 .length;
             _countSick = list
-                .where(
-                    (element) => element.data()["status_kesehatan"] == "Sakit")
+                .where((element) =>
+                    element.data()["status_kesehatan"] == "Sakit" &&
+                    element.data()["status"] == "Hidup")
                 .length;
           });
         });
@@ -79,6 +87,7 @@ class _MainMenuState extends State<MainMenu> {
       _currentIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
@@ -101,7 +110,7 @@ class _MainMenuState extends State<MainMenu> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
         // Tambahkan identitas pengguna di sini
-        title:Text("QR-Sheep"),
+        title: Text("QR-Sheep"),
         // Misalnya, aksi Logout
         // actions: [
         //   IconButton(
@@ -117,7 +126,8 @@ class _MainMenuState extends State<MainMenu> {
         //   ),
         // ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,//widget untuk +
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked, //widget untuk +
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -130,7 +140,7 @@ class _MainMenuState extends State<MainMenu> {
         ),
         onPressed: () {
           setState(() {
-            _currentIndex = 1; // Pindah ke qr 
+            _currentIndex = 1; // Pindah ke qr
           });
         },
       ),

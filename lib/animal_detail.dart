@@ -31,7 +31,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   TextEditingController _textController = TextEditingController();
   final TextEditingController _tanggalBobotController = TextEditingController();
   final TextEditingController _textStatusController = TextEditingController();
-  final TextEditingController _textStatus_kesehatanController = TextEditingController();
+  final TextEditingController _textStatus_kesehatanController =
+      TextEditingController();
 
   bool _readOnlyFinalWeight = true;
   bool _readOnlyStatus = true;
@@ -91,7 +92,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
   }
-                                        
+
   Future<void> _captureAndSaveQrCode() async {
     // Meminta izin penyimpanan
     RenderRepaintBoundary boundary =
@@ -361,8 +362,10 @@ class _AnimalDetailState extends State<AnimalDetail> {
                             Navigator.push< //menumpuk / menambah
                                 DocumentSnapshot<Map<String, dynamic>>>(
                               context,
-                              MaterialPageRoute(//
-                                  builder: (context) => AnimalEdit( //mengarah ke halaman enimal edit
+                              MaterialPageRoute(
+                                  //
+                                  builder: (context) => AnimalEdit(
+                                        //mengarah ke halaman enimal edit
                                         doc: doc,
                                         user: widget.user,
                                       )),
@@ -376,8 +379,12 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           }
                         },
                         itemBuilder: (context) => [
-                          const PopupMenuItem(
-                              value: "edit", child: Text("Edit")),
+                          PopupMenuItem(
+                              enabled: doc.data()?["status"] == "Hidup"
+                                  ? true
+                                  : false,
+                              value: "edit",
+                              child: const Text("Edit")),
                           const PopupMenuItem(
                               value: "delete", child: Text("Hapus")),
                         ],
@@ -497,7 +504,10 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           FirebaseFirestore.instance
                               .collection("hewan")
                               .doc(doc.id)
-                              .update({"status_kesehatan": _textStatus_kesehatanController.text});
+                              .update({
+                            "status_kesehatan":
+                                _textStatus_kesehatanController.text
+                          });
                         }
                         setState(() {
                           _readOnlyKondisi = !_readOnlyKondisi;
@@ -544,7 +554,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                       Expanded(
                         flex: 1,
                         child: form(
-                          iconSuffix: _readOnlyFinalWeight
+                          iconSuffix: _readOnlyFinalWeight &&
+                                  doc.data()?['status'] == "Hidup"
                               ? GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -569,40 +580,47 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         Expanded(
                           flex: 2,
                           child: form(
-                            iconSuffix: GestureDetector(
-                              onTap: () {
-                                if (_formKey.currentState?.validate() == true) {
-                                  if (_icon == Icons.save_rounded) {
-                                    FirebaseFirestore.instance
-                                        .collection("hewan")
-                                        .doc(doc.id)
-                                        .update({
-                                      "bobot_akhir": _textController.text
-                                    });
-                                    FirebaseFirestore.instance
-                                        .collection("bobot")
-                                        .add({
-                                      "hewan_id": doc.id,
-                                      "bobot_akhir": _textController.text,
-                                      "tanggal": _tanggalBobotController.text,
-                                    }).then((value) =>
-                                            _tanggalBobotController.clear());
-                                  }
-                                  setState(() {
-                                    _readOnlyFinalWeight =
-                                        !_readOnlyFinalWeight;
-                                    _icon = _readOnlyFinalWeight
-                                        ? Icons.rebase_edit
-                                        : Icons.save_rounded;
-                                  });
-                                }
-                              },
-                              child: Icon(_icon),
-                            ),
+                            iconSuffix: doc.data()?['status'] != "Hidup"
+                                ? null
+                                : GestureDetector(
+                                    onTap: () {
+                                      if (_formKey.currentState?.validate() ==
+                                          true) {
+                                        if (_icon == Icons.save_rounded) {
+                                          FirebaseFirestore.instance
+                                              .collection("hewan")
+                                              .doc(doc.id)
+                                              .update({
+                                            "bobot_akhir": _textController.text
+                                          });
+                                          FirebaseFirestore.instance
+                                              .collection("bobot")
+                                              .add({
+                                            "hewan_id": doc.id,
+                                            "bobot_akhir": _textController.text,
+                                            "tanggal":
+                                                _tanggalBobotController.text,
+                                          }).then((value) =>
+                                                  _tanggalBobotController
+                                                      .clear());
+                                        }
+                                        setState(() {
+                                          _readOnlyFinalWeight =
+                                              !_readOnlyFinalWeight;
+                                          _icon = _readOnlyFinalWeight
+                                              ? Icons.rebase_edit
+                                              : Icons.save_rounded;
+                                        });
+                                      }
+                                    },
+                                    child: Icon(_icon),
+                                  ),
                             text: "Tanggal",
                             textController: _tanggalBobotController,
                             validatorMessage: "Tanggal Kosong",
                             onTap: () => _selectDate(context),
+                            value:
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
                           ),
                         ),
                     ],
@@ -695,7 +713,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  TextFormField form( 
+  TextFormField form(
       {required String text,
       String? value,
       Widget? iconSuffix,
@@ -736,7 +754,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
       TextEditingController? textController}) {
     return DropdownButtonFormField(
       decoration: InputDecoration(
-          labelText: text, suffixIcon: iconSuffix, isDense: true),
+          labelText: text,
+          suffixIcon: doc.data()?['status'] == "Hidup" ? iconSuffix : null,
+          isDense: true),
       value: dropdown.contains(value) ? (value) : null,
       items: dropdown.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(

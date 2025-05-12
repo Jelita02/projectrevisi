@@ -28,7 +28,6 @@ class _LaporanScreenState extends State<LaporanScreen> {
   int totalMati = 0;
   int totalTerjual = 0;
 
-
   Future<void> pickDateRange() async {
     DateTimeRange? picked = await showDateRangePicker(
         context: context,
@@ -62,30 +61,37 @@ class _LaporanScreenState extends State<LaporanScreen> {
       setState(() {
         totalDomba = value.size;
         totalMale = list
-            .where((element) => element.data()["jenis_kelamin"] == "Jantan")
+            .where((element) =>
+                element.data()["jenis_kelamin"] == "Jantan" &&
+                element.data()["status"] == "Hidup")
             .length;
         totalFemale = list
-            .where((element) => element.data()["jenis_kelamin"] == "Betina")
+            .where((element) =>
+                element.data()["jenis_kelamin"] == "Betina" &&
+                element.data()["status"] == "Hidup")
             .length;
         totalSick = list
-            .where((element) => element.data()["status_kesehatan"] == "Sakit")
+            .where((element) =>
+                element.data()["status_kesehatan"] == "Sakit" &&
+                element.data()["status"] == "Hidup")
             .length;
         totalPembiakan = list
-            .where((element) => element.data()["kategori"] == "Pembiakan")
+            .where((element) =>
+                element.data()["kategori"] == "Pembiakan" &&
+                element.data()["status"] == "Hidup")
             .length;
         totalPenggemukan = list
-            .where((element) => element.data()["kategori"] == "Penggemukan")
+            .where((element) =>
+                element.data()["kategori"] == "Penggemukan" &&
+                element.data()["status"] == "Hidup")
             .length;
-        totalHidup = list
-            .where((element) => element.data()["status"] == "Hidup")
-            .length;
-        totalMati = list
-            .where((element) => element.data()["status"] == "Mati")
-            .length;
+        totalHidup =
+            list.where((element) => element.data()["status"] == "Hidup").length;
+        totalMati =
+            list.where((element) => element.data()["status"] == "Mati").length;
         totalTerjual = list
             .where((element) => element.data()["status"] == "Terjual")
             .length;
-
       });
     });
   }
@@ -205,103 +211,104 @@ class _LaporanScreenState extends State<LaporanScreen> {
             title:
                 Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailLaporanScreen(
-                              user: widget.user,
-                              selectedRange: selectedRange,
-                              status: "Hidup",
-                            ),
-                          ));
-                    },
-                      child: Text.rich(
-                       TextSpan(
-                           children: [
-                               const TextSpan(
-                               text: "Hidup\n",style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                TextSpan(
-                                   text: "$totalHidup Ekor", style: const 
-                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
-                                   fontSize: 12,
-                                   )
-                                  ),
-                                 ],
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailLaporanScreen(
+                            user: widget.user,
+                            selectedRange: selectedRange,
+                            status: "Hidup",
                           ),
-                          textAlign: TextAlign.center,
+                        ));
+                  },
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Hidup\n",
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                        TextSpan(
+                            text: "$totalHidup Ekor",
+                            style: const TextStyle(
+                              color: Color.fromRGBO(26, 107, 125, 1),
+                              fontSize: 12,
+                            )),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                   // child: const 
-                   // Text("Hidup")
-                   // ),
-
+                // child: const
+                // Text("Hidup")
+                // ),
 
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailLaporanScreen(
-                              user: widget.user,
-                              selectedRange: selectedRange,
-                              status: "Mati",
-                            ),
-                          ));
-                    },
-                     child: Text.rich(
-                       TextSpan(
-                           children: [
-                               const TextSpan(
-                               text: "Mati\n",style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                TextSpan(
-                                   text: "$totalMati Ekor", style: const 
-                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
-                                   fontSize: 12,
-                                   )
-                                  ),
-                                 ],
-                       ),
-                          textAlign: TextAlign.center,
-                      ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailLaporanScreen(
+                            user: widget.user,
+                            selectedRange: selectedRange,
+                            status: "Mati",
+                          ),
+                        ));
+                  },
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Mati\n",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                            text: "$totalMati Ekor",
+                            style: const TextStyle(
+                              color: Color.fromRGBO(26, 107, 125, 1),
+                              fontSize: 12,
+                            )),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailLaporanScreen(
-                              user: widget.user,
-                              selectedRange: selectedRange,
-                              status: "Terjual",
-                            ),
-                          ));
-                    },
-                    child: Text.rich(
-                       TextSpan(
-                           children: [
-                               const TextSpan(
-                               text: "Terjual\n",style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                TextSpan(
-                                   text: "$totalTerjual Ekor", style: const 
-                                  TextStyle(color: Color.fromRGBO(26, 107, 125, 1),
-                                   fontSize: 12,
-                                   )
-                                  ),
-                                 ],
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailLaporanScreen(
+                            user: widget.user,
+                            selectedRange: selectedRange,
+                            status: "Terjual",
                           ),
-                          textAlign: TextAlign.center,
+                        ));
+                  },
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Terjual\n",
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+                        TextSpan(
+                            text: "$totalTerjual Ekor",
+                            style: const TextStyle(
+                              color: Color.fromRGBO(26, 107, 125, 1),
+                              fontSize: 12,
+                            )),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
