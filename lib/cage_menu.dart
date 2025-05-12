@@ -207,6 +207,7 @@ class _CageMenuState extends State<CageMenu> {
             //     // ),
             //     ),
             Expanded(
+<<<<<<< HEAD
   flex: 9,
   child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
     future: _getListCage(),
@@ -263,6 +264,69 @@ class _CageMenuState extends State<CageMenu> {
   ),
 ),
 
+=======
+                flex: 9,
+                child: FutureBuilder<
+                    List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+                  future: _getListCage(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return const Center(child: Text("Terjadi kesalahan"));
+                    } else {
+                      final docs = snapshot.data ?? [];
+
+                      // Filter nama secara lokal (case-insensitive)
+                      final filteredDocs = docs.where((doc) {
+                        final data = doc.data();
+                        final nama =
+                            data["nama"]?.toString().toLowerCase() ?? "";
+                        return nama.contains(searchQuery.toLowerCase());
+                      }).toList();
+
+                      final listData = filteredDocs.map((e) {
+                        return FutureBuilder(
+                          future: FirebaseFirestore.instance
+                              .collection("hewan")
+                              .where("kandang_id", isEqualTo: e.id)
+                              .count()
+                              .get(),
+                          builder: (context, snap) {
+                            if (snap.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            final total = snap.data?.count ?? 0;
+                            return TileCage(
+                              user: widget.user,
+                              refresh: () => setState(() {
+                                print("SIP");
+                              }),
+                              doc: e,
+                              total: total.toString(),
+                            );
+                          },
+                        );
+                      }).toList();
+
+                      return ListView(children: listData);
+                    }
+                  },
+                )
+
+                // ).toList(),
+
+                // return ListView(
+                //   children: listData,
+                // );
+                //     }
+                //   },
+                // ),
+                ),
+>>>>>>> 69606a68a548e277ff3dcff3bddd6e17ca9a1bca
           ],
         ),
       ),

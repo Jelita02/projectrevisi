@@ -176,8 +176,12 @@ class _BlockDetailState extends State<BlockDetail> {
           ),
         ),
         leading: IconButton(
+<<<<<<< HEAD
           icon: const Icon(Icons.arrow_back),
           // <- back icon
+=======
+          icon: const Icon(Icons.arrow_back), // <- back icon
+>>>>>>> 69606a68a548e277ff3dcff3bddd6e17ca9a1bca
           onPressed: () {
             FirebaseFirestore.instance
                 .collection('kandang')
