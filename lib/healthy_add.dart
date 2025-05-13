@@ -22,7 +22,8 @@ class HealthyAdd extends StatefulWidget {
 class HealthyAddState extends State<HealthyAdd> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _tanggalController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   final TextEditingController _textOtherController = TextEditingController();
 
   bool _vaksinCheck = false;
@@ -34,7 +35,11 @@ class HealthyAddState extends State<HealthyAdd> {
   File? _image;
   final picker = ImagePicker();
   bool _isAnyCheckboxChecked() {
-  return _vaksinCheck || _nafsuCheck || _pinkEyeCheck || _busukCheck || _otherCheck;
+    return _vaksinCheck ||
+        _nafsuCheck ||
+        _pinkEyeCheck ||
+        _busukCheck ||
+        _otherCheck;
   }
 
   DocumentSnapshot<Map<String, dynamic>>? animal;
@@ -88,7 +93,8 @@ class HealthyAddState extends State<HealthyAdd> {
     );
     if (picked != null && picked != DateTime.now()) {
       setState(() {
-        _tanggalController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _tanggalController.text =
+            DateFormat('yyyy-MM-dd').format(DateTime.now());
       });
     }
   }
@@ -222,7 +228,6 @@ class HealthyAddState extends State<HealthyAdd> {
                 }),
                 title: const Text("Penyakit mata (pink eye)"),
               ),
-              
               CheckboxListTile(
                 value: _busukCheck,
                 onChanged: (value) => setState(() {
@@ -254,12 +259,13 @@ class HealthyAddState extends State<HealthyAdd> {
                 ),
               TextFormField(
                 controller: _tanggalController,
+                enabled: false,
                 decoration: const InputDecoration(
                   labelText: 'Tanggal kesehatan',
                   suffix: Icon(Icons.date_range_outlined),
                 ),
                 readOnly: true,
-                onTap: () => _selectDate(context),
+                // onTap: () => _selectDate(context),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Masukan tanggal kesehatan";
@@ -342,42 +348,40 @@ class HealthyAddState extends State<HealthyAdd> {
                   backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
                 ),
                 onPressed: () {
-                  
-            final isValid = _formKey.currentState?.validate() ?? false;
-            
-            if (!isValid) return;
+                  final isValid = _formKey.currentState?.validate() ?? false;
 
-            if (!_isAnyCheckboxChecked()) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Pilih minimal satu keterangan kesehatan."),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
+                  if (!isValid) return;
 
-            if (_image == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Harap unggah foto hewan."),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-            if (animal == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Harap pilih hewan terlebih dahulu."),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-            _addHealthy();
+                  if (!_isAnyCheckboxChecked()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text("Pilih minimal satu keterangan kesehatan."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
 
-
+                  if (_image == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Harap unggah foto hewan."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  if (animal == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Harap pilih hewan terlebih dahulu."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  _addHealthy();
                 },
                 child: const Text(
                   'Simpan',
