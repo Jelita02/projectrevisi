@@ -40,7 +40,8 @@ class _AnimalEditState extends State<AnimalEdit> {
   String urlgambar = "";
 
   TextEditingController _namaController = TextEditingController();
-  TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _tanggalController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   TextEditingController _bobotController = TextEditingController();
 
   void _showImage() async {
@@ -127,8 +128,8 @@ class _AnimalEditState extends State<AnimalEdit> {
 
     _showImage();
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
-    _tanggalController =
-        TextEditingController(text: widget.doc.data()?["tanggal_masuk"]);
+    // _tanggalController =
+    //     TextEditingController(text: widget.doc.data()?["tanggal_masuk"]);
     _bobotController =
         TextEditingController(text: widget.doc.data()?["bobot_akhir"]);
 
@@ -505,8 +506,10 @@ class _AnimalEditState extends State<AnimalEdit> {
                         labelText: 'Tanggal update',
                         suffix: Icon(Icons.date_range_outlined),
                       ),
-                      readOnly: true, // masih bisa dibaca, tapi tidak bisa diubah
-                      enabled: false,  // kalau ingin benar-benar tidak bisa diakses sama sekali
+                      readOnly:
+                          true, // masih bisa dibaca, tapi tidak bisa diubah
+                      enabled:
+                          false, // kalau ingin benar-benar tidak bisa diakses sama sekali
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Masukan tanggal";
