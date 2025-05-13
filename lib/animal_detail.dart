@@ -29,7 +29,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   late DocumentSnapshot<Map<String, dynamic>> doc;
   final GlobalKey _globalKey = GlobalKey();
   TextEditingController _textController = TextEditingController();
-  final TextEditingController _tanggalBobotController = TextEditingController();
+  final TextEditingController _tanggalBobotController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   final TextEditingController _textStatusController = TextEditingController();
   final TextEditingController _textStatus_kesehatanController =
       TextEditingController();
@@ -623,9 +624,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                             text: "Tanggal",
                             textController: _tanggalBobotController,
                             validatorMessage: "Tanggal Kosong",
-                            onTap: () => _selectDate(context),
-                            value:
-                                DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                            // onTap: () => _selectDate(context),
+                            // value:
+                            //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
                           ),
                         ),
                     ],
