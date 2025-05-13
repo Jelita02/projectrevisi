@@ -26,7 +26,8 @@ class _CageEditState extends State<CageEdit> {
   late String _kategori;
   TextEditingController _namaController = TextEditingController();
   TextEditingController _kapasitasController = TextEditingController();
-  TextEditingController _tanggalController = TextEditingController();
+  TextEditingController _tanggalController = TextEditingController(
+      text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
 
   List<Map<String, dynamic>> blok = [];
 
@@ -42,7 +43,8 @@ class _CageEditState extends State<CageEdit> {
       }
     });
   }
-   Future<void> _selectDate(BuildContext context) async {
+
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -58,7 +60,6 @@ class _CageEditState extends State<CageEdit> {
 
   var kandang = FirebaseFirestore.instance.collection('kandang');
   var blokStore = FirebaseFirestore.instance.collection('blok');
-  
 
   void _editCage(context) {
     kandang.doc(widget.doc.id).update({
@@ -84,7 +85,7 @@ class _CageEditState extends State<CageEdit> {
           "image": fileName,
         });
       }
-  
+
       int kapasitasKandang = 0;
       Map<String, String> listId = {};
       for (var v in blok) {
@@ -99,7 +100,6 @@ class _CageEditState extends State<CageEdit> {
         listId[doc.id] = doc.id;
       }
 
-    
       WriteBatch batch = FirebaseFirestore.instance.batch();
       var querySnapshot =
           await blokStore.where('kandang_id', isEqualTo: widget.doc.id).get();
@@ -145,7 +145,6 @@ class _CageEditState extends State<CageEdit> {
                   Navigator.of(context).pop();
                 },
               ),
-              
             ],
           ),
         );
@@ -156,8 +155,9 @@ class _CageEditState extends State<CageEdit> {
   void _showAddBlok(context) {
     final blokKey = GlobalKey<FormState>();
     final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController = TextEditingController();
-    
+    final TextEditingController kapasitasBlokController =
+        TextEditingController();
+
     showModalBottomSheet(
       isScrollControlled:
           true, // <- penting untuk menghindari tertutup keyboard
@@ -271,8 +271,6 @@ class _CageEditState extends State<CageEdit> {
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
     _kapasitasController =
         TextEditingController(text: widget.doc.data()?["kapasitas"]);
-     _tanggalController =
-        TextEditingController(text: widget.doc.data()?["tanggal_update"]);
 
     blokStore.where("kandang_id", isEqualTo: widget.doc.id).get().then((value) {
       value.docs.map((e) {
