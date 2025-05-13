@@ -497,27 +497,43 @@ class _AnimalEditState extends State<AnimalEdit> {
                       },
                     ),
                   ),
-                  // const SizedBox(width: 20),
-                  // Expanded(
-                  //   child: TextFormField(
-                  //     controller: _tanggalController,
-                  //     decoration: const InputDecoration(
-                  //       labelText: 'Tanggal Masuk',
-                  //       suffix: Icon(Icons.date_range_outlined),
-                  //     ),
-                  //     readOnly: true,
-                  //     onTap: () => _selectDate(context),
-                  //     validator: (value) {
-                  //       if (value == null || value.isEmpty) {
-                  //         return "Masukan tanggal";
-                  //       }
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _tanggalController,
+                      decoration: const InputDecoration(
+                        labelText: 'Tanggal update',
+                        suffix: Icon(Icons.date_range_outlined),
+                      ),
+                      readOnly: true, // masih bisa dibaca, tapi tidak bisa diubah
+                      enabled: false,  // kalau ingin benar-benar tidak bisa diakses sama sekali
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Masukan tanggal";
+                        }
 
-                  //       return null;
-                  //     },
-                  //   ),
-                  // ),
+                        return null;
+                      },
+                    ),
+                  ),
                 ],
               ),
+              // child: TextFormField(
+              //         controller: _tanggalController,
+              //         decoration: const InputDecoration(
+              //           labelText: 'Tanggal Masuk',
+              //           suffix: Icon(Icons.date_range_outlined),
+              //         ),
+              //         readOnly: true, // masih bisa dibaca, tapi tidak bisa diubah
+              //         enabled: false,  // kalau ingin benar-benar tidak bisa diakses sama sekali
+              //         validator: (value) {
+              //           if (value == null || value.isEmpty) {
+              //             return "Masukan tanggal";
+              //           }
+
+              //           return null;
+              //         },
+              //       ),
               // const SizedBox(height: 20),
               // Container(
               //   // height: 80,

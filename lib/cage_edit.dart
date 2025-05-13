@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,6 +26,7 @@ class _CageEditState extends State<CageEdit> {
   late String _kategori;
   TextEditingController _namaController = TextEditingController();
   TextEditingController _kapasitasController = TextEditingController();
+  TextEditingController _tanggalController = TextEditingController();
 
   List<Map<String, dynamic>> blok = [];
 
@@ -40,9 +42,23 @@ class _CageEditState extends State<CageEdit> {
       }
     });
   }
+   Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        _tanggalController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
 
   var kandang = FirebaseFirestore.instance.collection('kandang');
   var blokStore = FirebaseFirestore.instance.collection('blok');
+  
 
   void _editCage(context) {
     kandang.doc(widget.doc.id).update({
@@ -50,6 +66,7 @@ class _CageEditState extends State<CageEdit> {
       "nama_lower": _namaController.text.toLowerCase(),
       "kapasitas": _kapasitasController.text,
       "kategori": _kategori,
+      "tanggal_update": _tanggalController.text,
     }).then((value) async {
       if (_image != null) {
         // Ambil ekstensi file asli
@@ -67,7 +84,7 @@ class _CageEditState extends State<CageEdit> {
           "image": fileName,
         });
       }
-
+  
       int kapasitasKandang = 0;
       Map<String, String> listId = {};
       for (var v in blok) {
@@ -82,6 +99,7 @@ class _CageEditState extends State<CageEdit> {
         listId[doc.id] = doc.id;
       }
 
+    
       WriteBatch batch = FirebaseFirestore.instance.batch();
       var querySnapshot =
           await blokStore.where('kandang_id', isEqualTo: widget.doc.id).get();
@@ -127,6 +145,7 @@ class _CageEditState extends State<CageEdit> {
                   Navigator.of(context).pop();
                 },
               ),
+              
             ],
           ),
         );
@@ -137,99 +156,8 @@ class _CageEditState extends State<CageEdit> {
   void _showAddBlok(context) {
     final blokKey = GlobalKey<FormState>();
     final TextEditingController namaBlokController = TextEditingController();
-    final TextEditingController kapasitasBlokController =
-        TextEditingController();
-
-    // showModalBottomSheet(
-    //   context: context,
-    //   builder: (BuildContext bc) {
-    //     return SafeArea(
-    //       child: Container(
-    //         padding: const EdgeInsets.all(20),
-    //         child: Form(
-    //           key: blokKey,
-    //           child: Wrap(
-    //             children: <Widget>[
-    //               Row(
-    //                 children: [
-    //                   Expanded(
-    //                     child: Padding(
-    //                       padding: const EdgeInsets.all(10),
-    //                       child: TextFormField(
-    //                         controller: namaBlokController,
-    //                         maxLength: 20,
-    //                         decoration: const InputDecoration(
-    //                           labelText: 'Nama',
-    //                         ),
-    //                         keyboardType: TextInputType.name,
-    //                         validator: (value) {
-    //                           if (value == null || value.isEmpty) {
-    //                             return "Masukan nama";
-    //                           }
-
-    //                           return null;
-    //                         },
-    //                       ),
-    //                     ),
-    //                   ),
-    //                   Expanded(
-    //                     child: Padding(
-    //                       padding: const EdgeInsets.all(10),
-    //                       child: TextFormField(
-    //                         controller: kapasitasBlokController,
-    //                         decoration: const InputDecoration(
-    //                           labelText: 'Kapasitas',
-    //                         ),
-    //                         keyboardType: TextInputType.number,
-    //                         validator: (value) {
-    //                           if (value == null || value.isEmpty) {
-    //                             return "Masukan kapasitas";
-    //                           }
-
-    //                           return null;
-    //                         },
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ],
-    //               ),
-    //               Center(
-    //                 child: SizedBox(
-    //                   width: double.infinity,
-    //                   child: ElevatedButton(
-    //                     style: ElevatedButton.styleFrom(
-    //                       backgroundColor:
-    //                           const Color.fromRGBO(26, 107, 125, 1),
-    //                     ),
-    //                     onPressed: () {
-    //                       if (blokKey.currentState?.validate() == true) {
-    //                         setState(() {
-    //                           blok.add({
-    //                             "nama": namaBlokController.text,
-    //                             "kapasitas": kapasitasBlokController.text,
-    //                           });
-
-    //                           Navigator.of(context).pop();
-    //                         });
-    //                       }
-    //                     },
-    //                     child: const Text(
-    //                       'Tambah Blok',
-    //                       style: TextStyle(
-    //                         color: Colors.white,
-    //                         fontSize: 20,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
+    final TextEditingController kapasitasBlokController = TextEditingController();
+    
     showModalBottomSheet(
       isScrollControlled:
           true, // <- penting untuk menghindari tertutup keyboard
@@ -343,6 +271,8 @@ class _CageEditState extends State<CageEdit> {
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
     _kapasitasController =
         TextEditingController(text: widget.doc.data()?["kapasitas"]);
+     _tanggalController =
+        TextEditingController(text: widget.doc.data()?["tanggal_update"]);
 
     blokStore.where("kandang_id", isEqualTo: widget.doc.id).get().then((value) {
       value.docs.map((e) {
@@ -441,71 +371,16 @@ class _CageEditState extends State<CageEdit> {
                   });
                 },
               ),
-              // const SizedBox(height: 20),
-              // Container(
-              //   // height: 80,
-              //   padding: const EdgeInsets.all(10),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(20),
-              //     border: Border.all(
-              //       color: Colors.black,
-              //     ),
-              //     boxShadow: const [
-              //       BoxShadow(
-              //         color: Colors.grey,
-              //         blurRadius: 10.0,
-              //         offset: Offset(1, 3),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Container(
-              //         decoration: BoxDecoration(
-              //             borderRadius: BorderRadius.circular(20)),
-              //         child: (urlgambar != null && _image == null)
-              //             ? Image.network(
-              //                 urlgambar,
-              //                 height: 200,
-              //                 width: 200,
-              //                 errorBuilder: (context, error, stackTrace) {
-              //                   return const Icon(Icons.broken_image,
-              //                       size: 50, color: Colors.grey);
-              //                 },
-              //                 loadingBuilder:
-              //                     (context, child, loadingProgress) {
-              //                   if (loadingProgress == null) return child;
-              //                   return const CircularProgressIndicator();
-              //                 },
-              //               )
-              //             : (_image != null)
-              //                 ? Image.file(
-              //                     _image!,
-              //                     height: 200,
-              //                     width: 200,
-              //                   )
-              //                 : const Text(
-              //                     "Foto Kandang",
-              //                     style: TextStyle(
-              //                         fontSize: 18, color: Colors.grey),
-              //                   ),
-              //       ),
-              //       ElevatedButton(
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor:
-              //               const Color.fromRGBO(48, 130, 148, 0.45),
-              //         ),
-              //         onPressed: () => _showPicker(context),
-              //         child: const Text(
-              //           "upload",
-              //           style: TextStyle(fontWeight: FontWeight.bold),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _tanggalController,
+                readOnly: true,
+                enabled: false,
+                decoration: const InputDecoration(
+                  labelText: 'Tanggal',
+                  suffixIcon: Icon(Icons.date_range_outlined),
+                ),
+              ),
               const SizedBox(height: 20),
               Container(
                 // height: 80,

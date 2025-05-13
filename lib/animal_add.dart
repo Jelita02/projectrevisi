@@ -453,23 +453,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                   ),
                   const SizedBox(width: 20),
                   Expanded(
-                    // child: TextFormField(
-                    //   controller: _tanggalController,
-                    //   decoration: const InputDecoration(
-                    //     labelText: 'Tanggal Masuk',
-                    //     suffix: Icon(Icons.date_range_outlined),
-                    //   ),
-                    //   readOnly: true,
-                    //   onTap: () => _selectDate(context),
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return "Masukan tanggal";
-                    //     }
-
-                    //     return null;
-                    //   },
-                    // ),
-                                        child: TextFormField(
+                     child: TextFormField(
                       controller: _tanggalController,
                       decoration: const InputDecoration(
                         labelText: 'Tanggal Masuk',

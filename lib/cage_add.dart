@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/intl.dart';
 
 class CageAdd extends StatefulWidget {
   final fire.User user;
@@ -24,10 +25,12 @@ class _CageAddState extends State<CageAdd> {
   late String _kategori;
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _kapasitasController = TextEditingController();
+  final TextEditingController _tanggalController = TextEditingController();
 
   List<Map<String, dynamic>> blok = [];
 
   final picker = ImagePicker();
+ 
 
   Future _getImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -42,6 +45,13 @@ class _CageAddState extends State<CageAdd> {
   var kandang = FirebaseFirestore.instance.collection('kandang');
   var blokStore = FirebaseFirestore.instance.collection('blok'); 
 
+  @override
+  void initState() {
+    super.initState();
+    // Set tanggal otomatis hari ini
+    _tanggalController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  }
+
   void _addCage() {
     kandang.add({
       "user_uid": widget.user.uid,
@@ -49,6 +59,7 @@ class _CageAddState extends State<CageAdd> {
       "nama_lower": _namaController.text.toLowerCase(),
       "kapasitas": _kapasitasController.text,
       "kategori": _kategori,
+      "tanggal_dibuat": _tanggalController.text,
     }).then((value) {
       if (_image != null) {
         // Ambil ekstensi file asli
@@ -207,6 +218,12 @@ class _CageAddState extends State<CageAdd> {
                                   if (value == null || value.isEmpty) {
                                     return "Masukan kapasitas";
                                   }
+                                  int? nilai = int.tryParse(value);
+                                  if (nilai != null) {
+                                  if (nilai <= 0 || nilai >= 15) {
+                                    return "Input dari 1-15";
+                                  }
+                                }
                                   return null;
                                 },
                               ),
@@ -253,6 +270,7 @@ class _CageAddState extends State<CageAdd> {
       },
     );
   }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +310,7 @@ class _CageAddState extends State<CageAdd> {
                   if (value == null || value.isEmpty) {
                     return "Masukan nama";
                   }
-
+                
                   return null;
                 },
               ),
@@ -317,6 +335,16 @@ class _CageAddState extends State<CageAdd> {
                     }
                   });
                 },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _tanggalController,
+                readOnly: true,
+                enabled: false,
+                decoration: const InputDecoration(
+                  labelText: 'Tanggal Dibuat',
+                  suffixIcon: Icon(Icons.date_range_outlined),
+                ),
               ),
               const SizedBox(height: 20),
               Container(
@@ -444,6 +472,7 @@ class _CageAddState extends State<CageAdd> {
                                         overflow: TextOverflow.ellipsis),
                                   ),
                                 ),
+                                
                               ],
                             ),
                             trailing: GestureDetector(

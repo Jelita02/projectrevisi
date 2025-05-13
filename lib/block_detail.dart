@@ -348,14 +348,14 @@ class _BlockDetailState extends State<BlockDetail> {
                                       ),
                                     ),
                                   ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _showEditBlok(context, e);
-                                      },
-                                      child: const Icon(Icons.edit),
-                                    ),
-                                  ),
+                                  // Expanded(
+                                  //   child: GestureDetector(
+                                  //     onTap: () {
+                                  //       _showEditBlok(context, e);
+                                  //     },
+                                  //     child: const Icon(Icons.edit),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             );

@@ -489,7 +489,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     fontSize: 17,
                   ),
                 ),
-                Text(doc.data()?["nama"] ?? ""),
+                Text(doc.data()?["tanggal_masuk"] ?? ""),
                 form(text: "Nama", value: doc.data()?["nama"] ?? ""),
                 form(text: "Usia", value: doc.data()?["usia"] ?? ""),
                 form(text: "Jenis Hewan", value: doc.data()?["jenis"] ?? ""),
@@ -551,9 +551,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     value: doc.data()?["status"] ?? ""),
                 form(
                     text: "Bobot Masuk",
-                    //  value: {doc.data()?["bobot"] ?? ""}| ${doc.data()?["tanggal_masuk"] ?? ""
                     value:
-                        "${doc.data()?["bobot"] ?? ""} Kg | ${doc.data()?["tanggal_masuk"] ?? ""}"),
+                        "${doc.data()?["bobot"] ?? ""} Kg | ${doc.data()?["tanggal_update"] ?? ""}"),
                 Form(
                   key: _formKey,
                   child: Row(

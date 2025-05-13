@@ -330,6 +330,21 @@ class _CageDetailState extends State<CageDetail> {
                     ),
                     child: Column(
                       children: [
+                     
+                          // New Row for tanggal_masuk
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                doc.data()?["tanggal_dibuat"] ?? "",  // Display the "tanggal_masuk"
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -365,6 +380,20 @@ class _CageDetailState extends State<CageDetail> {
                             ),
                           ],
                         ),
+                        //     const SizedBox(height: 10),
+                        // // Tambahkan tampilan tanggal masuk di sini
+                        // Align(
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Text(
+                        //     "Tanggal : ${doc.data()?["tanggal_dibuat"] ?? ""}",
+                        //     style: const TextStyle(
+                        //       fontSize: 13,
+                        //       fontWeight: FontWeight.w500,
+                        //       color: Colors.black54,
+                        //     ),
+                        //   ),
+                        // ),
+
                       ],
                     ),
                   ),
