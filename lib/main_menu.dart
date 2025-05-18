@@ -165,6 +165,7 @@ class _MainMenuState extends State<MainMenu> {
         ),
       ),
       bottomNavigationBar: Container(
+        height: 83,
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -216,7 +217,7 @@ class _MainMenuState extends State<MainMenu> {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final bool isSelected = _currentIndex == index;
-    
+
     return InkWell(
       onTap: () => _onTapped(index),
       child: Container(
@@ -226,9 +227,7 @@ class _MainMenuState extends State<MainMenu> {
           children: [
             Icon(
               icon,
-              color: isSelected 
-                ? const Color(0xFF1D91AA) 
-                : Colors.grey,
+              color: isSelected ? const Color(0xFF1D91AA) : Colors.grey,
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -236,12 +235,8 @@ class _MainMenuState extends State<MainMenu> {
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: isSelected 
-                  ? const Color(0xFF1D91AA) 
-                  : Colors.grey,
-                fontWeight: isSelected 
-                  ? FontWeight.bold 
-                  : FontWeight.normal,
+                color: isSelected ? const Color(0xFF1D91AA) : Colors.grey,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ],

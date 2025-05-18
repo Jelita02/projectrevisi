@@ -61,6 +61,27 @@ class _CageEditState extends State<CageEdit> {
   var kandang = FirebaseFirestore.instance.collection('kandang');
   var blokStore = FirebaseFirestore.instance.collection('blok');
 
+  void _log({
+    dynamic before,
+    dynamic after,
+    required String textInitial,
+    required String icon,
+    String textPrefix = "",
+    String textSufix = "",
+  }) {
+    if (before != after) {
+      var text =
+          "$textInitial berubah dari $textPrefix $before $textSufix menjadi $textPrefix $after $textSufix";
+      FirebaseFirestore.instance.collection('kandang_log').add({
+        "kandang_id": widget.doc.id,
+        "text": text,
+        "created_at": DateTime.now().toString().substring(0, 10),
+        "title": "Perubahan $textInitial",
+        "icon": icon,
+      });
+    }
+  }
+
   void _editCage(context) {
     kandang.doc(widget.doc.id).update({
       "nama": _namaController.text,
@@ -69,6 +90,17 @@ class _CageEditState extends State<CageEdit> {
       "kategori": _kategori,
       "tanggal_update": _tanggalController.text,
     }).then((value) async {
+      _log(
+          before: widget.doc.data()?["nama"],
+          after: _namaController.text,
+          textInitial: "Nama",
+          textPrefix: "Kandang",
+          icon: 'pets_rounded');
+      _log(
+          before: widget.doc.data()?["kategori"],
+          after: _kategori,
+          textInitial: "Kategori",
+          icon: 'category_rounded');
       if (_image != null) {
         // Ambil ekstensi file asli
         String extension = path.extension(_image!.path);
@@ -113,6 +145,13 @@ class _CageEditState extends State<CageEdit> {
       kandang
           .doc(widget.doc.id)
           .update({"kapasitas": kapasitasKandang.toString()});
+      _log(
+        icon: 'edit_rounded',
+        before: int.tryParse(widget.doc.data()?["kapasitas"] ?? 0) ?? 0,
+        after: kapasitasKandang,
+        textInitial: "Kapasitas",
+        textSufix: "Ekor",
+      );
 
       var value = await kandang.doc(widget.doc.id).get();
       Navigator.pop(
@@ -143,7 +182,8 @@ class _CageEditState extends State<CageEdit> {
                         color: const Color(0xFF1D91AA).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.photo_library, color: Color(0xFF1D91AA)),
+                      child: const Icon(Icons.photo_library,
+                          color: Color(0xFF1D91AA)),
                     ),
                     const SizedBox(width: 12),
                     const Text(
@@ -232,7 +272,8 @@ class _CageEditState extends State<CageEdit> {
                               color: const Color(0xFF1D91AA).withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.dashboard_customize, color: Color(0xFF1D91AA)),
+                            child: const Icon(Icons.dashboard_customize,
+                                color: Color(0xFF1D91AA)),
                           ),
                           const SizedBox(width: 12),
                           const Text(
@@ -264,11 +305,13 @@ class _CageEditState extends State<CageEdit> {
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xFF1D91AA), width: 1),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFF1D91AA), width: 1),
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 16, horizontal: 16),
@@ -298,11 +341,13 @@ class _CageEditState extends State<CageEdit> {
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(color: Color(0xFF1D91AA), width: 1),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFF1D91AA), width: 1),
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 16, horizontal: 16),
@@ -457,26 +502,26 @@ class _CageEditState extends State<CageEdit> {
                             width: double.infinity,
                             height: 200,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => 
+                            errorBuilder: (context, error, stackTrace) =>
                                 Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.image_not_supported,
-                                        color: Colors.white,
-                                        size: 40,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        "Gambar tidak tersedia",
-                                        style: TextStyle(
-                                          color: Colors.white.withOpacity(0.8),
-                                        ),
-                                      ),
-                                    ],
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.white,
+                                    size: 40,
                                   ),
-                                ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Gambar tidak tersedia",
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                   ),
                   Positioned(
@@ -508,7 +553,7 @@ class _CageEditState extends State<CageEdit> {
                 ],
               ),
             ),
-            
+
             // Form section
             Container(
               padding: const EdgeInsets.all(20),
@@ -560,7 +605,7 @@ class _CageEditState extends State<CageEdit> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Nama field
                     TextFormField(
                       controller: _namaController,
@@ -568,20 +613,24 @@ class _CageEditState extends State<CageEdit> {
                       decoration: InputDecoration(
                         labelText: 'Nama Kandang',
                         hintText: 'Masukkan nama kandang',
-                        prefixIcon: const Icon(Icons.home_outlined, color: Color(0xFF1D91AA)),
+                        prefixIcon: const Icon(Icons.home_outlined,
+                            color: Color(0xFF1D91AA)),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF1D91AA), width: 1.5),
+                          borderSide: const BorderSide(
+                              color: Color(0xFF1D91AA), width: 1.5),
                         ),
                       ),
                       keyboardType: TextInputType.name,
@@ -593,29 +642,34 @@ class _CageEditState extends State<CageEdit> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Kategori dropdown
                     DropdownButtonFormField(
                       decoration: InputDecoration(
                         labelText: 'Kategori',
                         hintText: 'Pilih kategori kandang',
-                        prefixIcon: const Icon(Icons.category_outlined, color: Color(0xFF1D91AA)),
+                        prefixIcon: const Icon(Icons.category_outlined,
+                            color: Color(0xFF1D91AA)),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF1D91AA), width: 1.5),
+                          borderSide: const BorderSide(
+                              color: Color(0xFF1D91AA), width: 1.5),
                         ),
                       ),
-                      validator: (value) => value == null ? 'Pilih kategori' : null,
+                      validator: (value) =>
+                          value == null ? 'Pilih kategori' : null,
                       items: dropdownKategori
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
@@ -623,8 +677,9 @@ class _CageEditState extends State<CageEdit> {
                           child: Text(value),
                         );
                       }).toList(),
-                      value:
-                          dropdownKategori.contains(_kategori) ? (_kategori) : null,
+                      value: dropdownKategori.contains(_kategori)
+                          ? (_kategori)
+                          : null,
                       onChanged: (value) {
                         setState(() {
                           if (value != null) {
@@ -634,7 +689,7 @@ class _CageEditState extends State<CageEdit> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Tanggal field
                     TextFormField(
                       controller: _tanggalController,
@@ -642,26 +697,30 @@ class _CageEditState extends State<CageEdit> {
                       enabled: false,
                       decoration: InputDecoration(
                         labelText: 'Tanggal Update',
-                        prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF1D91AA)),
+                        prefixIcon: const Icon(Icons.calendar_today,
+                            color: Color(0xFF1D91AA)),
                         filled: true,
                         fillColor: Colors.grey[100],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade300, width: 1),
                         ),
                         suffixIcon: const Icon(Icons.date_range_outlined),
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Blok section header
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -724,139 +783,152 @@ class _CageEditState extends State<CageEdit> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // Blok list
                     blok.isEmpty
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.dashboard_outlined,
-                              size: 48,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "Belum ada blok",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              "Tekan 'Tambah' untuk menambahkan blok",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: blok.length,
-                        itemBuilder: (context, index) {
-                          var item = blok[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                              leading: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(vertical: 32),
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: [
+                                Icon(
                                   Icons.dashboard_outlined,
-                                  color: Color(0xFF1D91AA),
+                                  size: 48,
+                                  color: Colors.grey[400],
                                 ),
-                              ),
-                              title: Text(
-                                "Blok: ${item["nama"] ?? ""}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
+                                const SizedBox(height: 16),
+                                Text(
+                                  "Belum ada blok",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                "Kapasitas: ${item["kapasitas"] ?? ""} Ekor",
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                const SizedBox(height: 4),
+                                Text(
+                                  "Tekan 'Tambah' untuk menambahkan blok",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
                                 ),
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.redAccent),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext dialogContext) {
-                                      return AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16),
-                                        ),
-                                        title: Row(
-                                          children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(8),
-                                              decoration: BoxDecoration(
-                                                color: Colors.red.withOpacity(0.1),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(Icons.delete_outline, color: Colors.red),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: blok.length,
+                            itemBuilder: (context, index) {
+                              var item = blok[index];
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 4),
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF1D91AA)
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(
+                                      Icons.dashboard_outlined,
+                                      color: Color(0xFF1D91AA),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    "Blok: ${item["nama"] ?? ""}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    "Kapasitas: ${item["kapasitas"] ?? ""} Ekor",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext dialogContext) {
+                                          return AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
                                             ),
-                                            const SizedBox(width: 16),
-                                            const Text("Konfirmasi Hapus"),
-                                          ],
-                                        ),
-                                        content: const Text("Apakah kamu yakin ingin menghapus blok ini?"),
-                                        actions: [
-                                          TextButton(
-                                            child: const Text("Batal"),
-                                            onPressed: () {
-                                              Navigator.of(dialogContext).pop();
-                                            },
-                                          ),
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                              foregroundColor: Colors.white,
-                                              elevation: 0,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
+                                            title: Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red
+                                                        .withOpacity(0.1),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                      Icons.delete_outline,
+                                                      color: Colors.red),
+                                                ),
+                                                const SizedBox(width: 16),
+                                                const Text("Konfirmasi Hapus"),
+                                              ],
                                             ),
-                                            child: const Text("Hapus"),
-                                            onPressed: () {
-                                              setState(() {
-                                                blok.removeAt(index);
-                                              });
-                                              Navigator.of(dialogContext).pop();
-                                            },
-                                          ),
-                                        ],
+                                            content: const Text(
+                                                "Apakah kamu yakin ingin menghapus blok ini?"),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("Batal"),
+                                                onPressed: () {
+                                                  Navigator.of(dialogContext)
+                                                      .pop();
+                                                },
+                                              ),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                  foregroundColor: Colors.white,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                ),
+                                                child: const Text("Hapus"),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    blok.removeAt(index);
+                                                  });
+                                                  Navigator.of(dialogContext)
+                                                      .pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                     const SizedBox(height: 30),
-                    
+
                     // Main submit button
-                    ElevatedButton.icon(
+                    ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1D91AA),
                         foregroundColor: Colors.white,
@@ -873,7 +945,7 @@ class _CageEditState extends State<CageEdit> {
                         }
                       },
                       // icon: const Icon(Icons.save),
-                      label: const Text(
+                      child: const Text(
                         'Simpan Perubahan',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,

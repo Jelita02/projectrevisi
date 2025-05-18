@@ -32,7 +32,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   TextEditingController _textController = TextEditingController();
   final TextEditingController _tanggalBobotController = TextEditingController();
   final TextEditingController _textStatusController = TextEditingController();
-  final TextEditingController _textStatus_kesehatanController = TextEditingController();
+  final TextEditingController _textStatus_kesehatanController =
+      TextEditingController();
 
   late bool status = true;
 
@@ -172,7 +173,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.2)),
                         ),
                         child: QrImageView(
                           data: doc.id,
@@ -268,7 +270,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
               onPressed: () {
                 FirebaseFirestore.instance
@@ -384,8 +387,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                               child: Center(
                                 child: CircularProgressIndicator(
                                   color: const Color(0xFF1D91AA),
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / 
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
@@ -525,13 +529,14 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ),
                         onSelected: (value) {
                           if (value == "edit") {
-                            Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
+                            Navigator.push<
+                                DocumentSnapshot<Map<String, dynamic>>>(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AnimalEdit(
-                                  doc: doc,
-                                  user: widget.user,
-                                )),
+                                  builder: (context) => AnimalEdit(
+                                        doc: doc,
+                                        user: widget.user,
+                                      )),
                             ).then((value) {
                               setState(() {
                                 doc = value!;
@@ -545,21 +550,22 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           PopupMenuItem(
                             enabled: status ? true : false,
                             value: "edit",
-                            child: Row(
-                              children: const [
+                            child: const Row(
+                              children: [
                                 Icon(Icons.edit, size: 18),
                                 SizedBox(width: 8),
                                 Text("Edit"),
                               ],
                             ),
                           ),
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: "delete",
                             child: Row(
-                              children: const [
+                              children: [
                                 Icon(Icons.delete, size: 18, color: Colors.red),
                                 SizedBox(width: 8),
-                                Text("Hapus", style: TextStyle(color: Colors.red)),
+                                Text("Hapus",
+                                    style: TextStyle(color: Colors.red)),
                               ],
                             ),
                           ),
@@ -574,7 +580,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   children: [
                     // Gender indicator
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(30),
@@ -606,7 +613,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     // Health status
                     if (doc.data()?["status_kesehatan"] != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: doc.data()?["status_kesehatan"] == "Sehat"
                               ? Colors.green.withOpacity(0.3)
@@ -637,7 +645,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     const SizedBox(width: 10),
                     // Animal status (alive, sold, etc)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: _getStatusColor(doc.data()?["status"]),
                         borderRadius: BorderRadius.circular(30),
@@ -709,22 +718,22 @@ class _AnimalDetailState extends State<AnimalDetail> {
             height: 1,
             color: Colors.grey.withOpacity(0.2),
           ),
-          
+
           // Animal Information Section
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline,
                       color: Color(0xFF1D91AA),
                       size: 22,
                     ),
-                    const SizedBox(width: 8),
-                    const Text(
+                    SizedBox(width: 8),
+                    Text(
                       "Informasi Hewan",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
@@ -757,7 +766,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                
+
                 // Information Cards
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -777,36 +786,32 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     children: [
                       // Name
                       _buildInfoRow(
-                        icon: FontAwesomeIcons.paw,
-                        label: "Nama",
-                        value: doc.data()?["nama"] ?? "-"
-                      ),
+                          icon: FontAwesomeIcons.paw,
+                          label: "Nama",
+                          value: doc.data()?["nama"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Age
                       _buildInfoRow(
-                        icon: Icons.access_time,
-                        label: "Usia",
-                        value: doc.data()?["usia"] ?? "-"
-                      ),
+                          icon: Icons.access_time,
+                          label: "Usia",
+                          value: doc.data()?["usia"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Type
                       _buildInfoRow(
-                        icon: Icons.category,
-                        label: "Jenis Hewan",
-                        value: doc.data()?["jenis"] ?? "-"
-                      ),
+                          icon: Icons.category,
+                          label: "Jenis Hewan",
+                          value: doc.data()?["jenis"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Category
                       _buildInfoRow(
-                        icon: Icons.layers,
-                        label: "Kategori Hewan",
-                        value: doc.data()?["kategori"] ?? "-"
-                      ),
+                          icon: Icons.layers,
+                          label: "Kategori Hewan",
+                          value: doc.data()?["kategori"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Health Condition Dropdown
                       Row(
                         children: [
@@ -856,7 +861,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ],
                       ),
                       const Divider(height: 20),
-                      
+
                       // Status Dropdown
                       Row(
                         children: [
@@ -882,9 +887,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                     await FirebaseFirestore.instance
                                         .collection("hewan")
                                         .doc(doc.id)
-                                        .update({"status": _textStatusController.text});
-                                    doc.data()?["status"] = _textStatusController.text;
-                                    status = _textStatusController.text == "Hidup";
+                                        .update({
+                                      "status": _textStatusController.text
+                                    });
+                                    doc.data()?["status"] =
+                                        _textStatusController.text;
+                                    status =
+                                        _textStatusController.text == "Hidup";
                                   }
                                   setState(() {
                                     _readOnlyStatus = !_readOnlyStatus;
@@ -907,9 +916,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Weight Information
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -937,7 +946,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Initial weight
                       Row(
                         children: [
@@ -991,9 +1000,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Current weight with edit function
                       Form(
                         key: _formKey,
@@ -1019,7 +1028,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                   Expanded(
                                     flex: 2,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Bobot Terkini",
@@ -1036,23 +1046,33 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                           decoration: InputDecoration(
                                             hintText: "Masukkan bobot",
                                             suffixText: "Kg",
-                                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 12),
                                             border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: BorderSide(color: Colors.grey[300]!),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey[300]!),
                                             ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: BorderSide(color: Colors.grey[300]!),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey[300]!),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: const BorderSide(color: Color(0xFF1D91AA)),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: const BorderSide(
+                                                  color: Color(0xFF1D91AA)),
                                             ),
                                           ),
                                           readOnly: _readOnlyFinalWeight,
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "Bobot Kosong";
                                             }
                                             return null;
@@ -1063,7 +1083,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                   ),
                                   if (_readOnlyFinalWeight && status)
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: Color(0xFF1D91AA)),
+                                      icon: const Icon(Icons.edit,
+                                          color: Color(0xFF1D91AA)),
                                       onPressed: () {
                                         setState(() {
                                           _readOnlyFinalWeight = false;
@@ -1073,9 +1094,11 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                     )
                                   else if (!_readOnlyFinalWeight)
                                     IconButton(
-                                      icon: const Icon(Icons.save_rounded, color: Color(0xFF1D91AA)),
+                                      icon: const Icon(Icons.save_rounded,
+                                          color: Color(0xFF1D91AA)),
                                       onPressed: () {
-                                        if (_formKey.currentState?.validate() == true) {
+                                        if (_formKey.currentState?.validate() ==
+                                            true) {
                                           FirebaseFirestore.instance
                                               .collection("hewan")
                                               .doc(doc.id)
@@ -1087,7 +1110,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                               .add({
                                             "hewan_id": doc.id,
                                             "bobot_akhir": _textController.text,
-                                            "tanggal": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                                            "tanggal": DateFormat('yyyy-MM-dd')
+                                                .format(DateTime.now()),
                                           });
                                           setState(() {
                                             _readOnlyFinalWeight = true;
@@ -1143,9 +1167,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   future: _getWeightData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(
-                          color: const Color(0xFF1D91AA),
+                          color: Color(0xFF1D91AA),
                           strokeWidth: 3,
                         ),
                       );
@@ -1249,9 +1273,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   future: _getHealthyData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(
-                          color: const Color(0xFF1D91AA),
+                          color: Color(0xFF1D91AA),
                           strokeWidth: 3,
                         ),
                       );
@@ -1345,7 +1369,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
         suffixIcon: iconSuffix,
         filled: true,
         fillColor: readOnly ? Colors.grey[50] : Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -1387,7 +1412,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
         isDense: true,
         filled: true,
         fillColor: readOnly ? Colors.grey[50] : Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -1489,7 +1515,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   }
 
   // Helper method to build information rows
-  Widget _buildInfoRow({required IconData icon, required String label, required String value}) {
+  Widget _buildInfoRow(
+      {required IconData icon, required String label, required String value}) {
     return Row(
       children: [
         Container(

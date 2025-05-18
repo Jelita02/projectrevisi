@@ -95,7 +95,8 @@ class _CageDetailState extends State<CageDetail> {
               const Text("Konfirmasi Hapus"),
             ],
           ),
-          content: const Text("Apakah kamu yakin ingin menghapus kandang ini? Tindakan ini tidak dapat dibatalkan."),
+          content: const Text(
+              "Apakah kamu yakin ingin menghapus kandang ini? Tindakan ini tidak dapat dibatalkan."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -233,9 +234,11 @@ class _CageDetailState extends State<CageDetail> {
                                 child: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                    Icon(Icons.broken_image,
+                                        size: 50, color: Colors.grey),
                                     SizedBox(height: 10),
-                                    Text("Gagal memuat gambar", style: TextStyle(color: Colors.grey))
+                                    Text("Gagal memuat gambar",
+                                        style: TextStyle(color: Colors.grey))
                                   ],
                                 ),
                               );
@@ -245,8 +248,9 @@ class _CageDetailState extends State<CageDetail> {
                               return Center(
                                 child: CircularProgressIndicator(
                                   color: const Color(0xFF1D91AA),
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / 
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
@@ -286,6 +290,16 @@ class _CageDetailState extends State<CageDetail> {
         );
       },
     );
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      _getListLog() async {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("kandang_log")
+        .where("kandang_id", isEqualTo: widget.doc.id);
+
+    final snapshot = await query.get();
+    return snapshot.docs;
   }
 
   @override
@@ -385,7 +399,8 @@ class _CageDetailState extends State<CageDetail> {
                     children: [
                       Icon(Icons.edit, color: Color(0xFF1D91AA), size: 20),
                       SizedBox(width: 12),
-                      Text("Edit", style: TextStyle(fontWeight: FontWeight.w500)),
+                      Text("Edit",
+                          style: TextStyle(fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ),
@@ -395,7 +410,10 @@ class _CageDetailState extends State<CageDetail> {
                     children: [
                       Icon(Icons.delete, color: Colors.redAccent, size: 20),
                       SizedBox(width: 12),
-                      Text("Hapus", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.redAccent)),
+                      Text("Hapus",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.redAccent)),
                     ],
                   ),
                 ),
@@ -485,7 +503,8 @@ class _CageDetailState extends State<CageDetail> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: const Color(0xFF1D91AA),
                               borderRadius: BorderRadius.circular(20),
@@ -501,7 +520,8 @@ class _CageDetailState extends State<CageDetail> {
                           ),
                           const SizedBox(width: 10),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.9),
                               borderRadius: BorderRadius.circular(20),
@@ -611,7 +631,8 @@ class _CageDetailState extends State<CageDetail> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
+                                  color:
+                                      const Color(0xFF1D91AA).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
@@ -669,7 +690,8 @@ class _CageDetailState extends State<CageDetail> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(189, 148, 26, 0.1),
+                                  color:
+                                      const Color.fromRGBO(189, 148, 26, 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
@@ -755,7 +777,7 @@ class _CageDetailState extends State<CageDetail> {
                                 Text(
                                   "Informasi blok dalam kandang",
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: Colors.grey,
                                   ),
                                 ),
@@ -764,7 +786,8 @@ class _CageDetailState extends State<CageDetail> {
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1D91AA).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -796,10 +819,11 @@ class _CageDetailState extends State<CageDetail> {
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.asset(
                                   "assets/images/icon-block.png",
-                                  width: 50,
-                                  height: 50,
+                                  width: 30,
+                                  height: 30,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => Container(
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
@@ -820,7 +844,7 @@ class _CageDetailState extends State<CageDetail> {
                                   const Text(
                                     "Lihat detail blok",
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -828,7 +852,7 @@ class _CageDetailState extends State<CageDetail> {
                                   Text(
                                     "Terdapat $totalBlok blok pada kandang ini",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 12,
                                       color: Colors.grey[600],
                                     ),
                                   ),
@@ -857,11 +881,13 @@ class _CageDetailState extends State<CageDetail> {
                             backgroundColor: const Color(0xFF1D91AA),
                             foregroundColor: Colors.white,
                             elevation: 2,
-                            shadowColor: const Color(0xFF1D91AA).withOpacity(0.3),
+                            shadowColor:
+                                const Color(0xFF1D91AA).withOpacity(0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
                           ),
                           child: const Text(
                             "Lihat Blok",
@@ -942,36 +968,37 @@ class _CageDetailState extends State<CageDetail> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _buildHistoryItem(
-                          icon: Icons.pets_rounded, 
-                          title: "Perubahan Kapasitas",
-                          description: "Kapasitas berubah dari 15 Ekor menjadi 20 Ekor",
-                          date: DateTime.now().toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                        ),
-                        _buildHistoryItem(
-                          icon: Icons.edit_rounded, 
-                          title: "Perubahan Nama",
-                          description: "Nama berubah dari Kandang A menjadi Kandang Utama",
-                          date: DateTime.now().subtract(const Duration(days: 7)).toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                        ),
-                        _buildHistoryItem(
-                          icon: Icons.category_rounded, 
-                          title: "Perubahan Kategori",
-                          description: "Kategori berubah dari Pembiakan menjadi Penggemukan",
-                          date: DateTime.now().subtract(const Duration(days: 14)).toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                          showDivider: false,
-                        ),
-                      ],
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(20),
+                      child: FutureBuilder(
+                        future: _getListLog(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              color: Color(0xFF1D91AA),
+                            ));
+                          }
+                          var data = snapshot.data?.map(
+                            (el) {
+                              var e = el.data();
+                              return _buildHistoryItem(
+                                iconName: e["icon"] ?? '',
+                                title: e["title"] ?? '',
+                                description: e["text"] ?? '',
+                                date: e["created_at"] ?? '',
+                                iconColor: const Color(0xFF1D91AA),
+                                showDivider: true,
+                              );
+                            },
+                          ).toList();
+                          return ListView(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: data ?? [],
+                          );
+                        },
+                      )),
                 ],
               ),
             ),
@@ -980,15 +1007,22 @@ class _CageDetailState extends State<CageDetail> {
       ),
     );
   }
-  
+
   Widget _buildHistoryItem({
-    required IconData icon,
+    required String iconName,
     required String title,
     required String description,
     required String date,
     required Color iconColor,
     bool showDivider = true,
   }) {
+    var icon = Icons.pets_rounded;
+    switch (iconName) {
+      case 'edit_rounded':
+        icon = Icons.edit_rounded;
+      case 'category_rounded':
+        icon = Icons.edit_rounded;
+    }
     return Column(
       children: [
         Row(
