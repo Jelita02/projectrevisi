@@ -27,7 +27,7 @@ class HealthyAddState extends State<HealthyAdd> {
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   final TextEditingController _textOtherController = TextEditingController();
 
-  bool _vaksinCheck = false;
+  bool _vaksinCheck = false; 
   bool _nafsuCheck = false;
   bool _pinkEyeCheck = false;
   bool _busukCheck = false;
