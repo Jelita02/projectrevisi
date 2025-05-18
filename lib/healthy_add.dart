@@ -159,44 +159,36 @@ class HealthyAddState extends State<HealthyAdd> {
       body: Column(
         children: [
           // Header section
-          Container(
-            color: const Color(0xFF1D91AA),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Tanggal: ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                // const SizedBox(height: 4),
-                // const Text(
-                //   "Tambahkan Catatan Keterangan",
-                //   style: TextStyle(
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.w700,
-                //     color: Colors.white,
-                //   ),
-                // ),
-              ],
-            ),
-          ),
+          // Container(
+          //   color: const Color(0xFF1D91AA),
+          //   width: double.infinity,
+          //   padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         "Tanggal: ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
+          //         style: TextStyle(
+          //           color: Colors.white.withOpacity(0.9),
+          //           fontSize: 14,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           
           // Curved transition
-          Container(
-            height: 20,
-            decoration: const BoxDecoration(
-              color: Color(0xFF1D91AA),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-          ),
+          // Container(
+          //   height: 20,
+          //   decoration: const BoxDecoration(
+          //     color: Color(0xFF1D91AA),
+          //     borderRadius: BorderRadius.only(
+          //       bottomLeft: Radius.circular(20),
+          //       bottomRight: Radius.circular(20),
+          //     ),
+          //   ),
+          // ),
+
           
           // Form section
           Expanded(
@@ -310,6 +302,14 @@ class HealthyAddState extends State<HealthyAdd> {
                         fontSize: 16,
                       ),
                     ),
+                Text(
+                  "Tanggal: ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
+                  style: TextStyle(
+                    color: Color(0xFF1D91AA),
+                    fontSize: 14,
+                  ),
+                ),
+              
                     // const SizedBox(height: 20),
                     // Row(
                     //   children: [
@@ -336,6 +336,7 @@ class HealthyAddState extends State<HealthyAdd> {
                     //     ),
                     //   ],
                     // ),
+            
                     const SizedBox(height: 12),
                     Container(
                       decoration: BoxDecoration(

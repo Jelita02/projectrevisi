@@ -39,11 +39,11 @@ class _HomeState extends State<Home> {
           colors: [Colors.white, Color(0xFFF5F5F5)],
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Center(
         child: ListView(
           children: [
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(15),
                 child: Column(
                   children: [
                     Row(
@@ -350,12 +350,12 @@ class _HomeState extends State<Home> {
               height: 80,
               fit: BoxFit.contain,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               label,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 14,
                 color: Color(0xFF1D91AA),
               ),
             ),

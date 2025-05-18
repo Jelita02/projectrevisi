@@ -35,18 +35,18 @@ class Login extends StatelessWidget {
                           // App logo
                           Container(
                             padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
+                            // decoration: BoxDecoration(
+                            //   color: Colors.white,
+                            //   shape: BoxShape.circle,
+                            //   boxShadow: [
+                            //     BoxShadow(
+                            //       color: Colors.black.withOpacity(0.1),
+                            //       blurRadius: 20,
+                            //       spreadRadius: 0,
+                            //       offset: const Offset(0, 2),
+                            //     ),
+                            //   ],
+                            // ),
                             child: Image.asset(
                               "assets/images/login-logo.jpg",
                               width: 120,
