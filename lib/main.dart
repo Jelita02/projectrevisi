@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+
 void main() async {
   runApp(MyApp());
   await Firebase.initializeApp(
@@ -32,11 +33,6 @@ class MyApp extends StatelessWidget {
       ),
     );
     return MaterialApp(// material tamplate ngatur forntend
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-        ),),
       localizationsDelegates: const [   //buat ngatur bahasa
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

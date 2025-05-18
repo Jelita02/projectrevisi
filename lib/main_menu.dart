@@ -107,53 +107,146 @@ class _MainMenuState extends State<MainMenu> {
     ];
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
-        // Tambahkan identitas pengguna di sini
-        title: const Text("QR-Sheep"),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked, //widget untuk +
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        elevation: 15,
-        backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
-        child: const Icon(
-          Icons.qr_code_scanner,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          setState(() {
-            _currentIndex = 1; // Pindah ke qr
-          });
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
-        backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
-        selectedItemColor: Colors.white,
-        currentIndex: _currentIndex,
-        onTap: _onTapped,
-        // untuk pindah ke fitur selanjutnya
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Beranda',
+        backgroundColor: const Color(0xFF1D91AA).withOpacity(0.9),
+        centerTitle: true,
+        title: const Text(
+          "QR-Sheep",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 20,
+            letterSpacing: 0.5,
           ),
-          BottomNavigationBarItem(
-            icon: SizedBox.shrink(),
-            label: '', //scanner
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
+        ),
       ),
-      body: pages[_currentIndex],
-      // untuk menampilkan tampilan
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(top: 10),
+        height: 65,
+        width: 65,
+        child: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(35),
+          ),
+          elevation: 4,
+          backgroundColor: const Color(0xFF1D91AA),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(35),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.qr_code_scanner,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              _currentIndex = 1; // Pindah ke qr
+            });
+          },
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+          child: BottomAppBar(
+            color: Colors.white,
+            height: 65,
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8,
+            elevation: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.home_rounded, 'Beranda'),
+                const SizedBox(width: 40), // Space for FAB
+                _buildNavItem(2, Icons.person_rounded, 'Profil'),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFF1D91AA).withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: pages[_currentIndex],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final bool isSelected = _currentIndex == index;
+    
+    return InkWell(
+      onTap: () => _onTapped(index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected 
+                ? const Color(0xFF1D91AA) 
+                : Colors.grey,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: isSelected 
+                  ? const Color(0xFF1D91AA) 
+                  : Colors.grey,
+                fontWeight: isSelected 
+                  ? FontWeight.bold 
+                  : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:ternak/animal_menu.dart';
+import 'package:ternak/components/colors.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
@@ -129,7 +130,10 @@ class HealthyAddState extends State<HealthyAdd> {
           kesehatan.doc(value.id).update({
             "image": fileName,
           });
-        }).catchError((error) => {print("ERRORRR: $error")});
+        }).catchError((error) {
+          debugPrint("ERROR: $error");
+          return null;
+        });
       }
 
       Navigator.pop(context);
@@ -139,261 +143,470 @@ class HealthyAddState extends State<HealthyAdd> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
+        backgroundColor: const Color(0xFF1D91AA),
+        elevation: 0,
         title: const Text(
-          "Kesehatan",
+          "Keteranngan ",
           style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w900,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
           ),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const Text(
-                "Foto Hewan",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 0.5),
+      body: Column(
+        children: [
+          // Header section
+          Container(
+            color: const Color(0xFF1D91AA),
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Tanggal: ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 14,
+                  ),
                 ),
+                // const SizedBox(height: 4),
+                // const Text(
+                //   "Tambahkan Catatan Keterangan",
+                //   style: TextStyle(
+                //     fontSize: 18,
+                //     fontWeight: FontWeight.w700,
+                //     color: Colors.white,
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+          
+          // Curved transition
+          Container(
+            height: 20,
+            decoration: const BoxDecoration(
+              color: Color(0xFF1D91AA),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () => _showPicker(context),
-                child: _image == null
-                    ? DottedBorder(
-                        borderType: BorderType.RRect,
-                        radius: const Radius.circular(5),
-                        dashPattern: const [10, 10],
-                        color: const Color.fromRGBO(26, 107, 125, 1),
-                        child: Container(
-                          margin: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Center(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  size: 40,
-                                  color: Color.fromRGBO(26, 107, 125, 1),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Upload",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color.fromRGBO(26, 107, 125, 1),
+            ),
+          ),
+          
+          // Form section
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    const Text(
+                      "Foto Hewan",
+                      style: TextStyle(
+                        color: Color.fromRGBO(0, 0, 0, 0.5),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () => _showPicker(context),
+                      child: _image == null
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 2),
                                   ),
-                                )
-                              ],
+                                ],
+                              ),
+                              child: DottedBorder(
+                                borderType: BorderType.RRect,
+                                radius: const Radius.circular(12),
+                                dashPattern: const [8, 8],
+                                color: const Color(0xFF1D91AA),
+                                padding: EdgeInsets.zero,
+                                child: Container(
+                                  height: 180,
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF1D91AA).withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 40,
+                                          color: Color(0xFF1D91AA),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      const Text(
+                                        "Upload Foto",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF1D91AA),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "Tap untuk memilih gambar",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.file(
+                                  _image!,
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "keterangan",
+                      style: TextStyle(
+                        color: Color.fromRGBO(0, 0, 0, 0.5),
+                        fontSize: 16,
+                      ),
+                    ),
+                    // const SizedBox(height: 20),
+                    // Row(
+                    //   children: [
+                    //     Container(
+                    //       padding: const EdgeInsets.all(8),
+                    //       decoration: BoxDecoration(
+                    //         color: const Color(0xFF1D91AA).withOpacity(0.1),
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       child: const Icon(
+                    //         Icons.medical_services,
+                    //         color: Color(0xFF1D91AA),
+                    //         size: 18,
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 10),
+                    //     const Text(
+                    //       "Catatan",
+                    //       style: TextStyle(
+                    //         color: Color(0xFF1D91AA),
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.w600,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          _buildCheckboxTile("Vaksin", _vaksinCheck, (value) => setState(() {
+                            _vaksinCheck = !_vaksinCheck;
+                          }), Icons.local_hospital, Colors.blue),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          _buildCheckboxTile("Nafsu Makan Turun", _nafsuCheck, (value) => setState(() {
+                            _nafsuCheck = !_nafsuCheck;
+                          }), Icons.no_food, Colors.orange),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          _buildCheckboxTile("Penyakit mata (pink eye)", _pinkEyeCheck, (value) => setState(() {
+                            _pinkEyeCheck = !_pinkEyeCheck;
+                          }), Icons.visibility_off, Colors.red),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          _buildCheckboxTile("Busuk kuku", _busukCheck, (value) => setState(() {
+                            _busukCheck = !_busukCheck;
+                          }), Icons.healing, Colors.purple),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          _buildCheckboxTile("Lainnya", _otherCheck, (value) => setState(() {
+                            _otherCheck = !_otherCheck;
+                          }), Icons.add_circle_outline, Colors.teal),
+                        ],
+                      ),
+                    ),
+                    if (_otherCheck) // Tampilkan input hanya jika checkbox aktif
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextFormField(
+                            validator: (value) {
+                              if ((value == null || value.isEmpty) && _otherCheck) {
+                                return "Masukan keterangan lainnya";
+                              }
+
+                              return null;
+                            },
+                            controller: _textOtherController,
+                            decoration: InputDecoration(
+                              labelText: "Masukkan keterangan lain",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             ),
                           ),
                         ),
-                      )
-                    : Image.file(_image!),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "keterangan",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 20),
-              CheckboxListTile(
-                value: _vaksinCheck,
-                onChanged: (value) => setState(() {
-                  _vaksinCheck = !_vaksinCheck;
-                }),
-                title: const Text("Vaksin"),
-              ),
-              CheckboxListTile(
-                value: _nafsuCheck,
-                onChanged: (value) => setState(() {
-                  _nafsuCheck = !_nafsuCheck;
-                }),
-                title: const Text("Nafsu Makan Turun"),
-              ),
-              CheckboxListTile(
-                value: _pinkEyeCheck,
-                onChanged: (value) => setState(() {
-                  _pinkEyeCheck = !_pinkEyeCheck;
-                }),
-                title: const Text("Penyakit mata (pink eye)"),
-              ),
-              CheckboxListTile(
-                value: _busukCheck,
-                onChanged: (value) => setState(() {
-                  _busukCheck = !_busukCheck;
-                }),
-                title: const Text("Busuk kuku"),
-              ),
-              CheckboxListTile(
-                value: _otherCheck,
-                onChanged: (value) => setState(() {
-                  _otherCheck = !_otherCheck;
-                }),
-                title: const Text("Lainnya"),
-              ),
-              if (_otherCheck) // Tampilkan input hanya jika checkbox aktif
-                TextFormField(
-                  validator: (value) {
-                    if ((value == null || value.isEmpty) && _otherCheck) {
-                      return "Masukan keterangan lainya";
-                    }
-
-                    return null;
-                  },
-                  controller: _textOtherController,
-                  decoration: const InputDecoration(
-                    labelText: "Masukkan keterangan lain",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              TextFormField(
-                controller: _tanggalController,
-                enabled: false,
-                decoration: const InputDecoration(
-                  labelText: 'Tanggal kesehatan',
-                  suffix: Icon(Icons.date_range_outlined),
-                ),
-                readOnly: true,
-                // onTap: () => _selectDate(context),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan tanggal kesehatan";
-                  }
-
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Hewan ",
-                style: TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                // height: 80,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 10.0,
-                      offset: Offset(1, 3),
+                      ),
+                    // Hidden date field
+                    Opacity(
+                      opacity: 0,
+                      child: SizedBox(
+                        height: 0,
+                        child: TextFormField(
+                          controller: _tanggalController,
+                          enabled: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Masukan tanggal keterangan";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1D91AA).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.pets,
+                            color: Color(0xFF1D91AA),
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Pilih Hewan",
+                          style: TextStyle(
+                            color: Color(0xFF1D91AA),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Container(
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Text(
-                        (animal == null)
-                            ? "Pilih Hewan"
-                            : (animal!.data()?["nama"] ?? ""),
-                        style: TextStyle(
-                            fontSize: 18,
-                            color:
-                                (animal == null) ? Colors.grey : Colors.black),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                animal == null ? "Belum Ada Hewan Dipilih" : animal!.data()?["nama"] ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: animal == null ? Colors.grey[500] : Colors.black,
+                                ),
+                              ),
+                              if (animal == null)
+                                Text(
+                                  "Klik tombol 'Pilih' untuk memilih hewan",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                            ],
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1D91AA),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MenuAnimal(
+                                    user: widget.user,
+                                    isForHealthy: true,
+                                  ),
+                                ),
+                              ).then((value) => setState(() {
+                                animal = value;
+                              }));
+                            },
+                            child: const Text(
+                              "Pilih",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromRGBO(48, 130, 148, 0.45),
-                      ),
-                      onPressed: () {
-                        Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MenuAnimal(
-                                user: widget.user,
-                                isForHealthy: true,
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: 54,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1D91AA),
+                          foregroundColor: Colors.white,
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          final isValid = _formKey.currentState?.validate() ?? false;
+
+                          if (!isValid) return;
+
+                          if (!_isAnyCheckboxChecked()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("Pilih minimal satu keterangan kesehatan."),
+                                backgroundColor: Colors.red,
                               ),
-                            )).then((value) => setState(() {
-                              animal = value;
-                            }));
-                      },
-                      child: const Text(
-                        "Pilih",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                            );
+                            return;
+                          }
+
+                          if (_image == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Harap unggah foto hewan."),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+                          if (animal == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Harap pilih hewan terlebih dahulu."),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+                          _addHealthy();
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Icon(Icons.save),
+                            SizedBox(width: 8),
+                            Text(
+                              'Simpan',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  // padding: EdgeInsets.all(20),
-                  backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
-                ),
-                onPressed: () {
-                  final isValid = _formKey.currentState?.validate() ?? false;
-
-                  if (!isValid) return;
-
-                  if (!_isAnyCheckboxChecked()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text("Pilih minimal satu keterangan kesehatan."),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-
-                  if (_image == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Harap unggah foto hewan."),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-                  if (animal == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Harap pilih hewan terlebih dahulu."),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-                  _addHealthy();
-                },
-                child: const Text(
-                  'Simpan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCheckboxTile(String title, bool value, Function(bool?) onChanged, IconData icon, Color color) {
+    return CheckboxListTile(
+      value: value,
+      onChanged: onChanged,
+      title: Row(
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 10),
+          Text(title),
+        ],
       ),
     );
   }

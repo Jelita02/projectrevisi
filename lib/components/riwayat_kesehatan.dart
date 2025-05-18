@@ -9,6 +9,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RiwayatKesehatan extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>> doc;
@@ -67,7 +68,11 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Image saved to gallery')));
+        .showSnackBar(const SnackBar(
+          content: Text('Image saved to gallery'),
+          backgroundColor: Color(0xFF1D91AA),
+          behavior: SnackBarBehavior.floating,
+        ));
   }
 
   void _showImage() async {
@@ -77,37 +82,94 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
 
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // Dialog tidak dapat ditutup dengan menyentuh di luar dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            "Gambar Kesehatan",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1D91AA),
+            ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.7,
-                  width: MediaQuery.of(context).size.height * 0.4,
-                  child: Center(
-                    child: RepaintBoundary(
-                      key: widget.globalKey,
-                      child: Container(
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.width * 0.7,
+                    width: MediaQuery.of(context).size.height * 0.4,
+                    child: Center(
+                      child: RepaintBoundary(
+                        key: widget.globalKey,
+                        child: Container(
                           color: Colors.white,
                           child: Image.network(
                             imageUrl,
+                            fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) {
-                              // Gambar gagal dimuat, tampilkan widget pengganti
-                              return const Icon(Icons.broken_image,
-                                  size: 50, color: Colors.grey);
+                              return Container(
+                                width: double.infinity,
+                                height: 250,
+                                color: Colors.grey[200],
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.broken_image,
+                                      size: 50,
+                                      color: Colors.grey[400],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      "Gambar tidak tersedia",
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
-                              return const CircularProgressIndicator(); // Bisa diganti dengan placeholder
+                              return Container(
+                                width: double.infinity,
+                                height: 250,
+                                color: Colors.grey[100],
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: const Color(0xFF1D91AA),
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded / 
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
                             },
-                          )),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -116,10 +178,23 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
               onPressed: () {
                 requestStoragePermission();
               },
-              child: const Text('Download'),
+              child: const Text(
+                'Download',
+                style: TextStyle(
+                  color: Color(0xFF1D91AA),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            TextButton(
-              child: const Text('Close'),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1D91AA),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text('Tutup'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -136,69 +211,118 @@ class _RiwayatKesehatanState extends State<RiwayatKesehatan> {
     if (widget.doc.data() != null) {
       keterangan = widget.doc.data()?["keterangan"] ?? [];
     }
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: const Color.fromRGBO(0, 0, 0, 0.1),
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    style: const TextStyle(
-                      fontSize: 17,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: keterangan.join(", "),
-                      ),
-                    ],
-                  ),
-                  softWrap: true,
-                ),
+          // Header with date
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1D91AA),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
-              IconButton(
-                icon: const Icon(Icons.archive),
-                onPressed: () {
-                  _showImage();
-                },
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text.rich(
-                TextSpan(
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
-                    WidgetSpan(
-                      child: Icon(Icons.healing),
+                    const Icon(
+                      Icons.calendar_today,
+                      color: Colors.white,
+                      size: 16,
                     ),
-                    TextSpan(
-                      text: 'Keterangan',
+                    const SizedBox(width: 8),
+                    Text(
+                      widget.doc.data()?["tanggal"] ?? "",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Text(
-                widget.doc.data()?["tanggal"] ?? "",
-                style: const TextStyle(
-                  fontSize: 17,
+                IconButton(
+                  icon: const Icon(
+                    Icons.image,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    _showImage();
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+          
+          // Health details
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D91AA).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.healing,
+                        color: Color(0xFF1D91AA),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Keterangan",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1D91AA),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            keterangan.join(", "),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

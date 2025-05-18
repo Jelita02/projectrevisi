@@ -32,24 +32,56 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.white, Color(0xFFF5F5F5)],
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
         child: ListView(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: const Color.fromRGBO(29, 145, 170, 0.3),
+                borderRadius: BorderRadius.circular(20),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF1D91AA),
+                    Color(0xFF25A5C4),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 0,
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Image.asset("assets/images/icon-cage.png"),
-                        const SizedBox(width: 10),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Image.asset(
+                            "assets/images/icon-cage.png",
+                            height: 40,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -57,112 +89,116 @@ class _HomeState extends State<Home> {
                               "Domba",
                               style: TextStyle(
                                 fontWeight: FontWeight.w900,
-                                fontSize: 17,
+                                fontSize: 20,
+                                color: Colors.white,
                               ),
                             ),
-                            Row(
+                            const SizedBox(height: 5),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
                               children: [
                                 const Text(
                                   "Total Populasi: ",
                                   style: TextStyle(
-                                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                                Text("${widget.countAnimal} Ekor"),
-                              ],
+                                  Text(
+                                    "${widget.countAnimal} Ekor",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         )
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    Column(
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.male,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Jantan"),
-                                  ],
-                                ),
-                                Text("${widget.countMale} Ekor"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.female,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Betina"),
-                                  ],
-                                ),
-                                Text("${widget.countFemale} Ekor"),
-                              ],
+                              _buildStatCard(
+                                icon: Icons.male,
+                                label: "Jantan",
+                                count: widget.countMale,
+                              ),
+                              _buildStatCard(
+                                icon: Icons.female,
+                                label: "Betina",
+                                count: widget.countFemale,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_activity_outlined,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Sehat"),
-                                  ],
-                                ),
-                                Text("${widget.countHealthy} Ekor"),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.healing,
-                                      color: Color.fromRGBO(29, 145, 170, 1),
-                                      size: 28,
-                                    ),
-                                    Text("Sakit"),
-                                  ],
-                                ),
-                                Text("${widget.countSick} Ekor"),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    )
+                              _buildStatCard(
+                                icon: Icons.local_activity_outlined,
+                                label: "Sehat",
+                                count: widget.countHealthy,
+                                iconColor: Colors.green,
+                              ),
+                              _buildStatCard(
+                                icon: Icons.healing,
+                                label: "Sakit",
+                                count: widget.countSick,
+                                iconColor: Colors.red,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
+            const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 5, bottom: 10),
+                    child: Text(
+                      "Menu Utama",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1D91AA),
+                      ),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      GestureDetector(
+                      _buildMenuCard(
+                        context: context,
+                        imagePath: "assets/images/Domba-fix.png",
+                        label: "Hewan",
                         onTap: () {
                           Navigator.push(
                               context,
@@ -170,27 +206,14 @@ class _HomeState extends State<Home> {
                                 builder: (context) => MenuAnimal(
                                   user: widget.user,
                                 ),
-                              )).then((value) => widget.getData());
+                            ),
+                          ).then((value) => widget.getData());
                         },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/Domba-fix.png",
-                              width: 110,
-                              height: 100,
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              "Hewan",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                      GestureDetector(
+                      _buildMenuCard(
+                        context: context,
+                        imagePath: "assets/images/Kandangr.png",
+                        label: "Kandang",
                         onTap: () {
                           Navigator.push(
                               context,
@@ -198,33 +221,20 @@ class _HomeState extends State<Home> {
                                 builder: (context) => CageMenu(
                                   user: widget.user,
                                 ),
-                              )).then((value) => widget.getData());
+                            ),
+                          ).then((value) => widget.getData());
                         },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/Kandangr.png",
-                              width: 100,
-                              height: 90,
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              "Kandang",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      GestureDetector(
+                      _buildMenuCard(
+                        context: context,
+                        imagePath: "assets/images/kesehatanr.png",
+                        label: "Keterangan",
                         onTap: () {
                           Navigator.push(
                               context,
@@ -232,27 +242,14 @@ class _HomeState extends State<Home> {
                                 builder: (context) => HealthyAdd(
                                   user: widget.user,
                                 ),
-                              ));
+                            ),
+                          );
                         },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/kesehatanr.png",
-                              width: 100,
-                              height: 90,
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              "Keterangan",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
-                      GestureDetector(
+                      _buildMenuCard(
+                        context: context,
+                        imagePath: "assets/images/laporanr.png",
+                        label: "Laporan",
                         onTap: () {
                           Navigator.push(
                               context,
@@ -260,29 +257,106 @@ class _HomeState extends State<Home> {
                                 builder: (context) => LaporanScreen(
                                   user: widget.user,
                                 ),
-                              ));
+                            ),
+                          );
                         },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/laporan-fix.png",
-                              width: 100,
-                              height: 90,
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              "Laporan",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required String label,
+    required int count,
+    Color iconColor = const Color(0xFF1D91AA),
+  }) {
+    return Container(
+      width: 120,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      decoration: BoxDecoration(
+        color: iconColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: iconColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: iconColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "$count Ekor",
+            style: TextStyle(
+              color: iconColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuCard({
+    required BuildContext context,
+    required String imagePath,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.4,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              imagePath,
+              width: 80,
+              height: 80,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Color(0xFF1D91AA),
               ),
             ),
           ],

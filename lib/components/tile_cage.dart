@@ -46,20 +46,34 @@ class TileCage extends StatelessWidget {
         });
       },
       child: Container(
-        margin: const EdgeInsets.all(10),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.black),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         width: double.infinity,
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              height: 100,
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(29, 145, 170, 0.75),
-                borderRadius: BorderRadius.only(
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF2AA3BC),
+                    Color(0xFF1D91AA),
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
@@ -69,7 +83,10 @@ class TileCage extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
                     );
                   }
                   var image = snapshot.data;
@@ -81,40 +98,89 @@ class TileCage extends StatelessWidget {
                       ),
                       child: Image.memory(
                         image,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
                       ),
                     );
                   }
-                  return Image.asset(
-                    "assets/images/Kandangr.png",
-                    fit: BoxFit.fill,
+                  return ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    child: Image.asset(
+                      "assets/images/Kandangr.png",
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
                   );
                 },
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(
-                vertical: 10,
+                vertical: 12,
                 horizontal: 20,
               ),
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 0.5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 1,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Kategori"),
-                  Text(doc.data()["kategori"] ?? ""),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.category_outlined,
+                        size: 18,
+                        color: Color(0xFF1D91AA),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        "Kategori:",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F4F8),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF1D91AA).withOpacity(0.3))
+                    ),
+                    child: Text(
+                      doc.data()["kategori"] ?? "",
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1D91AA),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(
-                vertical: 10,
+                vertical: 14,
                 horizontal: 20,
               ),
               decoration: const BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 1),
+                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -123,14 +189,52 @@ class TileCage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    doc.data()["nama"] ?? "",
-                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.home_outlined,
+                          size: 20,
+                          color: Color(0xFF1D91AA),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            doc.data()["nama"] ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                              overflow: TextOverflow.ellipsis
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    // ignore: prefer_interpolation_to_compose_strings
-                    total + "/" + (doc.data()["kapasitas"] ?? "") + " Ekor",
-                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1D91AA).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.pets_rounded,
+                          size: 16,
+                          color: Color(0xFF1D91AA),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "$total/${doc.data()["kapasitas"] ?? ""} Ekor",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: Color(0xFF1D91AA),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

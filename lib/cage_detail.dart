@@ -54,7 +54,6 @@ class _CageDetailState extends State<CageDetail> {
   void initState() {
     super.initState();
     doc = widget.doc;
-
     getTotal();
 
     var kapasitasInt = int.tryParse(doc.data()?["kapasitas"] ?? "");
@@ -79,11 +78,30 @@ class _CageDetailState extends State<CageDetail> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Konfirmasi Hapus"),
-          content: const Text("Apakah kamu yakin ingin menghapus ini?"),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.delete_outline, color: Colors.red),
+              ),
+              const SizedBox(width: 16),
+              const Text("Konfirmasi Hapus"),
+            ],
+          ),
+          content: const Text("Apakah kamu yakin ingin menghapus kandang ini? Tindakan ini tidak dapat dibatalkan."),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Tutup dialog
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey[700],
+              ),
               child: const Text("Batal"),
             ),
             ElevatedButton(
@@ -96,15 +114,31 @@ class _CageDetailState extends State<CageDetail> {
                   Navigator.of(context).pop(); // Tutup dialog
                   Navigator.of(context).pop(); // penumpuk
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Berhasil dihapus")),
+                    const SnackBar(
+                      content: Text("Berhasil dihapus"),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                    ),
                   );
                 }).catchError((value) {
                   Navigator.of(context).pop(); // Tutup dialog
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Gagal menghapus")),
+                    const SnackBar(
+                      content: Text("Gagal menghapus"),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
                   );
                 });
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text("Hapus"),
             ),
           ],
@@ -166,10 +200,13 @@ class _CageDetailState extends State<CageDetail> {
 
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // Dialog tidak dapat ditutup dengan menyentuh di luar dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          contentPadding: const EdgeInsets.all(16),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -181,19 +218,43 @@ class _CageDetailState extends State<CageDetail> {
                     child: RepaintBoundary(
                       key: _globalKey,
                       child: Container(
-                          color: Colors.white,
+                        color: Colors.white,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
                           child: Image.network(
                             imageUrl,
                             errorBuilder: (context, error, stackTrace) {
-                              // Gambar gagal dimuat, tampilkan widget pengganti
-                              return const Icon(Icons.broken_image,
-                                  size: 50, color: Colors.grey);
+                              return Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                    SizedBox(height: 10),
+                                    Text("Gagal memuat gambar", style: TextStyle(color: Colors.grey))
+                                  ],
+                                ),
+                              );
                             },
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
-                              return const CircularProgressIndicator(); // Bisa diganti dengan placeholder
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: const Color(0xFF1D91AA),
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / 
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
                             },
-                          )),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 )
@@ -201,17 +262,25 @@ class _CageDetailState extends State<CageDetail> {
             ),
           ),
           actions: <Widget>[
-            TextButton(
+            TextButton.icon(
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('Download'),
               onPressed: () {
                 requestStoragePermission(imageUrl);
               },
-              child: const Text('Download'),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF1D91AA),
+              ),
             ),
-            TextButton(
-              child: const Text('Close'),
+            TextButton.icon(
+              icon: const Icon(Icons.close, size: 18),
+              label: const Text('Tutup'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey[700],
+              ),
             ),
           ],
         );
@@ -219,37 +288,74 @@ class _CageDetailState extends State<CageDetail> {
     );
   }
 
-  @override //tampilan
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
-        title: const Text(
-          "Detail Kandang",
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w900,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // <- back icon
-          onPressed: () {
-            Navigator.pop(context, 'refresh'); // <- custom aksi back
-          },
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF1D91AA)),
+            onPressed: () {
+              Navigator.pop(context, 'refresh');
+            },
+          ),
         ),
         actions: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () {
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.image, color: Color(0xFF1D91AA)),
+              onPressed: () {
                 _showImage();
               },
-              child: const Icon(Icons.archive),
-            ), // Titik tiga vertikal
+            ),
           ),
-          Align(
-            alignment: Alignment.centerRight,
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
             child: PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Color(0xFF1D91AA)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              offset: const Offset(0, 40),
               onSelected: (value) {
                 if (value == "delete") {
                   _showDeleteConfirmation(context);
@@ -259,11 +365,11 @@ class _CageDetailState extends State<CageDetail> {
                   Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
                     context,
                     MaterialPageRoute(
-                        // pindah ke halaman edit
-                        builder: (context) => CageEdit(
-                              doc: doc,
-                              user: widget.user,
-                            )),
+                      builder: (context) => CageEdit(
+                        doc: doc,
+                        user: widget.user,
+                      ),
+                    ),
                   ).then((value) {
                     setState(() {
                       doc = value!;
@@ -273,204 +379,496 @@ class _CageDetailState extends State<CageDetail> {
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(value: "edit", child: Text("Edit")),
-                const PopupMenuItem(value: "delete", child: Text("Hapus")),
+                const PopupMenuItem(
+                  value: "edit",
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: Color(0xFF1D91AA), size: 20),
+                      SizedBox(width: 12),
+                      Text("Edit", style: TextStyle(fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: "delete",
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                      SizedBox(width: 12),
+                      Text("Hapus", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.redAccent)),
+                    ],
+                  ),
+                ),
               ],
-              icon: const Icon(Icons.more_vert), // Titik tiga vertikal
-            ),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              width: double.infinity,
-              color: const Color.fromRGBO(29, 145, 170, 0.75),
-              child: FutureBuilder<Uint8List?>(
-                future: _getImage(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  var image = snapshot.data;
-                  if (image != null) {
-                    return Image.memory(
-                      image,
-                      fit: BoxFit.fill,
-                    );
-                  }
-                  return Image.asset(
-                    "assets/images/Kandangr.png",
-                    fit: BoxFit.fill,
-                  );
-                },
-              ),
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Transform.translate(
-              offset: const Offset(0, -70),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.all(20),
-                    width: double.infinity,
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            // Header image with overlay
+            Stack(
+              children: [
+                SizedBox(
+                  height: 280,
+                  width: double.infinity,
+                  child: FutureBuilder<Uint8List?>(
+                    future: _getImage(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        );
+                      }
+                      var image = snapshot.data;
+                      if (image != null) {
+                        return Image.memory(
+                          image,
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: double.infinity,
+                        );
+                      }
+                      return Image.asset(
+                        "assets/images/Kandangr.png",
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                      );
+                    },
+                  ),
+                ),
+                // Gradient overlay for better text contrast
+                Positioned.fill(
+                  child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.grey,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                        stops: const [0.5, 1.0],
                       ),
                     ),
-                    child: Column(
-                      children: [
-                     
-                          // New Row for tanggal_masuk
+                  ),
+                ),
+                // Title overlay at bottom of image
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  right: 20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doc.data()?["nama"] ?? "",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 3.0,
+                              color: Color.fromARGB(150, 0, 0, 0),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1D91AA),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              doc.data()?["kategori"] ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_rounded,
+                                  size: 14,
+                                  color: Color(0xFF1D91AA),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  doc.data()?["tanggal_dibuat"] ?? "",
+                                  style: const TextStyle(
+                                    color: Color(0xFF1D91AA),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            // Date section
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1D91AA).withOpacity(0.05),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.withOpacity(0.15),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.today_rounded,
+                    size: 18,
+                    color: Color(0xFF1D91AA),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    "Tanggal Masuk:",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    doc.data()?["tanggal_dibuat"] ?? "-",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Capacity info cards
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Row(
+                children: [
+                  // Left card
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Jumlah Ternak",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.pets,
+                                  size: 20,
+                                  color: Color(0xFF1D91AA),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
                               Text(
-                                doc.data()?["tanggal_dibuat"] ?? "",  // Display the "tanggal_masuk"
+                                "${widget.total}/${doc.data()?["kapasitas"] ?? ""} Ekor",
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Color(0xFF1D91AA),
                                 ),
                               ),
                             ],
                           ),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Kandang"),
-                            Text("Kategori"),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              doc.data()?["nama"] ?? "",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w900,
-                              ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Right card
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Kapasitas Tersisa",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                            Text(doc.data()?["kategori"] ?? ""),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                                // ignore: prefer_interpolation_to_compose_strings
-                                "${widget.total + "/" + (doc.data()?["kapasitas"] ?? "")} Ekor"),
-                            Text(
-                              "Muat ${canUse.toString()} Ekor Lagi",
-                              style: const TextStyle(
-                                color: Color.fromRGBO(189, 148, 26, 1),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color.fromRGBO(189, 148, 26, 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.add_circle_outline_rounded,
+                                  size: 20,
+                                  color: Color.fromRGBO(189, 148, 26, 1),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        //     const SizedBox(height: 10),
-                        // // Tambahkan tampilan tanggal masuk di sini
-                        // Align(
-                        //   alignment: Alignment.centerLeft,
-                        //   child: Text(
-                        //     "Tanggal : ${doc.data()?["tanggal_dibuat"] ?? ""}",
-                        //     style: const TextStyle(
-                        //       fontSize: 13,
-                        //       fontWeight: FontWeight.w500,
-                        //       color: Colors.black54,
-                        //     ),
-                        //   ),
-                        // ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "${canUse.toString()} Ekor",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Color.fromRGBO(189, 148, 26, 1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
+            // Block details card
+            Container(
+              margin: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1D91AA).withOpacity(0.05),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1D91AA).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.dashboard_rounded,
+                                color: Color(0xFF1D91AA),
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Detail Blok",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1D91AA),
+                                  ),
+                                ),
+                                Text(
+                                  "Informasi blok dalam kandang",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1D91AA).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: const Color(0xFF1D91AA).withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            "$totalBlok Blok",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xFF1D91AA),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.all(20),
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(217, 217, 217, 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        const Text(
-                          "Detail Blok",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.all(0),
-                                horizontalTitleGap: 1,
-                                title: const Text(
-                                  "Jumlah Blok",
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                subtitle: Text(
-                                  "$totalBlok Blok",
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w900),
-                                ),
-                                leading: Image.asset(
+                        Expanded(
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
                                   "assets/images/icon-block.png",
-                                  fit: BoxFit.fill,
-                                  height: 40,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                  child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromRGBO(48, 130, 148, 0.45),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      // pindah ke blok detail
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => BlockDetail(
-                                          kandangId: doc.id,
-                                          total: widget.total,
-                                          totalBlok: totalBlok.toString(),
-                                        ),
-                                      )).then((value) => setState(() {
-                                        doc = value!;
-                                        getTotal();
-                                      }));
-                                },
-                                child: const Text(
-                                  "Lihat Blok",
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(26, 107, 125, 1),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w900,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      Icons.dashboard_rounded,
+                                      color: Colors.grey[400],
+                                    ),
                                   ),
                                 ),
-                              )),
+                              ),
+                              const SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Lihat detail blok",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Terdapat $totalBlok blok pada kandang ini",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlockDetail(
+                                  kandangId: doc.id,
+                                  total: widget.total,
+                                  totalBlok: totalBlok.toString(),
+                                ),
+                              ),
+                            ).then((value) => setState(() {
+                                  doc = value!;
+                                  getTotal();
+                                }));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1D91AA),
+                            foregroundColor: Colors.white,
+                            elevation: 2,
+                            shadowColor: const Color(0xFF1D91AA).withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          ],
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          child: const Text(
+                            "Lihat Blok",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -478,9 +876,179 @@ class _CageDetailState extends State<CageDetail> {
                 ],
               ),
             ),
-          ),
-        ],
+
+            // Edit history card
+            Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1D91AA).withOpacity(0.05),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1D91AA).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.history_rounded,
+                            color: Color(0xFF1D91AA),
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Riwayat Edit",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1D91AA),
+                              ),
+                            ),
+                            Text(
+                              "Daftar perubahan pada kandang",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildHistoryItem(
+                          icon: Icons.pets_rounded, 
+                          title: "Perubahan Kapasitas",
+                          description: "Kapasitas berubah dari 15 Ekor menjadi 20 Ekor",
+                          date: DateTime.now().toString().substring(0, 10),
+                          iconColor: const Color(0xFF1D91AA),
+                        ),
+                        _buildHistoryItem(
+                          icon: Icons.edit_rounded, 
+                          title: "Perubahan Nama",
+                          description: "Nama berubah dari Kandang A menjadi Kandang Utama",
+                          date: DateTime.now().subtract(const Duration(days: 7)).toString().substring(0, 10),
+                          iconColor: const Color(0xFF1D91AA),
+                        ),
+                        _buildHistoryItem(
+                          icon: Icons.category_rounded, 
+                          title: "Perubahan Kategori",
+                          description: "Kategori berubah dari Pembiakan menjadi Penggemukan",
+                          date: DateTime.now().subtract(const Duration(days: 14)).toString().substring(0, 10),
+                          iconColor: const Color(0xFF1D91AA),
+                          showDivider: false,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+  
+  Widget _buildHistoryItem({
+    required IconData icon,
+    required String title,
+    required String description,
+    required String date,
+    required Color iconColor,
+    bool showDivider = true,
+  }) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                size: 18,
+                color: iconColor,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (showDivider)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(),
+          ),
+      ],
     );
   }
 }

@@ -24,77 +24,221 @@ class _ProfileState extends State<Profile> {
           FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(
+            color: Color(0xFF1D91AA),
+          ));
         }
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: Text('Data tidak ditemukan'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.person_off, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                const Text(
+                  'Data tidak ditemukan',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          );
         }
         var userData = snapshot.data!.data() as Map<String, dynamic>;
         return ListView(
           children: [
             Container(
-              color: Colors.teal[700],
-              padding: const EdgeInsets.all(16),
-              child: Row(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF1D91AA), Color(0xFF25A5C4)],
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              child: Column(
                 children: [
                   const CircleAvatar(
-                    radius: 30,
+                    radius: 50,
                     backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 30, color: Colors.teal),
+                    child: Icon(Icons.person, size: 60, color: Color(0xFF1D91AA)),
                   ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(userData['nama'],
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18)),
-                      Text(user?.email ?? '',
-                          style: const TextStyle(color: Colors.white70)),
-                    ],
+                  const SizedBox(height: 16),
+                  Text(
+                    userData['nama'],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    user?.email ?? '',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                    ),
                   ),
                 ],
               ),
             ),
-            Card(
-              margin: const EdgeInsets.all(16),
-              child: ListTile(
-                title: const Text('Nama Peternakan'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(userData['farmName'],
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(userData['location']),
-                  ],
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => showUpdateAccount(context, userData),
-                ),
+            const SizedBox(height: 16),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    title: const Text(
+                      'Nama Peternakan',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 5),
+                        Text(
+                          userData['farmName'],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16, color: Color(0xFF1D91AA)),
+                            const SizedBox(width: 4),
+                            Text(
+                              userData['location'],
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D91AA).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.edit, color: Color(0xFF1D91AA)),
+                        onPressed: () => showUpdateAccount(context, userData),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.key, color: Colors.teal),
-              title: const Text('Ubah Password'),
-              subtitle: const Text('Perbarui password demi keamanan'),
-              onTap: () => showUpdatePasswordDialog(context),
+            const SizedBox(height: 20),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildMenuTile(
+                    icon: Icons.key,
+                    title: 'Ubah Password',
+                    subtitle: 'Perbarui password demi keamanan',
+                    onTap: () => showUpdatePasswordDialog(context),
+                  ),
+                  const Divider(height: 1),
+                  _buildMenuTile(
+                    icon: Icons.logout,
+                    title: 'Logout',
+                    subtitle: 'Keluar dari aplikasi',
+                    isLogout: true,
+                    onTap: () => _showLogoutConfirmation(context),
+                  ),
+                ],
+              ),
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.notifications, color: Colors.teal),
-            //   title: const Text('Pengingat'),
-            //   subtitle: const Text('Buat Jadwal untuk pengingat aktivitas'),
-            //   onTap: () {},
-            // ),
-            ListTile(
-                leading: const Icon(Icons.logout, color: Colors.black),
-                title: const Text('Logout'),
-                onTap: () {
-                  _showLogoutConfirmation(context);
-                }),
+            const SizedBox(height: 30),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildMenuTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    bool isLogout = false,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isLogout 
+              ? Colors.red.withOpacity(0.1) 
+              : const Color(0xFF1D91AA).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          color: isLogout ? Colors.red : const Color(0xFF1D91AA),
+          size: 24,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: isLogout ? Colors.red : Colors.black87,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          fontSize: 14,
+          color: Colors.grey[600],
+        ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: isLogout ? Colors.red : Colors.grey,
+      ),
+      onTap: onTap,
     );
   }
 
@@ -103,21 +247,34 @@ class _ProfileState extends State<Profile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text("Konfirmasi Logout"),
           content: const Text("Apakah kamu yakin ingin keluar?"),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Tutup dialog
-              child: const Text("Batal"),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                "Batal",
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               onPressed: () {
                 FirebaseAuth.instance.signOut().then((value) {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const Login()),
                     (Route<dynamic> route) =>
-                        false, // Menghapus semua halaman sebelumnya
+                        false,
                   );
                 });
               },
@@ -128,115 +285,149 @@ class _ProfileState extends State<Profile> {
       },
     );
   }
+  
   void showUpdatePasswordDialog(BuildContext context) {
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-  final FirebaseAuth auth = FirebaseAuth.instance;
+    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController confirmPasswordController =
+        TextEditingController();
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
-  bool _obscureText = true;
-  bool _obscureConfirmText = true;
+    bool _obscureText = true;
+    bool _obscureConfirmText = true;
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text("Update Password"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: passwordController,
-                  obscureText: _obscureText,
-                  decoration: InputDecoration(
-                    labelText: "Password Baru",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureText
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text("Update Password"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      labelText: "Password Baru",
+                      floatingLabelStyle: const TextStyle(
+                        color: Color(0xFF1D91AA),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1D91AA)),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: const Color(0xFF1D91AA),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: confirmPasswordController,
+                    obscureText: _obscureConfirmText,
+                    decoration: InputDecoration(
+                      labelText: "Konfirmasi Password",
+                      floatingLabelStyle: const TextStyle(
+                        color: Color(0xFF1D91AA),
+                      ),
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1D91AA)),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureConfirmText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: const Color(0xFF1D91AA),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmText = !_obscureConfirmText;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    "Batal",
+                    style: TextStyle(color: Colors.grey),
                   ),
                 ),
-                TextField(
-                  controller: confirmPasswordController,
-                  obscureText: _obscureConfirmText,
-                  decoration: InputDecoration(
-                    labelText: "Konfirmasi Password",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmText
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmText = !_obscureConfirmText;
-                        });
-                      },
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1D91AA),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
+                  onPressed: () async {
+                    String newPassword = passwordController.text.trim();
+                    String confirmPassword =
+                        confirmPasswordController.text.trim();
+
+                    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Password tidak boleh kosong!")));
+                      return;
+                    }
+
+                    if (newPassword != confirmPassword) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Password tidak cocok!")));
+                      return;
+                    }
+
+                    try {
+                      User? user = auth.currentUser;
+                      if (user != null) {
+                        await user.updatePassword(newPassword);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Password berhasil diperbarui!")));
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("User tidak ditemukan!")));
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: $e")));
+                    }
+                  },
+                  child: const Text("Update"),
                 ),
               ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Batal"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  String newPassword = passwordController.text.trim();
-                  String confirmPassword =
-                      confirmPasswordController.text.trim();
+            );
+          },
+        );
+      },
+    );
+  }
 
-                  if (newPassword.isEmpty || confirmPassword.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Password tidak boleh kosong!")));
-                    return;
-                  }
-
-                  if (newPassword != confirmPassword) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Password tidak cocok!")));
-                    return;
-                  }
-
-                  try {
-                    User? user = auth.currentUser;
-                    if (user != null) {
-                      await user.updatePassword(newPassword);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Password berhasil diperbarui!")));
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("User tidak ditemukan!")));
-                    }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error: $e")));
-                  }
-                },
-                child: const Text("Update"),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
-
-  
   void showUpdateAccount(BuildContext context, Map<String, dynamic> userData) {
     final TextEditingController farmNameController =
         TextEditingController(text: userData['farmName']);
@@ -250,6 +441,9 @@ class _ProfileState extends State<Profile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text("Update Akun"),
           content: SingleChildScrollView(
             child: Column(
@@ -257,26 +451,73 @@ class _ProfileState extends State<Profile> {
               children: [
                 TextField(
                   controller: namaController,
-                  decoration: const InputDecoration(labelText: "Nama"),
+                  decoration: const InputDecoration(
+                    labelText: "Nama",
+                    labelStyle: TextStyle(color: Colors.grey),
+                    floatingLabelStyle: TextStyle(
+                      color: Color(0xFF1D91AA),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1D91AA)),
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: farmNameController,
-                  decoration:
-                      const InputDecoration(labelText: "Nama Peternakan"),
+                  decoration: const InputDecoration(
+                    labelText: "Nama Peternakan",
+                    labelStyle: TextStyle(color: Colors.grey),
+                    floatingLabelStyle: TextStyle(
+                      color: Color(0xFF1D91AA),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1D91AA)),
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: locationController,
-                  decoration: const InputDecoration(labelText: "Lokasi"),
+                  decoration: const InputDecoration(
+                    labelText: "Lokasi",
+                    labelStyle: TextStyle(color: Colors.grey),
+                    floatingLabelStyle: TextStyle(
+                      color: Color(0xFF1D91AA),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1D91AA)),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context), // Tutup dialog
-              child: const Text("Batal"),
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Batal",
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1D91AA),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               onPressed: () async {
                 String farmName = farmNameController.text.trim();
                 String nama = namaController.text.trim();

@@ -108,212 +108,671 @@ class _LaporanScreenState extends State<LaporanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Laporan"),
+        title: const Text(
+          "Laporan",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: MyColors.primaryC,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            InkResponse(
-              onTap: () {
-                setState(() {
-                  _isProcessing = true;
-                });
-                pickDateRange();
-              },
-              child: buildCard(Icons.calendar_today, "Tanggal",
-                  "${DateFormat('dd MMMM yyyy', 'id_ID').format(selectedRange.start)} - ${DateFormat('dd MMMM yyyy', 'id_ID').format(selectedRange.end)}",
-                  trailing: _isProcessing
-                      ? const CircularProgressIndicator(
-                          color: MyColors.primaryC)
-                      : null),
+      body: Column(
+        children: [
+          // Header with date selector
+          Container(
+            color: MyColors.primaryC,
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Ringkasan Data Peternakan",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isProcessing = true;
+                    });
+                    pickDateRange();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            "${DateFormat('dd MMMM yyyy', 'id_ID').format(selectedRange.start)} - ${DateFormat('dd MMMM yyyy', 'id_ID').format(selectedRange.end)}",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (_isProcessing) ...[
+                          const SizedBox(width: 8),
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            buildCard(Icons.pie_chart, "Domba", "Populasi: $totalDomba Ekor"),
-            buildGenderSection(),
-            buildCard(Icons.favorite, "Jumlah Kasus Sakit", "$totalSick Kasus"),
-            // buildCard(Icons.cake, "Usia", ""),
-            buildCategorySection(),
-            buildStatusSection(),
+          ),
+          
+          // Curved transition
+          Container(
+            height: 20,
+            decoration: BoxDecoration(
+              color: MyColors.primaryC,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+          ),
+          
+          // Statistics
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Total sheep card
+                _buildStatCard(
+                  icon: Icons.pets,
+                  title: "Total Domba",
+                  value: "$totalDomba",
+                  subtitle: "Ekor",
+                  color: Colors.blue,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Gender section
+                _buildGenderSection(),
+                
+                const SizedBox(height: 16),
+                
+                // Health section
+                _buildStatCard(
+                  icon: Icons.health_and_safety,
+                  title: "Kasus Sakit",
+                  value: "$totalSick",
+                  subtitle: "Kasus",
+                  color: Colors.orange,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Category section
+                _buildCategorySection(),
+                
+                const SizedBox(height: 16),
+                
+                // Status section
+                _buildStatusSection(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color color,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildCard(IconData icon, String title, String subtitle,
-      {Widget? trailing}) {
-    return Card(
-      child: ListTile(
-        trailing: trailing,
-        leading: Icon(icon, color: const Color.fromRGBO(26, 107, 125, 1)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle),
-      ),
-    );
-  }
-
-  Widget buildGenderSection() {
-    return Card(
-      child: Column(
-        children: [
-          const ListTile(
-            title: Text("Jenis Kelamin",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
-            leading:
-                const Icon(Icons.male, color: Color.fromRGBO(26, 107, 125, 1)),
-            title: const Text("Jantan"),
-            trailing: Text("$totalMale Ekor",
-                style: const TextStyle(color: Color.fromRGBO(26, 107, 125, 1))),
-          ),
-          ListTile(
-            leading: const Icon(Icons.female, color: Colors.pink),
-            title: const Text("Betina"),
-            trailing: Text("$totalFemale Ekor",
-                style: const TextStyle(color: Color.fromRGBO(26, 107, 125, 1))),
+  Widget _buildGenderSection() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildCategorySection() {
-    return Card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const ListTile(
-            title:
-                Text("Kategori", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          ListTile(
-            title: const Text("Pembiakan"),
-            trailing: Text("$totalPembiakan Ekor",
-                style: const TextStyle(color: Color.fromRGBO(26, 107, 125, 1))),
-          ),
-          ListTile(
-            title: const Text("Penggemukan"),
-            trailing: Text("$totalPenggemukan Ekor",
-                style: const TextStyle(color: Color.fromRGBO(26, 107, 125, 1))),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildStatusSection() {
-    return Card(
-      child: Column(
-        children: [
-          const ListTile(
-            title:
-                Text("Status", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailLaporanScreen(
-                            user: widget.user,
-                            selectedRange: selectedRange,
-                            status: "Hidup",
-                          ),
-                        ));
-                  },
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "Hidup\n",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                            text: "$totalHidup Ekor",
-                            style: const TextStyle(
-                              color: Color.fromRGBO(26, 107, 125, 1),
-                              fontSize: 12,
-                            )),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                // child: const
-                // Text("Hidup")
+                // Container(
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: BoxDecoration(
+                //     color: Colors.purple.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   child: const Icon(
+                //     Icons.wc,
+                //     color: Colors.purple,
+                //     size: 24,
+                //   ),
                 // ),
-
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailLaporanScreen(
-                            user: widget.user,
-                            selectedRange: selectedRange,
-                            status: "Mati",
-                          ),
-                        ));
-                  },
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "Mati\n",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                            text: "$totalMati Ekor",
-                            style: const TextStyle(
-                              color: Color.fromRGBO(26, 107, 125, 1),
-                              fontSize: 12,
-                            )),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
+                const SizedBox(width: 12),
+                const Text(
+                  "Jenis Kelamin",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailLaporanScreen(
-                            user: widget.user,
-                            selectedRange: selectedRange,
-                            status: "Terjual",
-                          ),
-                        ));
-                  },
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "Terjual\n",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          
+          // Male
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.male,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Jantan",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                        TextSpan(
-                            text: "$totalTerjual Ekor",
-                            style: const TextStyle(
-                              color: Color.fromRGBO(26, 107, 125, 1),
-                              fontSize: 12,
-                            )),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: totalMale / (totalMale + totalFemale > 0 ? totalMale + totalFemale : 1),
+                        backgroundColor: Colors.grey[200],
+                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  "$totalMale",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  "Ekor",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Female
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.pink.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.female,
+                    color: Colors.pink,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Betina",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: totalFemale / (totalMale + totalFemale > 0 ? totalMale + totalFemale : 1),
+                        backgroundColor: Colors.grey[200],
+                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.pink),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  "$totalFemale",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  "Ekor",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategorySection() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.category,
+                    color: Colors.green,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Kategori",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          
+          // Breeding
+          _buildCategoryRow(
+            title: "Pembiakan", 
+            value: totalPembiakan, 
+            total: totalPembiakan + totalPenggemukan > 0 ? totalPembiakan + totalPenggemukan : 1,
+            color: Colors.teal
+          ),
+          
+          // Fattening
+          _buildCategoryRow(
+            title: "Penggemukan", 
+            value: totalPenggemukan, 
+            total: totalPembiakan + totalPenggemukan > 0 ? totalPembiakan + totalPenggemukan : 1,
+            color: Colors.amber,
+            isLast: true
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildCategoryRow({
+    required String title, 
+    required int value, 
+    required int total,
+    required Color color,
+    bool isLast = false
+  }) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, isLast ? 16 : 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                "$value",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                "Ekor",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Stack(
+            children: [
+              Container(
+                height: 8,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              FractionallySizedBox(
+                widthFactor: value / total,
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusSection() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: MyColors.primaryC.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.info,
+                    color: MyColors.primaryC,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Status",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatusButton(
+                    status: "Hidup",
+                    count: totalHidup,
+                    color: Colors.green,
+                    icon: Icons.favorite,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatusButton(
+                    status: "Mati",
+                    count: totalMati,
+                    color: Colors.red,
+                    icon: Icons.dangerous,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatusButton(
+                    status: "Terjual",
+                    count: totalTerjual,
+                    color: Colors.blue,
+                    icon: Icons.attach_money,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildStatusButton({
+    required String status,
+    required int count,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailLaporanScreen(
+                user: widget.user,
+                selectedRange: selectedRange,
+                status: status,
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.3),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: 24,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                status,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "$count Ekor",
+                style: const TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

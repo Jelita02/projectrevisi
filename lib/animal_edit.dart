@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AnimalEdit extends StatefulWidget {
   final userFire.User user;
@@ -70,18 +71,6 @@ class _AnimalEditState extends State<AnimalEdit> {
 
   var hewan = FirebaseFirestore.instance.collection('hewan');
 
-  void _ambilGambar() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? img = await picker.pickImage(
-      source: ImageSource.camera, // alternatively, use ImageSource.gallery
-      maxWidth: 400,
-    );
-    if (img == null) return;
-    setState(() {
-      _imgFile = File(img.path); // convert it to a Dart:io file
-    });
-  }
-
   _editHewan() {
     hewan.doc(widget.doc.id).update({
       "user_uid": widget.user.uid,
@@ -100,6 +89,7 @@ class _AnimalEditState extends State<AnimalEdit> {
       "tanggal_masuk": _tanggalController.text,
       "status_kesehatan": _statusKesehatan,
       "status": _status,
+       "sudah_diedit": true, 
     }).then((value) {
       if (_imgFile != null) {
         // Ambil ekstensi file asli
@@ -121,15 +111,14 @@ class _AnimalEditState extends State<AnimalEdit> {
           ));
     });
   }
-
+ bool _isEditable = true;
   @override
   void initState() {
     super.initState();
 
+     _isEditable = widget.doc.data()?["sudah_diedit"] != true;
     _showImage();
     _namaController = TextEditingController(text: widget.doc.data()?["nama"]);
-    // _tanggalController =
-    //     TextEditingController(text: widget.doc.data()?["tanggal_masuk"]);
     _bobotController =
         TextEditingController(text: widget.doc.data()?["bobot_akhir"]);
 
@@ -207,6 +196,32 @@ class _AnimalEditState extends State<AnimalEdit> {
     });
   }
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case "Hidup":
+        return Colors.green;
+      case "Mati":
+        return Colors.red;
+      case "Terjual":
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case "Hidup":
+        return Icons.check_circle;
+      case "Mati":
+        return Icons.cancel;
+      case "Terjual":
+        return Icons.monetization_on;
+      default:
+        return Icons.help;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dropdownKategori = <String>['Pembiakan', 'Penggemukan'];
@@ -233,398 +248,819 @@ class _AnimalEditState extends State<AnimalEdit> {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(29, 145, 170, 0.5),
+        backgroundColor: const Color(0xFF1D91AA),
+        elevation: 0,
         title: const Text(
           "Edit Hewan",
           style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w900,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const Text(
-                "Lengkapi data hewan",
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 17,
-                ),
+      body: Column(
+        children: [
+          // Header section with current image if available
+          // Container(
+          //   color: const Color(0xFF1D91AA),
+          //   width: double.infinity,
+          //   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         "Tanggal: ${DateFormat('dd MMMM yyyy').format(DateTime.now())}",
+          //         style: TextStyle(
+          //           color: Colors.white.withOpacity(0.9),
+          //           fontSize: 14,
+          //         ),
+          //       ),
+          //       const SizedBox(height: 8),
+          //       Row(
+          //         children: [
+          //           Expanded(
+          //             child: Column(
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 const Text(
+          //                   "Edit Data Hewan",
+          //                   style: TextStyle(
+          //                     fontSize: 18,
+          //                     fontWeight: FontWeight.w700,
+          //                     color: Colors.white,
+          //                   ),
+          //                 ),
+          //                 const SizedBox(height: 4),
+          //                 Text(
+          //                   widget.doc.data()?["nama"] ?? "Hewan",
+          //                   style: const TextStyle(
+          //                     fontSize: 22,
+          //                     fontWeight: FontWeight.w700,
+          //                     color: Colors.white,
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //           if (!_isEditable)
+          //             Container(
+          //               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          //               decoration: BoxDecoration(
+          //                 color: Colors.red.withOpacity(0.2),
+          //                 borderRadius: BorderRadius.circular(30),
+          //               ),
+          //               child: const Row(
+          //                 mainAxisSize: MainAxisSize.min,
+          //                 children: [
+          //                   Icon(
+          //                     Icons.lock,
+          //                     color: Colors.white,
+          //                     size: 16,
+          //                   ),
+          //                   SizedBox(width: 4),
+          //                   Text(
+          //                     "Sudah Diedit",
+          //                     style: TextStyle(
+          //                       fontSize: 12,
+          //                       fontWeight: FontWeight.w600,
+          //                       color: Colors.white,
+          //                     ),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          
+          // Curved transition
+          Container(
+            height: 20,
+            decoration: const BoxDecoration(
+              color: Color(0xFF1D91AA),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
-              const SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Jenis Kelamin",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text("Jantan"),
-                          value: "Jantan",
-                          groupValue: _jenisKelamin,
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != null) {
-                                _jenisKelamin = value;
-                              }
-                            });
-                          },
+            ),
+          ),
+          
+          // Form section
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    // Basic information section
+                    _buildSectionTitle("Informasi Dasar", Icons.info_outline),
+                    const SizedBox(height: 16),
+                    if (!_isEditable)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lock,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              "Sudah Diedit",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text("Betina"),
-                          value: "Betina",
-                          groupValue: _jenisKelamin,
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != null) {
-                                _jenisKelamin = value;
-                              }
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              TextFormField(
-                controller: _namaController,
-                maxLength: 20,
-                decoration: const InputDecoration(
-                  labelText: 'Nama',
-                  suffix: Icon(Icons.animation),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Masukan nama";
-                  }
-
-                  return null;
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Usia',
-                ),
-                validator: (value) => value == null ? 'Pilih usia' : null,
-                items:
-                    dropdownUsia.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                value: dropdownUsia.contains(_usia) ? (_usia) : null,
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _usia = value;
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Kategori',
-                ),
-                validator: (value) => value == null ? 'Pilih kategori' : null,
-                items: dropdownKategori
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                value:
-                    dropdownKategori.contains(_kategori) ? (_kategori) : null,
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _kategori = value;
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Kondisi',
-                ),
-                value: dropdownStatusKesehatan.contains(_statusKesehatan)
-                    ? (_statusKesehatan)
-                    : null,
-                validator: (value) => value == null ? 'Pilih Kondisi' : null,
-                items: dropdownStatusKesehatan
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _statusKesehatan = value;
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Status',
-                ),
-                value: dropdownStatus.contains(_status) ? (_status) : null,
-                validator: (value) => value == null ? 'Pilih Kondisi' : null,
-                items: dropdownStatus
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _status = value;
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Jenis',
-                ),
-                validator: (value) => value == null ? 'Pilih jenis' : null,
-                items:
-                    dropdownJenis.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                value: dropdownJenis.contains(_jenis) ? (_jenis) : null,
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _jenis = value;
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Kandang',
-                ),
-                validator: (value) => value == null ? 'Pilih kandang' : null,
-                items: _listKategori
-                    .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: value,
-                    child: Text(value['nama']),
-                  );
-                }).toList(),
-                value: _listKategori.firstWhere(
-                    (e) => e["id"] == widget.doc.data()?["kandang_id"],
-                    orElse: () => {}),
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      _kandang = value["nama"] ?? "";
-                      _kandangId = value["id"] ?? "";
-
-                      _getListBlok(value["id"] ?? "");
-                    }
-                  });
-                },
-              ),
-              DropdownButtonFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Blok',
-                ),
-                validator: (value) => value == null ? 'Pilih blok' : null,
-                items: _listBlok.map<DropdownMenuItem<String>>((value) {
-                  return DropdownMenuItem<String>(
-                    value: value["id"],
-                    child: Text(value["nama"] ?? ""),
-                  );
-                }).toList(),
-                value: _listBlok
-                        .firstWhere(
-                            (e) => e["id"] == widget.doc.data()?["blok_id"],
-                            orElse: () => {})
-                        .isEmpty
-                    ? null
-                    : widget.doc.data()?["blok_id"],
-                onChanged: (value) {
-                  setState(() {
-                    if (value != null) {
-                      Map<String, dynamic> choiceBlok =
-                          _listBlok.firstWhere((item) => item['id'] == value);
-                      _blok = choiceBlok["nama"];
-                      _blokId = choiceBlok["id"];
-                      //  "Blok: " + (e["nama_blok"] ?? ""),
-                    }
-                  });
-                },
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _bobotController,
-                      decoration: const InputDecoration(
-                        labelText: 'Bobot Masuk',
-                        suffix: Text("Kg"),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Masukan bobot";
-                        }
-
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _tanggalController,
-                      decoration: const InputDecoration(
-                        labelText: 'Tanggal update',
-                        suffix: Icon(Icons.date_range_outlined),
-                      ),
-                      readOnly:
-                          true, // masih bisa dibaca, tapi tidak bisa diubah
-                      enabled:
-                          false, // kalau ingin benar-benar tidak bisa diakses sama sekali
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Masukan tanggal";
-                        }
-
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              // child: TextFormField(
-              //         controller: _tanggalController,
-              //         decoration: const InputDecoration(
-              //           labelText: 'Tanggal Masuk',
-              //           suffix: Icon(Icons.date_range_outlined),
-              //         ),
-              //         readOnly: true, // masih bisa dibaca, tapi tidak bisa diubah
-              //         enabled: false,  // kalau ingin benar-benar tidak bisa diakses sama sekali
-              //         validator: (value) {
-              //           if (value == null || value.isEmpty) {
-              //             return "Masukan tanggal";
-              //           }
-
-              //           return null;
-              //         },
-              //       ),
-              // const SizedBox(height: 20),
-              // Container(
-              //   // height: 80,
-              //   padding: const EdgeInsets.all(10),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(20),
-              //     border: Border.all(
-              //       color: Colors.black,
-              //     ),
-              //     boxShadow: const [
-              //       BoxShadow(
-              //         color: Colors.grey,
-              //         blurRadius: 10.0,
-              //         offset: Offset(1, 3),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Container(
-              //           decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(20)),
-              //           child: (_imgFile != null)
-              //               ? Image.file(_imgFile!, height: 200, width: 200)
-              //               : (urlgambar != "")
-              //                   ? Image.network(
-              //                       urlgambar,
-              //                       height: 200,
-              //                       width: 200,
-              //                       errorBuilder: (context, error, stackTrace) {
-              //                         return const Icon(Icons.broken_image,
-              //                             size: 50, color: Colors.grey);
-              //                       },
-              //                       loadingBuilder:
-              //                           (context, child, loadingProgress) {
-              //                         if (loadingProgress == null) return child;
-              //                         return const CircularProgressIndicator();
-              //                       },
-              //                     )
-              //                   : const Text(
-              //                       "Foto Hewan",
-              //                       style: TextStyle(
-              //                           fontSize: 18, color: Colors.grey),
-              //                     )),
-              //       ElevatedButton(
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor:
-              //               const Color.fromRGBO(48, 130, 148, 0.45),
-              //         ),
-              //         onPressed: () => _ambilGambar(),
-              //         child: const Text(
-              //           "Upload",
-              //           style: TextStyle(fontWeight: FontWeight.bold),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
-              const SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      // padding: EdgeInsets.all(20),
-                      backgroundColor: const Color.fromRGBO(26, 107, 125, 1),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() == true) {
-                        _editHewan();
-                      }
-                    },
-                    child: const Text(
-                      'Edit Hewan',
-                      style: TextStyle(
+                    Container(
+                      decoration: BoxDecoration(
                         color: Colors.white,
-                        fontSize: 20,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Name field
+                          TextFormField(
+                            controller: _namaController,
+                            maxLength: 20,
+                            enabled: _isEditable,
+                            decoration: InputDecoration(
+                              labelText: 'Nama Hewan',
+                              prefixIcon: const Icon(FontAwesomeIcons.paw, size: 22),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(color: Color(0xFF1D91AA)),
+                              ),
+                              filled: true,
+                              fillColor: _isEditable ? Colors.white : Colors.grey[100],
+                              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Masukan nama";
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Gender selection
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Jenis Kelamin",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildRadioOption(
+                                      value: "Jantan",
+                                      groupValue: _jenisKelamin,
+                                      icon: Icons.male,
+                                      iconColor: Colors.blue,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value != null) {
+                                            _jenisKelamin = value;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: _buildRadioOption(
+                                      value: "Betina",
+                                      groupValue: _jenisKelamin,
+                                      icon: Icons.female,
+                                      iconColor: Colors.pink,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value != null) {
+                                            _jenisKelamin = value;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Characteristics section
+                    _buildSectionTitle("Karakteristik", Icons.category),
+                    const SizedBox(height: 16),
+                    
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Age dropdown
+                          _buildDropdown(
+                            labelText: 'Usia',
+                            icon: Icons.calendar_today,
+                            items: dropdownUsia.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            value: dropdownUsia.contains(_usia) ? (_usia) : null,
+                            onChanged: (value) {
+                              setState(() {
+                                if (value != null) {
+                                  _usia = value;
+                                }
+                              });
+                            },
+                            validator: (value) => value == null ? 'Pilih usia' : null,
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          
+                          // Category dropdown
+                          _buildDropdown(
+                            labelText: 'Kategori',
+                            icon: Icons.category,
+                            items: dropdownKategori.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            value: dropdownKategori.contains(_kategori) ? (_kategori) : null,
+                            onChanged: (value) {
+                              setState(() {
+                                if (value != null) {
+                                  _kategori = value;
+                                }
+                              });
+                            },
+                            validator: (value) => value == null ? 'Pilih kategori' : null,
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          
+                          // Animal type dropdown
+                          _buildDropdown(
+                            labelText: 'Jenis',
+                            icon: Icons.agriculture,
+                            items: dropdownJenis.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            value: dropdownJenis.contains(_jenis) ? (_jenis) : null,
+                            onChanged: (value) {
+                              setState(() {
+                                if (value != null) {
+                                  _jenis = value;
+                                }
+                              });
+                            },
+                            validator: (value) => value == null ? 'Pilih jenis' : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // // Status section
+                    // _buildSectionTitle("Status dan Kondisi", Icons.health_and_safety),
+                    // const SizedBox(height: 16),
+                    
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //         color: Colors.black.withOpacity(0.05),
+                    //         blurRadius: 10,
+                    //         spreadRadius: 0,
+                    //         offset: const Offset(0, 2),
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   padding: const EdgeInsets.all(16),
+                    //   child: Column(
+                    //     children: [
+                    //       // Health condition dropdown
+                    //       _buildDropdown(
+                    //         labelText: 'Kondisi Kesehatan',
+                    //         icon: Icons.favorite,
+                    //         items: dropdownStatusKesehatan.map<DropdownMenuItem<String>>((String value) {
+                    //           return DropdownMenuItem<String>(
+                    //             value: value,
+                    //             child: Row(
+                    //               children: [
+                    //                 Container(
+                    //                   width: 12,
+                    //                   height: 12,
+                    //                   decoration: BoxDecoration(
+                    //                     color: value == 'Sehat' ? Colors.green : Colors.red,
+                    //                     borderRadius: BorderRadius.circular(6),
+                    //                   ),
+                    //                 ),
+                    //                 const SizedBox(width: 8),
+                    //                 Text(value),
+                    //               ],
+                    //             ),
+                    //           );
+                    //         }).toList(),
+                    //         value: dropdownStatusKesehatan.contains(_statusKesehatan) ? (_statusKesehatan) : null,
+                    //         onChanged: (value) {
+                    //           setState(() {
+                    //             if (value != null) {
+                    //               _statusKesehatan = value;
+                    //             }
+                    //           });
+                    //         },
+                    //         validator: (value) => value == null ? 'Pilih Kondisi' : null,
+                    //       ),
+                          
+                    //       const SizedBox(height: 16),
+                          
+                    //       // Status dropdown
+                    //       _buildDropdown(
+                    //         labelText: 'Status',
+                    //         icon: Icons.info_outline,
+                    //         items: dropdownStatus.map<DropdownMenuItem<String>>((String value) {
+                    //           return DropdownMenuItem<String>(
+                    //             value: value,
+                    //             child: Row(
+                    //               children: [
+                    //                 Container(
+                    //                   width: 12,
+                    //                   height: 12,
+                    //                   decoration: BoxDecoration(
+                    //                     color: _getStatusColor(value),
+                    //                     borderRadius: BorderRadius.circular(6),
+                    //                   ),
+                    //                 ),
+                    //                 const SizedBox(width: 8),
+                    //                 Text(value),
+                    //               ],
+                    //             ),
+                    //           );
+                    //         }).toList(),
+                    //         value: dropdownStatus.contains(_status) ? (_status) : null,
+                    //         onChanged: (value) {
+                    //           setState(() {
+                    //             if (value != null) {
+                    //               _status = value;
+                    //             }
+                    //           });
+                    //         },
+                    //         validator: (value) => value == null ? 'Pilih Status' : null,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Location section
+                    _buildSectionTitle("Lokasi Kandang", Icons.home_work),
+                    const SizedBox(height: 16),
+                    
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Cage dropdown
+                          _buildDropdown(
+                            labelText: 'Kandang',
+                            icon: Icons.home,
+                            items: _listKategori.map<DropdownMenuItem<Map<String, dynamic>>>((value) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: value,
+                                child: Text(value['nama']),
+                              );
+                            }).toList(),
+                            value: _listKategori.firstWhere(
+                                (e) => e["id"] == widget.doc.data()?["kandang_id"],
+                                orElse: () => {}),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value != null) {
+                                  _kandang = value["nama"] ?? "";
+                                  _kandangId = value["id"] ?? "";
+                                  _getListBlok(value["id"] ?? "");
+                                }
+                              });
+                            },
+                            validator: (value) => value == null ? 'Pilih kandang' : null,
+                          ),
+                          
+                          const SizedBox(height: 16),
+                          
+                          // Block dropdown
+                          _buildDropdown(
+                            labelText: 'Blok',
+                            icon: Icons.grid_view,
+                            items: _listBlok.map<DropdownMenuItem<String>>((value) {
+                              return DropdownMenuItem<String>(
+                                value: value["id"],
+                                child: Text(value["nama"] ?? ""),
+                              );
+                            }).toList(),
+                            value: _listBlok
+                                    .firstWhere(
+                                        (e) => e["id"] == widget.doc.data()?["blok_id"],
+                                        orElse: () => {})
+                                    .isEmpty
+                                ? null
+                                : widget.doc.data()?["blok_id"],
+                            onChanged: (value) {
+                              setState(() {
+                                if (value != null) {
+                                  Map<String, dynamic> choiceBlok =
+                                      _listBlok.firstWhere((item) => item['id'] == value);
+                                  _blok = choiceBlok["nama"];
+                                  _blokId = choiceBlok["id"];
+                                }
+                              });
+                            },
+                            validator: (value) => value == null ? 'Pilih blok' : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Weight and Date section
+                    _buildSectionTitle("Berat dan Tanggal", Icons.date_range),
+                    const SizedBox(height: 16),
+                    
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          // Weight field
+                          Expanded(
+                            child: TextFormField(
+                              controller: _bobotController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Bobot Masuk',
+                                suffixText: "Kg",
+                                prefixIcon: const Icon(Icons.monitor_weight, size: 22),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(color: Color(0xFF1D91AA)),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan bobot";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          
+                          const SizedBox(width: 16),
+                          
+                          // Date field (disabled)
+                          Expanded(
+                            child: TextFormField(
+                              controller: _tanggalController,
+                              readOnly: true,
+                              enabled: false,
+                              decoration: InputDecoration(
+                                labelText: 'Tanggal Update',
+                                prefixIcon: const Icon(Icons.date_range, size: 22),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Masukan tanggal";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Submit button
+                    if (_isEditable)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: SizedBox(
+                          height: 56,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1D91AA),
+                              foregroundColor: Colors.white,
+                              elevation: 2,
+                              shadowColor: const Color(0xFF1D91AA).withOpacity(0.4),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() == true) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      title: const Text(
+                                        "Konfirmasi Perubahan",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1D91AA),
+                                        ),
+                                      ),
+                                      content: const Text(
+                                        "Apakah Anda yakin ingin menyimpan perubahan data hewan ini?",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(),
+                                          child: const Text(
+                                            "Batal",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(0xFF1D91AA),
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            _editHewan();
+                                          },
+                                          child: const Text("Simpan"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.save),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Simpan Perubahan',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-            ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildSectionTitle(String title, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1D91AA).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: const Color(0xFF1D91AA),
+            size: 20,
           ),
         ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1D91AA),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildRadioOption({
+    required String value,
+    required String groupValue,
+    required IconData icon,
+    required Color iconColor,
+    required void Function(String?)? onChanged,
+  }) {
+    final isSelected = value == groupValue;
+    
+    return InkWell(
+      onTap: () => onChanged?.call(value),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: isSelected ? iconColor.withOpacity(0.1) : Colors.grey[100],
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? iconColor : Colors.grey[300]!,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected ? iconColor : Colors.black87,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+  
+  Widget _buildDropdown<T>({
+    required String labelText,
+    required IconData icon,
+    required List<DropdownMenuItem<T>> items,
+    required T? value,
+    required void Function(T?)? onChanged,
+    required String? Function(T?)? validator,
+  }) {
+    return DropdownButtonFormField<T>(
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon, size: 22),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xFF1D91AA)),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      ),
+      value: value,
+      style: const TextStyle(fontSize: 15, color: Colors.black87),
+      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF1D91AA)),
+      isExpanded: true,
+      validator: validator,
+      items: items,
+      onChanged: onChanged,
     );
   }
 }

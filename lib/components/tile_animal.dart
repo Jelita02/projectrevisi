@@ -41,133 +41,159 @@ class TileAnimal extends StatelessWidget {
                 )).then((value) => refresh());
       },
       child: Container(
-        height: 90,
-        margin: const EdgeInsets.only(bottom: 20),
+        height: 110,
+        margin: const EdgeInsets.only(bottom: 16, left: 2, right: 2),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(15),
-            topRight: Radius.circular(15),
-          ),
-          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          border: Border.all(color: Colors.grey.shade300, width: 1),
         ),
         width: double.infinity,
         child: Row(
           children: [
-            Expanded(
-              flex: 1,
-              child: FutureBuilder<Uint8List?>(
-                future: _getImage(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+            Container(
+              width: 110,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomLeft: Radius.circular(15),
+                ),
+                color: Colors.grey.shade100,
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(14),
+                  bottomLeft: Radius.circular(14),
+                ),
+                child: FutureBuilder<Uint8List?>(
+                  future: _getImage(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF1D91AA),
+                          strokeWidth: 2,
+                        ),
+                      );
+                    }
+                    var image = snapshot.data;
+                    if (image != null) {
+                      return Image.memory(
+                        image,
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                      );
+                    }
+                    return Image.asset(
+                      "assets/images/login-logo.jpg",
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
                     );
-                  }
-                  var image = snapshot.data;
-                  if (image != null) {
-                    return Image.memory(
-                      image,
-                      fit: BoxFit.fill,
-                    );
-                  }
-                  return Image.asset(
-                    "assets/images/login-logo.jpg",
-                    height: 93,
-                    width: 97,
-                    fit: BoxFit.cover,
-                  );
-                },
+                  },
+                ),
               ),
             ),
-            const SizedBox(width: 20),
             Expanded(
               flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    doc.data()?["nama"] ?? "",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      doc.data()?["nama"] ?? "",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                        color: Color(0xFF333333),
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                (doc.data()?["jenis_kelamin"] ?? "") == "Jantan"
-                                    ? const Icon(
-                                        Icons.male,
-                                        // size: 28,
-                                      )
-                                    : const Icon(
-                                        Icons.female,
-                                        // size: 28,
-                                      ),
-                                Text(doc.data()?["jenis_kelamin"] ?? ""),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.healing),
-                                Text(doc.data()?["status_kesehatan"] ?? ""),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.monitor_weight_outlined),
-                                Expanded(
-                                  child: Text(
-                                    (doc.data()?["bobot"] ?? "") + " kg",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.cottage_outlined),
-                                Expanded(
-                                  child: Text(
-                                    doc.data()?["kandang"] ?? "",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        _buildInfoItem(
+                          icon: (doc.data()?["jenis_kelamin"] ?? "") == "Jantan"
+                              ? Icons.male
+                              : Icons.female,
+                          text: doc.data()?["jenis_kelamin"] ?? "",
+                          iconColor: (doc.data()?["jenis_kelamin"] ?? "") == "Jantan"
+                              ? Colors.blue
+                              : Colors.pink,
+                        ),
+                        const SizedBox(width: 12),
+                        _buildInfoItem(
+                          icon: Icons.healing,
+                          text: doc.data()?["status_kesehatan"] ?? "",
+                          iconColor: (doc.data()?["status_kesehatan"] ?? "") == "Sehat"
+                              ? Colors.green
+                              : Colors.orange,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        _buildInfoItem(
+                          icon: Icons.monitor_weight_outlined,
+                          text: "${doc.data()?["bobot"] ?? ""} kg",
+                          iconColor: const Color(0xFF1D91AA),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildInfoItem(
+                          icon: Icons.cottage_outlined,
+                          text: doc.data()?["kandang"] ?? "",
+                          iconColor: const Color(0xFF1D91AA),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoItem({
+    required IconData icon,
+    required String text,
+    required Color iconColor,
+  }) {
+    return Expanded(
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: iconColor,
+            size: 18,
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
       ),
     );
   }
