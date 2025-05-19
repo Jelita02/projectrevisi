@@ -32,7 +32,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
   TextEditingController _textController = TextEditingController();
   final TextEditingController _tanggalBobotController = TextEditingController();
   final TextEditingController _textStatusController = TextEditingController();
-  final TextEditingController _textStatus_kesehatanController = TextEditingController();
+  final TextEditingController _textStatus_kesehatanController =
+      TextEditingController();
 
   late bool status = true;
 
@@ -172,14 +173,15 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.2)),
                         ),
                         child: QrImageView(
                           data: doc.id,
                           size: 300,
                           version: QrVersions.auto,
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF1D91AA),
+                          foregroundColor: Color.fromRGBO(0, 0, 0, 1),
                         ),
                       ),
                     ),
@@ -268,7 +270,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
               onPressed: () {
                 FirebaseFirestore.instance
@@ -384,8 +387,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                               child: Center(
                                 child: CircularProgressIndicator(
                                   color: const Color(0xFF1D91AA),
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / 
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
@@ -483,537 +487,284 @@ class _AnimalDetailState extends State<AnimalDetail> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
+                  blurRadius: 5,
                   spreadRadius: 0,
-                  offset: const Offset(0, 3),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 15),
             child: Column(
               children: [
-                                Row(
+                // Add sheep name as a centered header
+                
+                const SizedBox(height: 10),
+                // Gender and health status with menu aligned
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Sheep name
-                    // Expanded(
-                    //   flex: 2,
-                    //   child: Text(
-                    //     doc.data()?["nama"] ?? "Detail Hewan",
-                    //     style: const TextStyle(
-                    //       fontWeight: FontWeight.w700,
-                    //       fontSize: 20,
-                    //       color: Color(0xFF1D91AA),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Placeholder for even layout
-                    const SizedBox(width: 20),
-                  ],
-                ),
-                // Gender, health status, and animal status at the top
-                Container(
-                  margin: const EdgeInsets.only(top: 10, bottom: 15),
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1D91AA).withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF1D91AA).withOpacity(0.1),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Gender indicator
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1D91AA).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
                         children: [
-                          const Text(
-                            "Informasi Status",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF1D91AA),
-                            ),
+                          Icon(
+                            (doc.data()?["jenis_kelamin"]) == "Jantan"
+                                ? Icons.male
+                                : Icons.female,
+                            color: (doc.data()?["jenis_kelamin"]) == "Jantan"
+                                ? Colors.lightBlue
+                                : Colors.pink,
+                            size: 18,
                           ),
-                          // Action menu
-                          PopupMenuButton<String>(
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(
-                              Icons.more_vert,
-                              color: Color(0xFF1D91AA),
-                              size: 20,
+                          const SizedBox(width: 8),
+                          Text(
+                            doc.data()?["jenis_kelamin"] ?? "",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
                             ),
-                            onSelected: (value) {
-                              if (value == "edit") {
-                                Navigator.push<DocumentSnapshot<Map<String, dynamic>>>(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AnimalEdit(
-                                      doc: doc,
-                                      user: widget.user,
-                                    )),
-                                ).then((value) {
-                                  setState(() {
-                                    doc = value!;
-                                  });
-                                });
-                              } else if (value == "delete") {
-                                _showDeleteConfirmation(context);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                enabled: status ? true : false,
-                                value: "edit",
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.edit, size: 18),
-                                    SizedBox(width: 8),
-                                    Text("Edit"),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: "delete",
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.delete, size: 18, color: Colors.red),
-                                    SizedBox(width: 8),
-                                    Text("Hapus", style: TextStyle(color: Colors.red)),
-                                  ],
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    ),
+                    const SizedBox(width: 12),
+                    // Health status
+                    if (doc.data()?["status_kesehatan"] != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: doc.data()?["status_kesehatan"] == "Sehat"
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              doc.data()?["status_kesehatan"] == "Sehat"
+                                  ? Icons.favorite
+                                  : Icons.healing,
+                              color: doc.data()?["status_kesehatan"] == "Sehat"
+                                  ? Colors.green
+                                  : Colors.red,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              doc.data()?["status_kesehatan"] ?? "",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(width: 12),
+                    // Animal status (alive, sold, etc)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: _getStatusBackgroundColor(doc.data()?["status"]),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
                         children: [
-                          // Gender indicator
-                          Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  (doc.data()?["jenis_kelamin"]) == "Jantan"
-                                      ? Icons.male
-                                      : Icons.female,
-                                  color: (doc.data()?["jenis_kelamin"]) == "Jantan"
-                                      ? Colors.blue
-                                      : Colors.pink,
-                                  size: 24,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                doc.data()?["jenis_kelamin"] ?? "",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1D91AA),
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            _getStatusIcon(doc.data()?["status"]),
+                            color: _getStatusIconColor(doc.data()?["status"]),
+                            size: 18,
                           ),
-                          
-                          // Health status
-                          if (doc.data()?["status_kesehatan"] != null)
-                            Column(
+                          const SizedBox(width: 12),
+                          Text(
+                            doc.data()?["status"] ?? "",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    // Action menu aligned with status indicators
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      // decoration: BoxDecoration(
+                      //   color: const Color(0xFF1D91AA).withOpacity(0.1),
+                      //   borderRadius: BorderRadius.circular(20),
+                      // ),
+                      child: PopupMenuButton<String>(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: Color(0xFF1D91AA),
+                          size: 24,
+                        ),
+                        onSelected: (value) {
+                          if (value == "edit") {
+                            Navigator.push<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AnimalEdit(
+                                        doc: doc,
+                                        user: widget.user,
+                                      )),
+                            ).then((value) {
+                              setState(() {
+                                doc = value!;
+                              });
+                            });
+                          } else if (value == "delete") {
+                            _showDeleteConfirmation(context);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            enabled: status ? true : false,
+                            value: "edit",
+                            child: const Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: doc.data()?["status_kesehatan"] == "Sehat"
-                                        ? Colors.green.withOpacity(0.1)
-                                        : Colors.red.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    doc.data()?["status_kesehatan"] == "Sehat"
-                                        ? Icons.favorite
-                                        : Icons.healing,
-                                    color: doc.data()?["status_kesehatan"] == "Sehat"
-                                        ? Colors.green
-                                        : Colors.red,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  doc.data()?["status_kesehatan"] ?? "",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: doc.data()?["status_kesehatan"] == "Sehat"
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                ),
+                                Icon(Icons.edit, size: 18),
+                                SizedBox(width: 8),
+                                Text("Edit"),
                               ],
                             ),
-                          
-                          // Animal status (alive, sold, etc)
-                          Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: _getStatusColor(doc.data()?["status"]),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  _getStatusIcon(doc.data()?["status"]),
-                                  color: _getStatusIconColor(doc.data()?["status"]),
-                                  size: 24,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                doc.data()?["status"] ?? "",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: _getStatusTextColor(doc.data()?["status"]),
-                                ),
-                              ),
-                            ],
+                          ),
+                          const PopupMenuItem(
+                            value: "delete",
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, size: 18, color: Colors.red),
+                                SizedBox(width: 8),
+                                Text("Hapus",
+                                    style: TextStyle(color: Colors.red)),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          dash(),
-          // Lokasi kompak dengan desain yang lebih menarik
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1D91AA).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.location_on,
-                        size: 18,
-                        color: Color(0xFF1D91AA),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Lokasi Kandang",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1D91AA),
-                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    // Kandang dengan ukuran lebih besar
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1D91AA).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFF1D91AA).withOpacity(0.2),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(
-                                Icons.home_rounded,
-                                size: 20,
-                                color: Color(0xFF1D91AA),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Kandang",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    doc.data()?["kandang"] ?? "-",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // Blok
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1D91AA).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: const Color(0xFF1D91AA).withOpacity(0.2),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(
-                                Icons.grid_view_rounded,
-                                size: 20,
-                                color: Color(0xFF1D91AA),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Blok",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    doc.data()?["blok"] ?? "-",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          
-          // Animal Image Preview
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1D91AA).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        FontAwesomeIcons.image,
-                        size: 16, 
-                        color: Color(0xFF1D91AA),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Foto Hewan",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1D91AA),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 8),
+                // Image view button
                 GestureDetector(
                   onTap: () => _showImage(),
                   child: Container(
-                    height: 80,
                     width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1D91AA).withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: const Color(0xFF1D91AA).withOpacity(0.1),
-                        width: 1.5,
-                      ),
+                      color: const Color(0xFF1D91AA),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
-                                  blurRadius: 8,
-                                  spreadRadius: 0,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              FontAwesomeIcons.image,
-                              size: 24,
-                              color: const Color(0xFF1D91AA),
-                            ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Lihat Foto Hewan",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Lihat Hewan",
-                            style: TextStyle(
-                              color: const Color(0xFF1D91AA),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          
-          // Tanggal
-          // Container(
-          //   margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          //   decoration: BoxDecoration(
-          //     color: const Color(0xFF1D91AA).withOpacity(0.08),
-          //     borderRadius: BorderRadius.circular(10),
-          //     border: Border.all(
-          //       color: const Color(0xFF1D91AA).withOpacity(0.1),
-          //       width: 1,
-          //     ),
-          //   ),
-          //   child: Row(
-          //     children: [
-          //       const Icon(
-          //         Icons.calendar_today,
-          //         size: 18,
-          //         color: Color(0xFF1D91AA),
-          //       ),
-          //       const SizedBox(width: 10),
-          //       Text(
-          //         "Tanggal Masuk: ${doc.data()?["tanggal_masuk"] ?? DateFormat('dd MMMM yyyy').format(DateTime.now())}",
-          //         style: const TextStyle(
-          //           color: Color(0xFF1D91AA),
-          //           fontSize: 14,
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          
-          dash(),
-          // Separator
+          const SizedBox(height: 5),
+          // Location info in a more compact card
           Container(
-            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            height: 1,
-            color: Colors.grey.withOpacity(0.2),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 5,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Lokasi Hewan",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Making location info more compact
+                    locationTile(
+                      text: "Kandang",
+                      icon: Icons.cabin,
+                      value: doc.data()?["kandang"] ?? "",
+                    ),
+                    const SizedBox(width: 20),
+                    locationTile(
+                      text: "Blok",
+                      icon: Icons.account_tree_outlined,
+                      value: doc.data()?["blok"] ?? "",
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          
-          // Animal Information Section
+          dash(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline,
                       color: Color(0xFF1D91AA),
                       size: 22,
                     ),
-                    const SizedBox(width: 8),
-                    const Text(
+                    SizedBox(width: 8),
+                    Text(
                       "Informasi Hewan",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
@@ -1023,7 +774,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 10),
                 // Date
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1045,8 +796,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
-                
+                const SizedBox(height: 10),
+
                 // Information Cards
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -1066,36 +817,32 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     children: [
                       // Name
                       _buildInfoRow(
-                        icon: FontAwesomeIcons.paw,
-                        label: "Nama",
-                        value: doc.data()?["nama"] ?? "-"
-                      ),
+                          icon: FontAwesomeIcons.paw,
+                          label: "Nama",
+                          value: doc.data()?["nama"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Age
                       _buildInfoRow(
-                        icon: Icons.access_time,
-                        label: "Usia",
-                        value: doc.data()?["usia"] ?? "-"
-                      ),
+                          icon: Icons.access_time,
+                          label: "Usia",
+                          value: doc.data()?["usia"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Type
                       _buildInfoRow(
-                        icon: Icons.category,
-                        label: "Jenis Hewan",
-                        value: doc.data()?["jenis"] ?? "-"
-                      ),
+                          icon: Icons.category,
+                          label: "Jenis Hewan",
+                          value: doc.data()?["jenis"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Category
                       _buildInfoRow(
-                        icon: Icons.layers,
-                        label: "Kategori Hewan",
-                        value: doc.data()?["kategori"] ?? "-"
-                      ),
+                          icon: Icons.layers,
+                          label: "Kategori Hewan",
+                          value: doc.data()?["kategori"] ?? "-"),
                       const Divider(height: 20),
-                      
+
                       // Health Condition Dropdown
                       Row(
                         children: [
@@ -1145,7 +892,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ],
                       ),
                       const Divider(height: 20),
-                      
+
                       // Status Dropdown
                       Row(
                         children: [
@@ -1171,9 +918,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                     await FirebaseFirestore.instance
                                         .collection("hewan")
                                         .doc(doc.id)
-                                        .update({"status": _textStatusController.text});
-                                    doc.data()?["status"] = _textStatusController.text;
-                                    status = _textStatusController.text == "Hidup";
+                                        .update({
+                                      "status": _textStatusController.text
+                                    });
+                                    doc.data()?["status"] =
+                                        _textStatusController.text;
+                                    status =
+                                        _textStatusController.text == "Hidup";
                                   }
                                   setState(() {
                                     _readOnlyStatus = !_readOnlyStatus;
@@ -1196,9 +947,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Weight Information
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -1226,7 +977,7 @@ class _AnimalDetailState extends State<AnimalDetail> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Initial weight
                       Row(
                         children: [
@@ -1280,9 +1031,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Current weight with edit function
                       Form(
                         key: _formKey,
@@ -1308,7 +1059,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                   Expanded(
                                     flex: 2,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Bobot Terkini",
@@ -1325,23 +1077,33 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                           decoration: InputDecoration(
                                             hintText: "Masukkan bobot",
                                             suffixText: "Kg",
-                                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 12),
                                             border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: BorderSide(color: Colors.grey[300]!),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey[300]!),
                                             ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: BorderSide(color: Colors.grey[300]!),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey[300]!),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                              borderSide: const BorderSide(color: Color(0xFF1D91AA)),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: const BorderSide(
+                                                  color: Color(0xFF1D91AA)),
                                             ),
                                           ),
                                           readOnly: _readOnlyFinalWeight,
                                           validator: (value) {
-                                            if (value == null || value.isEmpty) {
+                                            if (value == null ||
+                                                value.isEmpty) {
                                               return "Bobot Kosong";
                                             }
                                             return null;
@@ -1352,7 +1114,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                   ),
                                   if (_readOnlyFinalWeight && status)
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: Color(0xFF1D91AA)),
+                                      icon: const Icon(Icons.edit,
+                                          color: Color(0xFF1D91AA)),
                                       onPressed: () {
                                         setState(() {
                                           _readOnlyFinalWeight = false;
@@ -1362,9 +1125,11 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                     )
                                   else if (!_readOnlyFinalWeight)
                                     IconButton(
-                                      icon: const Icon(Icons.save_rounded, color: Color(0xFF1D91AA)),
+                                      icon: const Icon(Icons.save_rounded,
+                                          color: Color(0xFF1D91AA)),
                                       onPressed: () {
-                                        if (_formKey.currentState?.validate() == true) {
+                                        if (_formKey.currentState?.validate() ==
+                                            true) {
                                           FirebaseFirestore.instance
                                               .collection("hewan")
                                               .doc(doc.id)
@@ -1376,7 +1141,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
                                               .add({
                                             "hewan_id": doc.id,
                                             "bobot_akhir": _textController.text,
-                                            "tanggal": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                                            "tanggal": DateFormat('yyyy-MM-dd')
+                                                .format(DateTime.now()),
                                           });
                                           setState(() {
                                             _readOnlyFinalWeight = true;
@@ -1432,9 +1198,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   future: _getWeightData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(
-                          color: const Color(0xFF1D91AA),
+                          color: Color(0xFF1D91AA),
                           strokeWidth: 3,
                         ),
                       );
@@ -1538,9 +1304,9 @@ class _AnimalDetailState extends State<AnimalDetail> {
                   future: _getHealthyData(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(
-                          color: const Color(0xFF1D91AA),
+                          color: Color(0xFF1D91AA),
                           strokeWidth: 3,
                         ),
                       );
@@ -1634,7 +1400,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
         suffixIcon: iconSuffix,
         filled: true,
         fillColor: readOnly ? Colors.grey[50] : Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -1676,7 +1443,8 @@ class _AnimalDetailState extends State<AnimalDetail> {
         isDense: true,
         filled: true,
         fillColor: readOnly ? Colors.grey[50] : Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -1721,29 +1489,38 @@ class _AnimalDetailState extends State<AnimalDetail> {
     );
   }
 
-  Row tile({
+  // Helper method for medium-sized location tile display
+  Widget locationTile({
     required IconData icon,
     required String text,
     required String value,
   }) {
-    return Row(
+    return Column(
       children: [
-        Icon(icon, size: 45),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: const TextStyle(fontSize: 10),
-            ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ],
+        Container(
+          height: 32,
+          width: 32,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1D91AA).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 18, color: const Color(0xFF1D91AA)),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
         ),
       ],
     );
@@ -1753,13 +1530,13 @@ class _AnimalDetailState extends State<AnimalDetail> {
   Color _getStatusColor(String? status) {
     switch (status) {
       case "Hidup":
-        return Colors.green.withOpacity(0.1);
+        return Colors.green.withOpacity(0.3);
       case "Mati":
-        return Colors.red.withOpacity(0.1);
+        return Colors.red.withOpacity(0.3);
       case "Terjual":
-        return Colors.blue.withOpacity(0.1);
+        return Colors.blue.withOpacity(0.3);
       default:
-        return Colors.grey.withOpacity(0.1);
+        return Colors.grey.withOpacity(0.3);
     }
   }
 
@@ -1776,37 +1553,10 @@ class _AnimalDetailState extends State<AnimalDetail> {
         return Icons.help;
     }
   }
-  
-  // Helper method to get status icon color
-  Color _getStatusIconColor(String? status) {
-    switch (status) {
-      case "Hidup":
-        return Colors.green;
-      case "Mati":
-        return Colors.red;
-      case "Terjual":
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
-  
-  // Helper method to get status text color
-  Color _getStatusTextColor(String? status) {
-    switch (status) {
-      case "Hidup":
-        return Colors.green;
-      case "Mati":
-        return Colors.red;
-      case "Terjual":
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
 
   // Helper method to build information rows
-  Widget _buildInfoRow({required IconData icon, required String label, required String value}) {
+  Widget _buildInfoRow(
+      {required IconData icon, required String label, required String value}) {
     return Row(
       children: [
         Container(
@@ -1847,5 +1597,33 @@ class _AnimalDetailState extends State<AnimalDetail> {
         ),
       ],
     );
+  }
+
+  // New helper method for status background colors (for white theme)
+  Color _getStatusBackgroundColor(String? status) {
+    switch (status) {
+      case "Hidup":
+        return Colors.green.withOpacity(0.1);
+      case "Mati":
+        return Colors.red.withOpacity(0.1);
+      case "Terjual":
+        return Colors.blue.withOpacity(0.1);
+      default:
+        return Colors.grey.withOpacity(0.1);
+    }
+  }
+
+  // New helper method for status icon colors (for white theme)
+  Color _getStatusIconColor(String? status) {
+    switch (status) {
+      case "Hidup":
+        return Colors.green;
+      case "Mati":
+        return Colors.red;
+      case "Terjual":
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
   }
 }

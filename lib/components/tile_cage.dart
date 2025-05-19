@@ -219,11 +219,11 @@ class TileCage extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.pets_rounded,
-                          size: 16,
-                          color: Color(0xFF1D91AA),
-                        ),
+                        // const Icon(
+                        //   Icons.pets_rounded,
+                        //   size: 16,
+                        //   color: Color(0xFF1D91AA),
+                        // ),
                         const SizedBox(width: 4),
                         Text(
                           "$total/${doc.data()["kapasitas"] ?? ""} Ekor",

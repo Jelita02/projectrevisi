@@ -148,7 +148,7 @@ class HealthyAddState extends State<HealthyAdd> {
         backgroundColor: const Color(0xFF1D91AA),
         elevation: 0,
         title: const Text(
-          "Keteranngan ",
+          "Keterangan ",
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -433,18 +433,18 @@ class HealthyAddState extends State<HealthyAdd> {
                     const SizedBox(height: 24),
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1D91AA).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.pets,
-                            color: Color(0xFF1D91AA),
-                            size: 18,
-                          ),
-                        ),
+                        // Container(
+                        //   padding: const EdgeInsets.all(8),
+                        //   decoration: BoxDecoration(
+                        //     color: const Color(0xFF1D91AA).withOpacity(0.1),
+                        //     borderRadius: BorderRadius.circular(8),
+                        //   ),
+                        //   // child: const Icon(
+                        //   //   Icons.pets,
+                        //   //   color: Color(0xFF1D91AA),
+                        //   //   size: 18,
+                        //   // ),
+                        // ),
                         const SizedBox(width: 10),
                         const Text(
                           "Pilih Hewan",

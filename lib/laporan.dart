@@ -127,7 +127,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
           Container(
             color: MyColors.primaryC,
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            padding: const EdgeInsets.fromLTRB(15, 0, 20, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -518,18 +518,18 @@ class _LaporanScreenState extends State<LaporanScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.category,
-                    color: Colors.green,
-                    size: 24,
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: BoxDecoration(
+                //     color: Colors.green.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   // child: const Icon(
+                //   //   Icons.category,
+                //   //   color: Colors.green,
+                //   //   size: 24,
+                //   // ),
+                // ),
                 const SizedBox(width: 12),
                 const Text(
                   "Kategori",
@@ -653,18 +653,18 @@ class _LaporanScreenState extends State<LaporanScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.primaryC.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.info,
-                    color: MyColors.primaryC,
-                    size: 24,
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.all(10),
+                //   decoration: BoxDecoration(
+                //     color: MyColors.primaryC.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   // child: const Icon(
+                //   //   Icons.info,
+                //   //   color: MyColors.primaryC,
+                //   //   size: 24,
+                //   // ),
+                // ),
                 const SizedBox(width: 12),
                 const Text(
                   "Status",

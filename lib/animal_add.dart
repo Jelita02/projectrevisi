@@ -251,8 +251,8 @@ class _AnimalAddState extends State<AnimalAdd> {
                 child: ListView(
                   children: [
                     // Image upload section
-                    _buildSectionTitle("Foto Hewan", Icons.photo_camera),
-                    const SizedBox(height: 12),
+                    // _buildSectionTitle("Foto Hewan", Icons.photo_camera),
+                    // const SizedBox(height: 12),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -387,7 +387,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                             decoration: InputDecoration(
                               labelText: 'Nama Hewan',
                               // prefixIcon: const Icon(Icons.agriculture, size: 22),
-                              prefixIcon: const Icon(FontAwesomeIcons.paw, size: 22),
+                              // prefixIcon: const Icon(FontAwesomeIcons.paw, size: 22),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
@@ -895,7 +895,7 @@ class _AnimalAddState extends State<AnimalAdd> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add),
+                            // Icon(Icons.add),
                             SizedBox(width: 8),
                             Text(
                               'Tambah Hewan',

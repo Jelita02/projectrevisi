@@ -95,7 +95,8 @@ class _CageDetailState extends State<CageDetail> {
               const Text("Konfirmasi Hapus"),
             ],
           ),
-          content: const Text("Apakah kamu yakin ingin menghapus kandang ini? Tindakan ini tidak dapat dibatalkan."),
+          content: const Text(
+              "Apakah kamu yakin ingin menghapus kandang ini? Tindakan ini tidak dapat dibatalkan."),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -233,9 +234,11 @@ class _CageDetailState extends State<CageDetail> {
                                 child: const Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                    Icon(Icons.broken_image,
+                                        size: 50, color: Colors.grey),
                                     SizedBox(height: 10),
-                                    Text("Gagal memuat gambar", style: TextStyle(color: Colors.grey))
+                                    Text("Gagal memuat gambar",
+                                        style: TextStyle(color: Colors.grey))
                                   ],
                                 ),
                               );
@@ -245,8 +248,9 @@ class _CageDetailState extends State<CageDetail> {
                               return Center(
                                 child: CircularProgressIndicator(
                                   color: const Color(0xFF1D91AA),
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / 
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
@@ -286,6 +290,16 @@ class _CageDetailState extends State<CageDetail> {
         );
       },
     );
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      _getListLog() async {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection("kandang_log")
+        .where("kandang_id", isEqualTo: widget.doc.id);
+
+    final snapshot = await query.get();
+    return snapshot.docs;
   }
 
   @override
@@ -385,7 +399,8 @@ class _CageDetailState extends State<CageDetail> {
                     children: [
                       Icon(Icons.edit, color: Color(0xFF1D91AA), size: 20),
                       SizedBox(width: 12),
-                      Text("Edit", style: TextStyle(fontWeight: FontWeight.w500)),
+                      Text("Edit",
+                          style: TextStyle(fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ),
@@ -395,7 +410,10 @@ class _CageDetailState extends State<CageDetail> {
                     children: [
                       Icon(Icons.delete, color: Colors.redAccent, size: 20),
                       SizedBox(width: 12),
-                      Text("Hapus", style: TextStyle(fontWeight: FontWeight.w500, color: Colors.redAccent)),
+                      Text("Hapus",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.redAccent)),
                     ],
                   ),
                 ),
@@ -485,7 +503,8 @@ class _CageDetailState extends State<CageDetail> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: const Color(0xFF1D91AA),
                               borderRadius: BorderRadius.circular(20),
@@ -500,31 +519,32 @@ class _CageDetailState extends State<CageDetail> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.calendar_today_rounded,
-                                  size: 14,
-                                  color: Color(0xFF1D91AA),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  doc.data()?["tanggal_dibuat"] ?? "",
-                                  style: const TextStyle(
-                                    color: Color(0xFF1D91AA),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   padding: const EdgeInsets.symmetric(
+                          //       horizontal: 12, vertical: 6),
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.white.withOpacity(0.9),
+                          //     borderRadius: BorderRadius.circular(20),
+                          //   ),
+                            // child: Row(
+                            //   children: [
+                            //     const Icon(
+                            //       Icons.calendar_today_rounded,
+                            //       size: 14,
+                            //       color: Color(0xFF1D91AA),
+                            //     ),
+                            //     const SizedBox(width: 6),
+                            //     Text(
+                            //       doc.data()?["tanggal_dibuat"] ?? "",
+                            //       style: const TextStyle(
+                            //         color: Color(0xFF1D91AA),
+                            //         fontWeight: FontWeight.w600,
+                            //         fontSize: 14,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                          // ),
                         ],
                       ),
                     ],
@@ -533,7 +553,7 @@ class _CageDetailState extends State<CageDetail> {
               ],
             ),
 
-            // Date section
+            //Date section
             Container(
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
               decoration: BoxDecoration(
@@ -554,7 +574,7 @@ class _CageDetailState extends State<CageDetail> {
                   ),
                   const SizedBox(width: 8),
                   const Text(
-                    "Tanggal Masuk:",
+                    "Tanggal Dibuat:",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -608,18 +628,19 @@ class _CageDetailState extends State<CageDetail> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1D91AA).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.pets,
-                                  size: 20,
-                                  color: Color(0xFF1D91AA),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.all(8),
+                              //   decoration: BoxDecoration(
+                              //     color:
+                              //         const Color(0xFF1D91AA).withOpacity(0.1),
+                              //     borderRadius: BorderRadius.circular(8),
+                              //   ),
+                              //   // child: const Icon(
+                                  // Icons.pets,
+                              //   //   size: 20,
+                              //   //   color: Color(0xFF1D91AA),
+                              //   // ),
+                              // ),
                               const SizedBox(width: 12),
                               Text(
                                 "${widget.total}/${doc.data()?["kapasitas"] ?? ""} Ekor",
@@ -666,18 +687,19 @@ class _CageDetailState extends State<CageDetail> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(189, 148, 26, 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.add_circle_outline_rounded,
-                                  size: 20,
-                                  color: Color.fromRGBO(189, 148, 26, 1),
-                                ),
-                              ),
+                              // Container(
+                              //   padding: const EdgeInsets.all(8),
+                              //   decoration: BoxDecoration(
+                              //     color:
+                              //         const Color.fromRGBO(189, 148, 26, 0.1),
+                              //     borderRadius: BorderRadius.circular(8),
+                              //   ),
+                              //   child: const Icon(
+                              //     Icons.add_circle_outline_rounded,
+                              //     size: 20,
+                              //     color: Color.fromRGBO(189, 148, 26, 1),
+                              //   ),
+                              // ),
                               const SizedBox(width: 12),
                               Text(
                                 "${canUse.toString()} Ekor",
@@ -714,20 +736,13 @@ class _CageDetailState extends State<CageDetail> {
               ),
               child: Column(
                 children: [
-                  Container(
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1D91AA).withOpacity(0.05),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
+                        Expanded(
+                          child: Row(
+                            children: [
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
@@ -740,11 +755,18 @@ class _CageDetailState extends State<CageDetail> {
                                 size: 22,
                               ),
                             ),
-                            const SizedBox(width: 14),
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
+                              const SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // const Text(
+                                  //   "Lihat detail blok",
+                                  //   style: TextStyle(
+                                  //     fontSize: 14,
+                                  //     fontWeight: FontWeight.w500,
+                                  //   ),
+                                  //),
+                                  const Text(
                                   "Detail Blok",
                                   style: TextStyle(
                                     fontSize: 18,
@@ -752,83 +774,11 @@ class _CageDetailState extends State<CageDetail> {
                                     color: Color(0xFF1D91AA),
                                   ),
                                 ),
-                                Text(
-                                  "Informasi blok dalam kandang",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1D91AA).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: const Color(0xFF1D91AA).withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Text(
-                            "$totalBlok Blok",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Color(0xFF1D91AA),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.asset(
-                                  "assets/images/icon-block.png",
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Icon(
-                                      Icons.dashboard_rounded,
-                                      color: Colors.grey[400],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    "Lihat detail blok",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    "Terdapat $totalBlok blok pada kandang ini",
+                                    "Terdapat $totalBlok blok ",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 12,
                                       color: Colors.grey[600],
                                     ),
                                   ),
@@ -857,17 +807,29 @@ class _CageDetailState extends State<CageDetail> {
                             backgroundColor: const Color(0xFF1D91AA),
                             foregroundColor: Colors.white,
                             elevation: 2,
-                            shadowColor: const Color(0xFF1D91AA).withOpacity(0.3),
+                            shadowColor:
+                                const Color(0xFF1D91AA).withOpacity(0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 10),
                           ),
-                          child: const Text(
-                            "Lihat Blok",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                "Lihat Blok",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Icon(
+                                Icons.arrow_forward,
+                                size: 16,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -893,84 +855,186 @@ class _CageDetailState extends State<CageDetail> {
                 ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  // Header
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1D91AA).withOpacity(0.05),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1D91AA).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                           ),
                           child: const Icon(
                             Icons.history_rounded,
                             color: Color(0xFF1D91AA),
-                            size: 22,
+                            size: 24,
                           ),
                         ),
-                        const SizedBox(width: 14),
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Riwayat Edit",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1D91AA),
+                        const SizedBox(width: 16),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Riwayat Edit",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1D91AA),
+                                ),
                               ),
-                            ),
-                            Text(
-                              "Daftar perubahan pada kandang",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
+                              SizedBox(height: 4),
+                              Text(
+                                "Daftar perubahan pada kandang",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _buildHistoryItem(
-                          icon: Icons.pets_rounded, 
-                          title: "Perubahan Kapasitas",
-                          description: "Kapasitas berubah dari 15 Ekor menjadi 20 Ekor",
-                          date: DateTime.now().toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                        ),
-                        _buildHistoryItem(
-                          icon: Icons.edit_rounded, 
-                          title: "Perubahan Nama",
-                          description: "Nama berubah dari Kandang A menjadi Kandang Utama",
-                          date: DateTime.now().subtract(const Duration(days: 7)).toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                        ),
-                        _buildHistoryItem(
-                          icon: Icons.category_rounded, 
-                          title: "Perubahan Kategori",
-                          description: "Kategori berubah dari Pembiakan menjadi Penggemukan",
-                          date: DateTime.now().subtract(const Duration(days: 14)).toString().substring(0, 10),
-                          iconColor: const Color(0xFF1D91AA),
-                          showDivider: false,
-                        ),
-                      ],
-                    ),
+                  
+                  // Divider
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.grey.withOpacity(0.1),
+                  ),
+                  
+                  // Content
+                  FutureBuilder(
+                    future: _getListLog(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          height: 150,
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator(
+                            color: Color(0xFF1D91AA),
+                            strokeWidth: 3,
+                          ),
+                        );
+                      }
+                      
+                      if (snapshot.data == null || snapshot.data!.isEmpty) {
+                        return Container(
+                          height: 180,
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.history_toggle_off_rounded,
+                                  size: 40,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "Belum ada riwayat perubahan",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Perubahan pada kandang akan muncul di sini",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      
+                      // Reverse the list to show newest edits first
+                      var dataList = snapshot.data?.toList() ?? [];
+                                            // Sort the list by date, most recent first                      dataList.sort((a, b) {                        // Parse date strings to ensure proper date comparison                        var aDateStr = a.data()["created_at"] ?? '';                        var bDateStr = b.data()["created_at"] ?? '';                                                // Try to parse dates if possible (format: dd/MM/yyyy)                        DateTime? aDate;                        DateTime? bDate;                                                try {                          var aParts = aDateStr.split('/');                          if (aParts.length == 3) {                            aDate = DateTime(                              int.parse(aParts[2]), // year                              int.parse(aParts[1]), // month                              int.parse(aParts[0]), // day                            );                          }                        } catch (e) {                          // Fallback to string comparison if parsing fails                        }                                                try {                          var bParts = bDateStr.split('/');                          if (bParts.length == 3) {                            bDate = DateTime(                              int.parse(bParts[2]), // year                              int.parse(bParts[1]), // month                              int.parse(bParts[0]), // day                            );                          }                        } catch (e) {                          // Fallback to string comparison if parsing fails                        }                                                // Compare dates if both were parsed successfully                        if (aDate != null && bDate != null) {                          return bDate.compareTo(aDate); // Newest first                        }                                                // Fallback to string comparison                        return bDateStr.compareTo(aDateStr); // Reverse order: newest first                      });
+                      
+                      var data = dataList.map(
+                        (el) {
+                          var e = el.data();
+                          return _buildHistoryItem(
+                            iconName: e["icon"] ?? '',
+                            title: e["title"] ?? '',
+                            description: e["text"] ?? '',
+                            date: e["created_at"] ?? '',
+                            iconColor: const Color(0xFF1D91AA),
+                            showDivider: el != dataList.last,
+                          );
+                        },
+                      ).toList();
+                      
+                      return Column(
+                        children: [
+                          Container(
+                            height: 300,
+                            padding: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: RawScrollbar(
+                              thumbColor: const Color(0xFF1D91AA).withOpacity(0.2),
+                              radius: const Radius.circular(20),
+                              thickness: 5,
+                              thumbVisibility: true,
+                              child: ListView(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                children: data ?? [],
+                              ),
+                            ),
+                          ),
+                          // Scroll indicator
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, bottom: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.keyboard_arrow_up,
+                                  size: 16,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Scroll untuk melihat lebih banyak",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 16,
+                                  color: Colors.grey[400],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -980,74 +1044,90 @@ class _CageDetailState extends State<CageDetail> {
       ),
     );
   }
-  
+
   Widget _buildHistoryItem({
-    required IconData icon,
+    required String iconName,
     required String title,
     required String description,
     required String date,
     required Color iconColor,
     bool showDivider = true,
   }) {
+    var icon = Icons.pets_rounded;
+    switch (iconName) {
+      case 'edit_rounded':
+        icon = Icons.edit_rounded;
+      case 'category_rounded':
+        icon = Icons.edit_rounded;
+    }
     return Column(
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: iconColor,
+                ),
               ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: iconColor,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      Text(
-                        date,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            date,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[800],
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         if (showDivider)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(),
-          ),
+          const Divider(),
       ],
     );
   }

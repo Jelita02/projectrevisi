@@ -257,84 +257,84 @@ class _BlockDetailState extends State<BlockDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header image section
-            Container(
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1D91AA),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      "assets/images/icon-block.png",
-                      fit: BoxFit.cover,
-                      opacity: const AlwaysStoppedAnimation(0.2),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 50,
-                    left: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Informasi Blok",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3.0,
-                                color: Color.fromARGB(150, 0, 0, 0),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "${widget.totalBlok} Blok  •  ${widget.total} Ekor",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   height: 180,
+            //   width: double.infinity,
+            //   decoration: BoxDecoration(
+            //     color: const Color(0xFF1D91AA),
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Colors.black.withOpacity(0.1),
+            //         blurRadius: 10,
+            //         offset: const Offset(0, 3),
+            //       ),
+            //     ],
+            //   ),
+            //   child: Stack(
+            //     children: [
+            //       Positioned.fill(
+            //         child: Image.asset(
+            //           "assets/images/icon-block.png",
+            //           fit: BoxFit.cover,
+            //           opacity: const AlwaysStoppedAnimation(0.2),
+            //         ),
+            //       ),
+            //       Positioned(
+            //         bottom: 0,
+            //         left: 0,
+            //         right: 0,
+            //         child: Container(
+            //           height: 30,
+            //           decoration: BoxDecoration(
+            //             color: Colors.grey[50],
+            //             borderRadius: const BorderRadius.vertical(
+            //               top: Radius.circular(30),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       Positioned(
+            //         bottom: 50,
+            //         left: 20,
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             const Text(
+            //               "Informasi Blok",
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontSize: 22,
+            //                 fontWeight: FontWeight.bold,
+            //                 shadows: [
+            //                   Shadow(
+            //                     offset: Offset(0, 1),
+            //                     blurRadius: 3.0,
+            //                     color: Color.fromARGB(150, 0, 0, 0),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //             const SizedBox(height: 8),
+            //             Container(
+            //               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            //               decoration: BoxDecoration(
+            //                 color: Colors.white.withOpacity(0.2),
+            //                 borderRadius: BorderRadius.circular(20),
+            //               ),
+            //               child: Text(
+            //                 "${widget.totalBlok} Blok  •  ${widget.total} Ekor",
+            //                 style: const TextStyle(
+            //                   color: Colors.white,
+            //                   fontWeight: FontWeight.w600,
+            //                 ),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             
             // Summary card
             Container(
@@ -456,24 +456,24 @@ class _BlockDetailState extends State<BlockDetail> {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1D91AA).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: const Color(0xFF1D91AA).withOpacity(0.3),
-                      ),
-                    ),
-                    child: Text(
-                      "${widget.totalBlok} Blok",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Color(0xFF1D91AA),
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  //   decoration: BoxDecoration(
+                  //     color: const Color(0xFF1D91AA).withOpacity(0.1),
+                  //     borderRadius: BorderRadius.circular(20),
+                  //     border: Border.all(
+                  //       color: const Color(0xFF1D91AA).withOpacity(0.3),
+                  //     ),
+                  //   ),
+                    // child: Text(
+                    //   "${widget.totalBlok} Blok",
+                    //   style: const TextStyle(
+                    //     fontWeight: FontWeight.bold,
+                    //     fontSize: 14,
+                    //     color: Color(0xFF1D91AA),
+                    //   ),
+                    // ),
+                 // ),
                 ],
               ),
             ),
@@ -706,40 +706,30 @@ class _BlockDetailState extends State<BlockDetail> {
   }
   
   Widget _buildSummaryItem({
-    required IconData icon,
+    required IconData icon,  // Kept for backward compatibility
     required Color iconColor,
     required String title,
     required String value,
   }) {
     return Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon, 
-              color: iconColor, 
-              size: 24,
-            ),
-          ),
-          const SizedBox(height: 12),
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: iconColor,
             ),
           ),
         ],

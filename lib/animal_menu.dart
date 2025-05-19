@@ -174,7 +174,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
                       value: "Penggemukan", 
                       child: Row(
                         children: [
-                          Icon(Icons.trending_up, color: Colors.orange, size: 18),
+                          // Icon(Icons.trending_up, color: Colors.orange, size: 18),
                           SizedBox(width: 8),
                           Text("Penggemukan"),
                         ],
@@ -184,7 +184,7 @@ class _MenuAnimalState extends State<MenuAnimal> {
                       value: "Pembiakan", 
                       child: Row(
                         children: [
-                          Icon(Icons.pets, color: Color(0xFF1D91AA), size: 18),
+                          // Icon(Icons.pets, color: Color(0xFF1D91AA), size: 18),
                           SizedBox(width: 8),
                           Text("Pembiakan"),
                         ],

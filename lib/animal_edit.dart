@@ -343,16 +343,16 @@ class _AnimalEditState extends State<AnimalEdit> {
           // ),
           
           // Curved transition
-          Container(
-            height: 20,
-            decoration: const BoxDecoration(
-              color: Color(0xFF1D91AA),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
-          ),
+          // Container(
+          //   height: 10,
+          //   decoration: const BoxDecoration(
+          //     color: Color(0xFF1D91AA),
+          //     borderRadius: BorderRadius.only(
+          //       bottomLeft: Radius.circular(20),
+          //       bottomRight: Radius.circular(20),
+          //     ),
+          //   ),
+          // ),
           
           // Form section
           Expanded(
@@ -416,7 +416,7 @@ class _AnimalEditState extends State<AnimalEdit> {
                             enabled: _isEditable,
                             decoration: InputDecoration(
                               labelText: 'Nama Hewan',
-                              prefixIcon: const Icon(FontAwesomeIcons.paw, size: 22),
+                              // prefixIcon: const Icon(FontAwesomeIcons.paw, size: 22),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
@@ -544,7 +544,7 @@ class _AnimalEditState extends State<AnimalEdit> {
                           // Category dropdown
                           _buildDropdown(
                             labelText: 'Kategori',
-                            icon: Icons.category,
+                            icon: Icons.layers,
                             items: dropdownKategori.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -567,7 +567,7 @@ class _AnimalEditState extends State<AnimalEdit> {
                           // Animal type dropdown
                           _buildDropdown(
                             labelText: 'Jenis',
-                            icon: Icons.agriculture,
+                            icon: Icons.category,
                             items: dropdownJenis.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -933,7 +933,6 @@ class _AnimalEditState extends State<AnimalEdit> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.save),
                                 SizedBox(width: 8),
                                 Text(
                                   'Simpan Perubahan',

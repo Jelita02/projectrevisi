@@ -110,14 +110,21 @@ class TileAnimal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      doc.data()?["nama"] ?? "",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18,
-                        color: Color(0xFF333333),
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            doc.data()?["nama"] ?? "",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 18,
+                              color: Color(0xFF333333),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        _buildStatusBadge(doc.data()?["status"] ?? "Hidup"),
+                      ],
                     ),
                     const SizedBox(height: 6),
                     Row(
@@ -191,6 +198,58 @@ class TileAnimal extends StatelessWidget {
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+   Widget _buildStatusBadge(String status) {
+    // Define color and icon based on status
+    Color badgeColor;
+    IconData statusIcon;
+    
+    switch (status) {
+      case "Hidup":
+        badgeColor = Colors.green;
+        statusIcon = Icons.favorite;
+        break;
+      case "Mati":
+        badgeColor = Colors.red;
+        statusIcon = Icons.dangerous;
+        break;
+      case "Terjual":
+        badgeColor = Colors.blue;
+        statusIcon = Icons.attach_money;
+        break;
+      default:
+        badgeColor = Colors.grey;
+        statusIcon = Icons.help_outline;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: badgeColor.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: badgeColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            statusIcon,
+            size: 14,
+            color: badgeColor,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            status,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: badgeColor,
             ),
           ),
         ],

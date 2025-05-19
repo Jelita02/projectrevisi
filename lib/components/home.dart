@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
               child: Container(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
                     Row(
@@ -126,12 +126,12 @@ class _HomeState extends State<Home> {
                         )
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                       children: [
@@ -329,7 +329,7 @@ class _HomeState extends State<Home> {
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.4,
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
