@@ -148,7 +148,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
                     pickDateRange();
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(8),
@@ -190,19 +191,19 @@ class _LaporanScreenState extends State<LaporanScreen> {
               ],
             ),
           ),
-          
+
           // Curved transition
           Container(
             height: 20,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MyColors.primaryC,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
               ),
             ),
           ),
-          
+
           // Statistics
           Expanded(
             child: ListView(
@@ -216,14 +217,14 @@ class _LaporanScreenState extends State<LaporanScreen> {
                   subtitle: "Ekor",
                   color: Colors.blue,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Gender section
                 _buildGenderSection(),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Health section
                 _buildStatCard(
                   icon: Icons.health_and_safety,
@@ -232,14 +233,14 @@ class _LaporanScreenState extends State<LaporanScreen> {
                   subtitle: "Kasus",
                   color: Colors.orange,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Category section
                 _buildCategorySection(),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Status section
                 _buildStatusSection(),
               ],
@@ -344,8 +345,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Row(
               children: [
                 // Container(
@@ -360,8 +361,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
                 //     size: 24,
                 //   ),
                 // ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   "Jenis Kelamin",
                   style: TextStyle(
                     fontSize: 16,
@@ -372,7 +373,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
             ),
           ),
           const Divider(height: 1),
-          
+
           // Male
           Padding(
             padding: const EdgeInsets.all(16),
@@ -404,9 +405,13 @@ class _LaporanScreenState extends State<LaporanScreen> {
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: totalMale / (totalMale + totalFemale > 0 ? totalMale + totalFemale : 1),
+                        value: totalMale /
+                            (totalMale + totalFemale > 0
+                                ? totalMale + totalFemale
+                                : 1),
                         backgroundColor: Colors.grey[200],
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.blue),
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ],
@@ -432,7 +437,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
               ],
             ),
           ),
-          
+
           // Female
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -464,9 +469,13 @@ class _LaporanScreenState extends State<LaporanScreen> {
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: totalFemale / (totalMale + totalFemale > 0 ? totalMale + totalFemale : 1),
+                        value: totalFemale /
+                            (totalMale + totalFemale > 0
+                                ? totalMale + totalFemale
+                                : 1),
                         backgroundColor: Colors.grey[200],
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.pink),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.pink),
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ],
@@ -514,8 +523,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Row(
               children: [
                 // Container(
@@ -530,8 +539,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
                 //   //   size: 24,
                 //   // ),
                 // ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   "Kategori",
                   style: TextStyle(
                     fontSize: 16,
@@ -542,35 +551,36 @@ class _LaporanScreenState extends State<LaporanScreen> {
             ),
           ),
           const Divider(height: 1),
-          
+
           // Breeding
           _buildCategoryRow(
-            title: "Pembiakan", 
-            value: totalPembiakan, 
-            total: totalPembiakan + totalPenggemukan > 0 ? totalPembiakan + totalPenggemukan : 1,
-            color: Colors.teal
-          ),
-          
+              title: "Pembiakan",
+              value: totalPembiakan,
+              total: totalPembiakan + totalPenggemukan > 0
+                  ? totalPembiakan + totalPenggemukan
+                  : 1,
+              color: Colors.teal),
+
           // Fattening
           _buildCategoryRow(
-            title: "Penggemukan", 
-            value: totalPenggemukan, 
-            total: totalPembiakan + totalPenggemukan > 0 ? totalPembiakan + totalPenggemukan : 1,
-            color: Colors.amber,
-            isLast: true
-          ),
+              title: "Penggemukan",
+              value: totalPenggemukan,
+              total: totalPembiakan + totalPenggemukan > 0
+                  ? totalPembiakan + totalPenggemukan
+                  : 1,
+              color: Colors.amber,
+              isLast: true),
         ],
       ),
     );
   }
-  
-  Widget _buildCategoryRow({
-    required String title, 
-    required int value, 
-    required int total,
-    required Color color,
-    bool isLast = false
-  }) {
+
+  Widget _buildCategoryRow(
+      {required String title,
+      required int value,
+      required int total,
+      required Color color,
+      bool isLast = false}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 16, 16, isLast ? 16 : 8),
       child: Column(
@@ -649,8 +659,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
+          const Padding(
+            padding: EdgeInsets.all(16),
             child: Row(
               children: [
                 // Container(
@@ -665,8 +675,8 @@ class _LaporanScreenState extends State<LaporanScreen> {
                 //   //   size: 24,
                 //   // ),
                 // ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   "Status",
                   style: TextStyle(
                     fontSize: 16,
@@ -677,7 +687,6 @@ class _LaporanScreenState extends State<LaporanScreen> {
             ),
           ),
           const Divider(height: 1),
-          
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -715,7 +724,7 @@ class _LaporanScreenState extends State<LaporanScreen> {
       ),
     );
   }
-  
+
   Widget _buildStatusButton({
     required String status,
     required int count,

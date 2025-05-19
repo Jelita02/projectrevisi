@@ -42,7 +42,7 @@ class _MainMenuState extends State<MainMenu> {
             _docUser = dataUser;
           });
         }
-      FirebaseFirestore.instance
+        FirebaseFirestore.instance
             .collection("hewan")
             .where("user_uid", isEqualTo: widget.user.uid)
             .get()
@@ -86,6 +86,7 @@ class _MainMenuState extends State<MainMenu> {
       _currentIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
@@ -108,7 +109,7 @@ class _MainMenuState extends State<MainMenu> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1D91AA),
         // Tambahkan identitas pengguna di sini
-        title: Text(
+        title: const Text(
           "QR-Sheep",
           style: TextStyle(
             color: Colors.white,
@@ -219,7 +220,7 @@ class _MainMenuState extends State<MainMenu> {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final bool isSelected = _currentIndex == index;
-    
+
     return InkWell(
       onTap: () => _onTapped(index),
       child: Container(
@@ -229,9 +230,7 @@ class _MainMenuState extends State<MainMenu> {
           children: [
             Icon(
               icon,
-              color: isSelected 
-                ? const Color(0xFF1D91AA) 
-                : Colors.grey,
+              color: isSelected ? const Color(0xFF1D91AA) : Colors.grey,
               size: 20,
             ),
             // const SizedBox(height: 0),
@@ -239,11 +238,11 @@ class _MainMenuState extends State<MainMenu> {
             //   label,
             //   style: TextStyle(
             //     fontSize: 12,
-            //     color: isSelected 
-            //       ? const Color(0xFF1D91AA) 
+            //     color: isSelected
+            //       ? const Color(0xFF1D91AA)
             //       : Colors.grey,
-            //     fontWeight: isSelected 
-            //       ? FontWeight.bold 
+            //     fontWeight: isSelected
+            //       ? FontWeight.bold
             //       : FontWeight.normal,
             //   ),
             // ),

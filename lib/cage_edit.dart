@@ -122,14 +122,25 @@ class _CageEditState extends State<CageEdit> {
       Map<String, String> listId = {};
       for (var v in blok) {
         kapasitasKandang += int.tryParse(v["kapasitas"] ?? 0) ?? 0;
-        var doc = await blokStore.add({
-          "user_uid": widget.user.uid,
-          "kandang_id": widget.doc.id,
-          "nama": v["nama"] ?? "",
-          "kapasitas": v["kapasitas"] ?? "",
-        });
+        if (v['id'].toString().isNotEmpty) {
+          await blokStore.doc(v['id'].toString()).update({
+            "user_uid": widget.user.uid,
+            "kandang_id": widget.doc.id,
+            "nama": v["nama"] ?? "",
+            "kapasitas": v["kapasitas"] ?? "",
+          });
 
-        listId[doc.id] = doc.id;
+          listId[v['id'].toString()] = v['id'].toString();
+        } else {
+          var doc = await blokStore.add({
+            "user_uid": widget.user.uid,
+            "kandang_id": widget.doc.id,
+            "nama": v["nama"] ?? "",
+            "kapasitas": v["kapasitas"] ?? "",
+          });
+
+          listId[doc.id] = doc.id;
+        }
       }
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -453,7 +464,6 @@ class _CageEditState extends State<CageEdit> {
             color: Colors.white,
           ),
         ),
-        
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -674,7 +684,7 @@ class _CageEditState extends State<CageEdit> {
                               ),
                             ],
                           ),
-                          ElevatedButton.icon(
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1D91AA),
                               foregroundColor: Colors.white,
@@ -685,7 +695,7 @@ class _CageEditState extends State<CageEdit> {
                             ),
                             onPressed: () => _showAddBlok(context),
                             // icon: const Icon(Icons.add, size: 20),
-                            label: const Text("tambah"),
+                            child: const Text("tambah"),
                           ),
                         ],
                       ),

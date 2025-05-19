@@ -135,7 +135,8 @@ class _QRScannerState extends State<QRScanner> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(16),
@@ -208,7 +209,7 @@ class _QRScannerState extends State<QRScanner> {
                       ),
                       QRScannerOverlay(
                         overlayColor: Colors.black.withOpacity(0.5),
-                        borderColor:  const Color(0xFF1D91AA),
+                        borderColor: const Color(0xFF1D91AA),
                         borderRadius: 24,
                         scanAreaSize: const Size.square(280),
                       ),
@@ -220,24 +221,25 @@ class _QRScannerState extends State<QRScanner> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.8),
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.info_outline,
                                     size: 18,
-                                    color: const Color(0xFF1D91AA),
+                                    color: Color(0xFF1D91AA),
                                   ),
                                   SizedBox(width: 8),
                                   Text(
                                     "Scanning...",
                                     style: TextStyle(
-                                      color: const Color(0xFF1D91AA),
+                                      color: Color(0xFF1D91AA),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -266,7 +268,8 @@ class _QRScannerState extends State<QRScanner> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1D91AA),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 24),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
